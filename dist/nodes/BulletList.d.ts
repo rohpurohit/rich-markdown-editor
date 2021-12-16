@@ -1,3 +1,4 @@
+import { InputRule } from "prosemirror-inputrules";
 import Node from "./Node";
 export default class BulletList extends Node {
     get name(): string;
@@ -21,7 +22,7 @@ export default class BulletList extends Node {
     };
     inputRules({ type }: {
         type: any;
-    }): import("prosemirror-inputrules").InputRule<any>[];
+    }): InputRule<any>[];
     toMarkdown(state: any, node: any): void;
     parseMarkdown(): {
         block: string;

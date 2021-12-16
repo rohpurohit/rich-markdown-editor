@@ -188,7 +188,7 @@ class RichMarkdownEditor extends React.PureComponent {
         this.getHeadings = () => {
             const headings = [];
             const previouslySeen = {};
-            this.view.state.doc.forEach(node => {
+            this.view.state.doc.forEach((node) => {
                 if (node.type.name === "heading") {
                     const slug = headingToSlug_1.default(node);
                     let id = slug;
@@ -372,7 +372,7 @@ class RichMarkdownEditor extends React.PureComponent {
                 new MaxLength_1.default({
                     maxLength: this.props.maxLength,
                 }),
-            ].filter(extension => {
+            ].filter((extension) => {
                 if (this.props.disableExtensions) {
                     return !this.props.disableExtensions.includes(extension.name);
                 }
@@ -472,7 +472,7 @@ class RichMarkdownEditor extends React.PureComponent {
         if (!this.element) {
             throw new Error("createView called before ref available");
         }
-        const isEditingCheckbox = tr => {
+        const isEditingCheckbox = (tr) => {
             return tr.steps.some((step) => {
                 var _a, _b, _c;
                 return ((_c = (_b = (_a = step.slice) === null || _a === void 0 ? void 0 : _a.content) === null || _b === void 0 ? void 0 : _b.firstChild) === null || _c === void 0 ? void 0 : _c.type.name) ===
@@ -488,7 +488,7 @@ class RichMarkdownEditor extends React.PureComponent {
             dispatchTransaction: function (transaction) {
                 const { state, transactions } = this.state.applyTransaction(transaction);
                 this.updateState(state);
-                if (transactions.some(tr => tr.docChanged) &&
+                if (transactions.some((tr) => tr.docChanged) &&
                     (!self.props.readOnly ||
                         (self.props.readOnlyWriteCheckboxes &&
                             transactions.some(isEditingCheckbox)))) {
@@ -520,7 +520,7 @@ class RichMarkdownEditor extends React.PureComponent {
         return (React.createElement(Flex_1.default, { onKeyDown: onKeyDown, style: style, className: className, align: "flex-start", justify: "center", dir: dir, column: true },
             React.createElement(styled_components_1.ThemeProvider, { theme: this.theme() },
                 React.createElement(React.Fragment, null,
-                    React.createElement(editor_1.StyledEditor, { dir: dir, rtl: isRTL, readOnly: readOnly, readOnlyWriteCheckboxes: readOnlyWriteCheckboxes, ref: ref => (this.element = ref) }),
+                    React.createElement(editor_1.StyledEditor, { dir: dir, rtl: isRTL, readOnly: readOnly, readOnlyWriteCheckboxes: readOnlyWriteCheckboxes, ref: (ref) => (this.element = ref) }),
                     !readOnly && this.view && (React.createElement(React.Fragment, null,
                         React.createElement(SelectionToolbar_1.default, { view: this.view, dictionary: dictionary, commands: this.commands, rtl: isRTL, isTemplate: this.props.template === true, onOpen: this.handleOpenSelectionMenu, onClose: this.handleCloseSelectionMenu, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onCreateLink: this.props.onCreateLink, tooltip: tooltip }),
                         React.createElement(LinkToolbar_1.default, { view: this.view, dictionary: dictionary, isActive: this.state.linkMenuOpen, onCreateLink: this.props.onCreateLink, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onShowToast: this.props.onShowToast, onClose: this.handleCloseLinkMenu, tooltip: tooltip }),
@@ -536,7 +536,7 @@ RichMarkdownEditor.defaultProps = {
     },
     onImageUploadStop: () => {
     },
-    onClickLink: href => {
+    onClickLink: (href) => {
         window.open(href, "_blank");
     },
     embeds: [],

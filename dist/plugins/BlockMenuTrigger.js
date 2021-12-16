@@ -94,8 +94,8 @@ class BlockMenuTrigger extends Extension_1.default {
                         }
                         return false;
                     },
-                    decorations: state => {
-                        const parent = prosemirror_utils_1.findParentNode(node => node.type.name === "paragraph")(state.selection);
+                    decorations: (state) => {
+                        const parent = prosemirror_utils_1.findParentNode((node) => node.type.name === "paragraph")(state.selection);
                         if (!parent) {
                             return;
                         }
