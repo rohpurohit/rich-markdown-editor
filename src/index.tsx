@@ -6,7 +6,13 @@ import { dropCursor } from "prosemirror-dropcursor";
 import { gapCursor } from "prosemirror-gapcursor";
 import { MarkdownParser, MarkdownSerializer } from "prosemirror-markdown";
 import { EditorView } from "prosemirror-view";
-import { Schema, NodeSpec, MarkSpec, Slice } from "prosemirror-model";
+import {
+  Schema,
+  NodeSpec,
+  MarkSpec,
+  Slice,
+  DOMParser,
+} from "prosemirror-model";
 import { inputRules, InputRule } from "prosemirror-inputrules";
 import { keymap } from "prosemirror-keymap";
 import { baseKeymap } from "prosemirror-commands";
@@ -205,6 +211,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   schema: Schema;
   serializer: MarkdownSerializer;
   parser: MarkdownParser;
+  domParser: DOMParser;
   pasteParser: MarkdownParser;
   plugins: Plugin[];
   keymaps: Plugin[];
@@ -299,6 +306,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     this.keymaps = this.createKeymaps();
     this.serializer = this.createSerializer();
     this.parser = this.createParser();
+    this.domParser = this.createDOMParser();
     this.pasteParser = this.createPasteParser();
     this.inputRules = this.createInputRules();
     this.nodeViews = this.createNodeViews();
@@ -490,6 +498,10 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       schema: this.schema,
       plugins: this.rulePlugins,
     });
+  }
+
+  createDOMParser() {
+    return DOMParser.fromSchema(this.schema);
   }
 
   createPasteParser() {

@@ -30,6 +30,9 @@ export default class BulletList extends Node {
   inputRules({ type }) {
     return [
       wrappingInputRule(/^\s*([-+*])\s$/, type),
+
+      // below is a custom added rule to create bullet list by default (like remnote)
+      //TODO: more testing for this rule to make sure it is working as expected.
       new InputRule(
         /^[\s\t\f]*[a-z,A-Z,0-9]?$/,
         (state, [matchStr], start, end) => {
