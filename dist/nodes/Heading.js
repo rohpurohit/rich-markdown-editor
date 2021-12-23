@@ -32,11 +32,12 @@ const splitHeading_1 = __importDefault(require("../commands/splitHeading"));
 const headingToSlug_1 = __importStar(require("../lib/headingToSlug"));
 const Node_1 = __importDefault(require("./Node"));
 const types_1 = require("../types");
+const domHelpers_1 = require("../domHelpers");
 class Heading extends Node_1.default {
     constructor() {
         super(...arguments);
         this.className = "heading-name";
-        this.handleFoldContent = event => {
+        this.handleFoldContent = (event) => {
             event.preventDefault();
             const { view } = this.editor;
             const { tr } = view.state;
@@ -64,7 +65,7 @@ class Heading extends Node_1.default {
                 }
             }
         };
-        this.handleCopyLink = event => {
+        this.handleCopyLink = (event) => {
             const anchor = event.currentTarget.parentNode.parentNode.previousSibling;
             if (!anchor.className.includes(this.className)) {
                 throw new Error("Did not find anchor as previous sibling of heading");
@@ -100,24 +101,32 @@ class Heading extends Node_1.default {
             group: "block",
             defining: true,
             draggable: false,
-            parseDOM: this.options.levels.map(level => ({
+            parseDOM: this.options.levels.map((level) => ({
                 tag: `h${level}`,
-                attrs: { level },
+                getAttrs: (hNode) => {
+                    const fontSize = domHelpers_1.getParsedValue(hNode.style.fontSize);
+                    if (isNaN(fontSize))
+                        return { level };
+                    if (domHelpers_1.isValidHeading(fontSize, level)) {
+                        return { level: domHelpers_1.getHeadingLevelByFontSize(fontSize) };
+                    }
+                    return false;
+                },
                 contentElement: ".heading-content",
             })),
-            toDOM: node => {
+            toDOM: (node) => {
                 const anchor = document.createElement("button");
                 anchor.innerText = "#";
                 anchor.type = "button";
                 anchor.className = "heading-anchor";
-                anchor.addEventListener("click", event => this.handleCopyLink(event));
+                anchor.addEventListener("click", (event) => this.handleCopyLink(event));
                 const fold = document.createElement("button");
                 fold.innerText = "";
                 fold.innerHTML =
                     '<svg fill="currentColor" width="12" height="24" viewBox="6 0 12 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.23823905,10.6097108 L11.207376,14.4695888 L11.207376,14.4695888 C11.54411,14.907343 12.1719566,14.989236 12.6097108,14.652502 C12.6783439,14.5997073 12.7398293,14.538222 12.792624,14.4695888 L15.761761,10.6097108 L15.761761,10.6097108 C16.0984949,10.1719566 16.0166019,9.54410997 15.5788477,9.20737601 C15.4040391,9.07290785 15.1896811,9 14.969137,9 L9.03086304,9 L9.03086304,9 C8.47857829,9 8.03086304,9.44771525 8.03086304,10 C8.03086304,10.2205442 8.10377089,10.4349022 8.23823905,10.6097108 Z" /></svg>';
                 fold.type = "button";
                 fold.className = `heading-fold ${node.attrs.collapsed ? "collapsed" : ""}`;
-                fold.addEventListener("click", event => this.handleFoldContent(event));
+                fold.addEventListener("click", (event) => this.handleFoldContent(event));
                 return [
                     `h${node.attrs.level + (this.options.offset || 0)}`,
                     [
@@ -165,7 +174,7 @@ class Heading extends Node_1.default {
         return Object.assign(Object.assign({}, options), { Backspace: backspaceToParagraph_1.default(type), Enter: splitHeading_1.default(type) });
     }
     get plugins() {
-        const getAnchors = doc => {
+        const getAnchors = (doc) => {
             const decorations = [];
             const previouslySeen = {};
             doc.descendants((node, pos) => {
@@ -200,13 +209,13 @@ class Heading extends Node_1.default {
                 },
             },
             props: {
-                decorations: state => plugin.getState(state),
+                decorations: (state) => plugin.getState(state),
             },
         });
         return [plugin];
     }
     inputRules({ type }) {
-        return this.options.levels.map(level => prosemirror_inputrules_1.textblockTypeInputRule(new RegExp(`^(#{1,${level}})\\s$`), type, () => ({
+        return this.options.levels.map((level) => prosemirror_inputrules_1.textblockTypeInputRule(new RegExp(`^(#{1,${level}})\\s$`), type, () => ({
             level,
         })));
     }

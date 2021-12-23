@@ -10,6 +10,11 @@ import splitHeading from "../commands/splitHeading";
 import headingToSlug, { headingToPersistenceKey } from "../lib/headingToSlug";
 import Node from "./Node";
 import { ToastType } from "../types";
+import {
+  getParsedValue,
+  isValidHeading,
+  getHeadingLevelByFontSize,
+} from "../domHelpers";
 
 export default class Heading extends Node {
   className = "heading-name";
@@ -39,17 +44,24 @@ export default class Heading extends Node {
       group: "block",
       defining: true,
       draggable: false,
-      parseDOM: this.options.levels.map(level => ({
+      parseDOM: this.options.levels.map((level) => ({
         tag: `h${level}`,
-        attrs: { level },
+        getAttrs: (hNode: HTMLElement) => {
+          const fontSize = getParsedValue(hNode.style.fontSize);
+          if (isNaN(fontSize)) return { level };
+          if (isValidHeading(fontSize, level)) {
+            return { level: getHeadingLevelByFontSize(fontSize) };
+          }
+          return false;
+        },
         contentElement: ".heading-content",
       })),
-      toDOM: node => {
+      toDOM: (node) => {
         const anchor = document.createElement("button");
         anchor.innerText = "#";
         anchor.type = "button";
         anchor.className = "heading-anchor";
-        anchor.addEventListener("click", event => this.handleCopyLink(event));
+        anchor.addEventListener("click", (event) => this.handleCopyLink(event));
 
         const fold = document.createElement("button");
         fold.innerText = "";
@@ -59,7 +71,9 @@ export default class Heading extends Node {
         fold.className = `heading-fold ${
           node.attrs.collapsed ? "collapsed" : ""
         }`;
-        fold.addEventListener("click", event => this.handleFoldContent(event));
+        fold.addEventListener("click", (event) =>
+          this.handleFoldContent(event)
+        );
 
         return [
           `h${node.attrs.level + (this.options.offset || 0)}`,
@@ -107,7 +121,7 @@ export default class Heading extends Node {
     };
   }
 
-  handleFoldContent = event => {
+  handleFoldContent = (event) => {
     event.preventDefault();
 
     const { view } = this.editor;
@@ -147,7 +161,7 @@ export default class Heading extends Node {
     }
   };
 
-  handleCopyLink = event => {
+  handleCopyLink = (event) => {
     // this is unfortunate but appears to be the best way to grab the anchor
     // as it's added directly to the dom by a decoration.
     const anchor = event.currentTarget.parentNode.parentNode.previousSibling;
@@ -192,7 +206,7 @@ export default class Heading extends Node {
   }
 
   get plugins() {
-    const getAnchors = doc => {
+    const getAnchors = (doc) => {
       const decorations: Decoration[] = [];
       const previouslySeen = {};
 
@@ -244,7 +258,7 @@ export default class Heading extends Node {
         },
       },
       props: {
-        decorations: state => plugin.getState(state),
+        decorations: (state) => plugin.getState(state),
       },
     });
 
@@ -252,7 +266,7 @@ export default class Heading extends Node {
   }
 
   inputRules({ type }: { type: NodeType }) {
-    return this.options.levels.map(level =>
+    return this.options.levels.map((level) =>
       textblockTypeInputRule(new RegExp(`^(#{1,${level}})\\s$`), type, () => ({
         level,
       }))
