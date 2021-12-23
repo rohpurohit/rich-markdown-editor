@@ -13,7 +13,13 @@ class Highlight extends Mark_1.default {
     }
     get schema() {
         return {
-            parseDOM: [{ tag: "mark" }],
+            parseDOM: [
+                { tag: "mark" },
+                {
+                    style: "background-color",
+                    getAttrs: (value) => !!value && value !== "transparent",
+                },
+            ],
             toDOM: () => ["mark"],
         };
     }

@@ -87,6 +87,7 @@ const Placeholder_2 = __importDefault(require("./plugins/Placeholder"));
 const SmartText_1 = __importDefault(require("./plugins/SmartText"));
 const TrailingNode_1 = __importDefault(require("./plugins/TrailingNode"));
 const PasteHandler_1 = __importDefault(require("./plugins/PasteHandler"));
+const isHTML_1 = require("./queries/isHTML");
 var server_1 = require("./server");
 Object.defineProperty(exports, "schema", { enumerable: true, get: function () { return server_1.schema; } });
 Object.defineProperty(exports, "parser", { enumerable: true, get: function () { return server_1.parser; } });
@@ -272,7 +273,8 @@ class RichMarkdownEditor extends React.PureComponent {
         this.rulePlugins = this.createRulePlugins();
         this.keymaps = this.createKeymaps();
         this.serializer = this.createSerializer();
-        this.parser = this.createParser();
+        this.mdParser = this.createMDParser();
+        this.domParser = this.createDOMParser();
         this.pasteParser = this.createPasteParser();
         this.inputRules = this.createInputRules();
         this.nodeViews = this.createNodeViews();
@@ -435,11 +437,14 @@ class RichMarkdownEditor extends React.PureComponent {
     createSerializer() {
         return this.extensions.serializer();
     }
-    createParser() {
+    createMDParser() {
         return this.extensions.parser({
             schema: this.schema,
             plugins: this.rulePlugins,
         });
+    }
+    createDOMParser() {
+        return prosemirror_model_1.DOMParser.fromSchema(this.schema);
     }
     createPasteParser() {
         return this.extensions.parser({
@@ -466,7 +471,12 @@ class RichMarkdownEditor extends React.PureComponent {
         });
     }
     createDocument(content) {
-        return this.parser.parse(content);
+        if (isHTML_1.isHTML(content)) {
+            const domNode = document.createElement("div");
+            domNode.innerHTML = content;
+            return this.domParser.parse(domNode);
+        }
+        return this.mdParser.parse(content);
     }
     createView() {
         if (!this.element) {

@@ -2,7 +2,7 @@ import * as React from "react";
 import { EditorState, Plugin } from "prosemirror-state";
 import { MarkdownParser, MarkdownSerializer } from "prosemirror-markdown";
 import { EditorView } from "prosemirror-view";
-import { Schema, NodeSpec, MarkSpec } from "prosemirror-model";
+import { Schema, NodeSpec, MarkSpec, DOMParser } from "prosemirror-model";
 import { InputRule } from "prosemirror-inputrules";
 import baseDictionary from "./dictionary";
 import { SearchResult } from "./components/LinkEditor";
@@ -172,7 +172,8 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     view: EditorView;
     schema: Schema;
     serializer: MarkdownSerializer;
-    parser: MarkdownParser;
+    mdParser: MarkdownParser;
+    domParser: DOMParser;
     pasteParser: MarkdownParser;
     plugins: Plugin[];
     keymaps: Plugin[];
@@ -202,7 +203,8 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     createMarks(): {};
     createSchema(): Schema<string, string>;
     createSerializer(): import("./lib/markdown/serializer").MarkdownSerializer;
-    createParser(): MarkdownParser<any>;
+    createMDParser(): MarkdownParser<any>;
+    createDOMParser(): DOMParser<Schema<any, any>>;
     createPasteParser(): MarkdownParser<any>;
     createState(value?: string): EditorState<any>;
     createDocument(content: string): import("prosemirror-model").Node<any>;

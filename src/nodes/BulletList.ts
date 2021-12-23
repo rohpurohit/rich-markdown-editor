@@ -1,4 +1,5 @@
 import { InputRule, wrappingInputRule } from "prosemirror-inputrules";
+import { NodeRange } from "prosemirror-model";
 import { canJoin, findWrapping } from "prosemirror-transform";
 import toggleList from "../commands/toggleList";
 import Node from "./Node";
@@ -41,11 +42,11 @@ export default class BulletList extends Node {
             : state.tr.insertText(matchStr, start, end);
 
           const $start = tr.doc.resolve(start);
-          const range = $start.blockRange();
+          const range = $start.blockRange() as NodeRange<any>; //TODO: hmmm
           const wrapping = range && findWrapping(range, type);
 
           if (!wrapping) return null;
-          tr.wrap(range, wrapping);
+          tr.wrap(range, wrapping); //TODO: range should be of type NodeRange<any>
 
           const before = tr.doc.resolve(start - 1).nodeBefore;
           if (before && before.type == type && canJoin(tr.doc, start - 1))

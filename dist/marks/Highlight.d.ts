@@ -2,9 +2,15 @@ import Mark from "./Mark";
 export default class Highlight extends Mark {
     get name(): string;
     get schema(): {
-        parseDOM: {
+        parseDOM: ({
             tag: string;
-        }[];
+            style?: undefined;
+            getAttrs?: undefined;
+        } | {
+            style: string;
+            getAttrs: (value: any) => boolean;
+            tag?: undefined;
+        })[];
         toDOM: () => string[];
     };
     inputRules({ type }: {
