@@ -83,6 +83,7 @@ import SmartText from "./plugins/SmartText";
 import TrailingNode from "./plugins/TrailingNode";
 import PasteHandler from "./plugins/PasteHandler";
 import { PluginSimple } from "markdown-it";
+import { isHTML } from "./queries/isHTML";
 
 export { schema, parser, serializer, renderToHtml } from "./server";
 
@@ -210,7 +211,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   view: EditorView;
   schema: Schema;
   serializer: MarkdownSerializer;
-  parser: MarkdownParser;
+  mdParser: MarkdownParser;
   domParser: DOMParser;
   pasteParser: MarkdownParser;
   plugins: Plugin[];
@@ -305,7 +306,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     this.rulePlugins = this.createRulePlugins();
     this.keymaps = this.createKeymaps();
     this.serializer = this.createSerializer();
-    this.parser = this.createParser();
+    this.mdParser = this.createMDParser();
     this.domParser = this.createDOMParser();
     this.pasteParser = this.createPasteParser();
     this.inputRules = this.createInputRules();
@@ -493,7 +494,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     return this.extensions.serializer();
   }
 
-  createParser() {
+  createMDParser() {
     return this.extensions.parser({
       schema: this.schema,
       plugins: this.rulePlugins,
@@ -532,7 +533,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   createDocument(content: string) {
-    return this.parser.parse(content);
+    if (isHTML(content)) {
+      const domNode = document.createElement("div");
+      domNode.innerHTML = content;
+      return this.domParser.parse(domNode);
+    }
+
+    return this.mdParser.parse(content);
   }
 
   createView() {
