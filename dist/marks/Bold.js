@@ -15,7 +15,8 @@ class Bold extends Mark_1.default {
             parseDOM: [
                 { tag: "b" },
                 { tag: "strong" },
-                { style: "font-style", getAttrs: value => value === "bold" },
+                { style: "font-style", getAttrs: (value) => value === "bold" },
+                { style: "font-weight", getAttrs: (value) => value === "bold" },
             ],
             toDOM: () => ["strong"],
         };
