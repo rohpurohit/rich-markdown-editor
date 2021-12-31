@@ -25,12 +25,12 @@ class GoToPreviousInputTrigger extends Extension_1.default {
                             this.options.onGoToPreviousInput();
                             return true;
                         }
-                        if (event.key === "ArrowUp" && isFirstLine_1.default(view)) {
+                        if (event.key === "ArrowUp" && isFirstLine_1.default(this.editor, view)) {
                             event.preventDefault();
                             this.options.onGoToPreviousInput();
                             return true;
                         }
-                        if (event.key === "ArrowLeft" && isFirstLine_1.default(view)) {
+                        if (event.key === "ArrowLeft" && isFirstLine_1.default(this.editor, view)) {
                             if ((isCursorAt_1.default(3, view.state) && isInList_1.default(view.state)) ||
                                 isCursorAt_1.default(1, view.state)) {
                                 event.preventDefault();

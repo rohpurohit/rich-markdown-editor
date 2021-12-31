@@ -1,1 +1,1 @@
-{"version":3,"file":"isFirstLine.d.ts","sourceRoot":"","sources":["../../src/queries/isFirstLine.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAE,MAAM,kBAAkB,CAAC;AAE9C,MAAM,CAAC,OAAO,UAAU,WAAW,CAAC,IAAI,EAAE,UAAU,GAAG,OAAO,CAM7D"}
+{"version":3,"file":"isFirstLine.d.ts","sourceRoot":"","sources":["../../src/queries/isFirstLine.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAE,MAAM,kBAAkB,CAAC;AAC9C,OAAO,kBAAkB,MAAM,IAAI,CAAC;AAMpC,MAAM,CAAC,OAAO,UAAU,WAAW,CACjC,MAAM,EAAE,kBAAkB,EAC1B,IAAI,EAAE,UAAU,GACf,OAAO,CAWT"}

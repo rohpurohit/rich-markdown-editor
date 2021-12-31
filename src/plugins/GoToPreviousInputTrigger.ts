@@ -24,13 +24,13 @@ export default class GoToPreviousInputTrigger extends Extension {
               return true;
             }
 
-            if (event.key === "ArrowUp" && isFirstLine(view)) {
+            if (event.key === "ArrowUp" && isFirstLine(this.editor, view)) {
               event.preventDefault();
               this.options.onGoToPreviousInput();
               return true;
             }
 
-            if (event.key === "ArrowLeft" && isFirstLine(view)) {
+            if (event.key === "ArrowLeft" && isFirstLine(this.editor, view)) {
               if (
                 (isCursorAt(3, view.state) && isInList(view.state)) || // the cursor will be at pos 3 if the list is empty
                 isCursorAt(1, view.state)
