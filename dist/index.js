@@ -360,6 +360,7 @@ class RichMarkdownEditor extends React.PureComponent {
                     onSave: this.handleSave,
                     onSaveAndExit: this.handleSaveAndExit,
                     onCancel: this.props.onCancel,
+                    onGoToPreviousInput: this.handleGoToPreviousInput,
                 }),
                 new BlockMenuTrigger_1.default({
                     dictionary,

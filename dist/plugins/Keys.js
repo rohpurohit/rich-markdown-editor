@@ -43,7 +43,7 @@ class Keys extends Extension_1.default {
                         if (event.key === "Backspace") {
                             if (isEmptyDoc_1.default(view.state.doc)) {
                                 event.preventDefault();
-                                this.options.handleGoToPreviousInput();
+                                this.options.onGoToPreviousInput();
                                 return true;
                             }
                             return false;
