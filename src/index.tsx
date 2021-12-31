@@ -84,6 +84,7 @@ import TrailingNode from "./plugins/TrailingNode";
 import PasteHandler from "./plugins/PasteHandler";
 import { PluginSimple } from "markdown-it";
 import { isHTML } from "./domHelpers";
+import GoToPreviousInputTrigger from "./plugins/GoToPreviousInputTrigger";
 
 export { schema, parser, serializer, renderToHtml } from "./server";
 
@@ -392,7 +393,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             onSave: this.handleSave,
             onSaveAndExit: this.handleSaveAndExit,
             onCancel: this.props.onCancel,
-            onGoToPreviousInput: this.handleGoToPreviousInput,
           }),
           new BlockMenuTrigger({
             dictionary,
@@ -406,6 +406,9 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             onClose: () => {
               this.setState({ emojiMenuOpen: false });
             },
+          }),
+          new GoToPreviousInputTrigger({
+            onGoToPreviousInput: this.handleGoToPreviousInput,
           }),
           new Placeholder({
             placeholder: this.props.placeholder,

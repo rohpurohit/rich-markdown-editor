@@ -76,7 +76,7 @@ const DEFAULT_LANGUAGE = "javascript";
 class CodeFence extends Node_1.default {
     constructor() {
         super(...arguments);
-        this.handleCopyToClipboard = event => {
+        this.handleCopyToClipboard = (event) => {
             const { view } = this.editor;
             const element = event.target;
             const { top, left } = element.getBoundingClientRect();
@@ -91,7 +91,7 @@ class CodeFence extends Node_1.default {
                 }
             }
         };
-        this.handleLanguageChange = event => {
+        this.handleLanguageChange = (event) => {
             const { view } = this.editor;
             const { tr } = view.state;
             const element = event.target;
@@ -141,7 +141,7 @@ class CodeFence extends Node_1.default {
                     },
                 },
             ],
-            toDOM: node => {
+            toDOM: (node) => {
                 const button = document.createElement("button");
                 button.innerText = "Copy";
                 button.type = "button";
@@ -166,7 +166,7 @@ class CodeFence extends Node_1.default {
         };
     }
     commands({ type, schema }) {
-        return attrs => toggleBlockType_1.default(type, schema.nodes.paragraph, Object.assign({ language: (localStorage === null || localStorage === void 0 ? void 0 : localStorage.getItem(PERSISTENCE_KEY)) || DEFAULT_LANGUAGE }, attrs));
+        return (attrs) => toggleBlockType_1.default(type, schema.nodes.paragraph, Object.assign({ language: (localStorage === null || localStorage === void 0 ? void 0 : localStorage.getItem(PERSISTENCE_KEY)) || DEFAULT_LANGUAGE }, attrs));
     }
     keys({ type, schema }) {
         return {
@@ -214,7 +214,7 @@ class CodeFence extends Node_1.default {
     parseMarkdown() {
         return {
             block: "code_block",
-            getAttrs: tok => ({ language: tok.info }),
+            getAttrs: (tok) => ({ language: tok.info }),
         };
     }
 }

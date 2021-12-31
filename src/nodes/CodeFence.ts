@@ -27,6 +27,7 @@ import toggleBlockType from "../commands/toggleBlockType";
 import isInCode from "../queries/isInCode";
 import Node from "./Node";
 import { ToastType } from "../types";
+import backspaceToParagraph from "../commands/backspaceToParagraph";
 
 const PERSISTENCE_KEY = "rme-code-language";
 const DEFAULT_LANGUAGE = "javascript";
@@ -88,7 +89,7 @@ export default class CodeFence extends Node {
           },
         },
       ],
-      toDOM: node => {
+      toDOM: (node) => {
         const button = document.createElement("button");
         button.innerText = "Copy";
         button.type = "button";
@@ -117,7 +118,7 @@ export default class CodeFence extends Node {
   }
 
   commands({ type, schema }) {
-    return attrs =>
+    return (attrs) =>
       toggleBlockType(type, schema.nodes.paragraph, {
         language: localStorage?.getItem(PERSISTENCE_KEY) || DEFAULT_LANGUAGE,
         ...attrs,
@@ -158,7 +159,7 @@ export default class CodeFence extends Node {
     };
   }
 
-  handleCopyToClipboard = event => {
+  handleCopyToClipboard = (event) => {
     const { view } = this.editor;
     const element = event.target;
     const { top, left } = element.getBoundingClientRect();
@@ -178,7 +179,7 @@ export default class CodeFence extends Node {
     }
   };
 
-  handleLanguageChange = event => {
+  handleLanguageChange = (event) => {
     const { view } = this.editor;
     const { tr } = view.state;
     const element = event.target;
@@ -222,7 +223,7 @@ export default class CodeFence extends Node {
   parseMarkdown() {
     return {
       block: "code_block",
-      getAttrs: tok => ({ language: tok.info }),
+      getAttrs: (tok) => ({ language: tok.info }),
     };
   }
 }

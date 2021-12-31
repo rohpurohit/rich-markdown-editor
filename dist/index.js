@@ -88,6 +88,7 @@ const SmartText_1 = __importDefault(require("./plugins/SmartText"));
 const TrailingNode_1 = __importDefault(require("./plugins/TrailingNode"));
 const PasteHandler_1 = __importDefault(require("./plugins/PasteHandler"));
 const domHelpers_1 = require("./domHelpers");
+const GoToPreviousInputTrigger_1 = __importDefault(require("./plugins/GoToPreviousInputTrigger"));
 var server_1 = require("./server");
 Object.defineProperty(exports, "schema", { enumerable: true, get: function () { return server_1.schema; } });
 Object.defineProperty(exports, "parser", { enumerable: true, get: function () { return server_1.parser; } });
@@ -360,7 +361,6 @@ class RichMarkdownEditor extends React.PureComponent {
                     onSave: this.handleSave,
                     onSaveAndExit: this.handleSaveAndExit,
                     onCancel: this.props.onCancel,
-                    onGoToPreviousInput: this.handleGoToPreviousInput,
                 }),
                 new BlockMenuTrigger_1.default({
                     dictionary,
@@ -374,6 +374,9 @@ class RichMarkdownEditor extends React.PureComponent {
                     onClose: () => {
                         this.setState({ emojiMenuOpen: false });
                     },
+                }),
+                new GoToPreviousInputTrigger_1.default({
+                    onGoToPreviousInput: this.handleGoToPreviousInput,
                 }),
                 new Placeholder_2.default({
                     placeholder: this.props.placeholder,

@@ -19,8 +19,8 @@ class Keys extends Extension_1.default {
                         blur: this.options.onBlur,
                         focus: this.options.onFocus,
                     },
-                    handleKeyDown: ({ state, dispatch }, event) => {
-                        var _a;
+                    handleKeyDown: (view, event) => {
+                        const { state, dispatch } = view;
                         if (state.selection instanceof prosemirror_state_1.AllSelection) {
                             if (event.key === "ArrowUp") {
                                 const selection = prosemirror_state_1.Selection.atStart(state.doc);
@@ -39,16 +39,6 @@ class Keys extends Extension_1.default {
                                 dispatch(state.tr.setSelection(prosemirror_state_1.TextSelection.near(state.doc.resolve(state.selection.from), -1)));
                                 return true;
                             }
-                        }
-                        if (["Backspace", "ArrowLeft", "ArrowUp"].includes(event.key)) {
-                            if (state.selection.from === 1 &&
-                                state.selection.to === 1 &&
-                                ((_a = state.doc.content.firstChild) === null || _a === void 0 ? void 0 : _a.type.name) === "paragraph") {
-                                event.preventDefault();
-                                this.options.onGoToPreviousInput();
-                                return true;
-                            }
-                            return false;
                         }
                         if (!isModKey_1.default(event)) {
                             return false;

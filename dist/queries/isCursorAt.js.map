@@ -1,0 +1,1 @@
+{"version":3,"file":"isCursorAt.js","sourceRoot":"","sources":["../../src/queries/isCursorAt.ts"],"names":[],"mappings":";;AAEA,SAAwB,UAAU,CAAC,GAAW,EAAE,KAAkB;IAChE,OAAO,KAAK,CAAC,SAAS,CAAC,IAAI,KAAK,GAAG,IAAI,KAAK,CAAC,SAAS,CAAC,EAAE,KAAK,GAAG,CAAC;AACpE,CAAC;AAFD,6BAEC"}

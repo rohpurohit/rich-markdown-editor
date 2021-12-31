@@ -7,7 +7,6 @@ import {
 import { GapCursor } from "prosemirror-gapcursor";
 import Extension from "../lib/Extension";
 import isModKey from "../lib/isModKey";
-import isEmptyDoc from "../queries/isEmptyDoc";
 export default class Keys extends Extension {
   get name() {
     return "keys";
@@ -23,7 +22,9 @@ export default class Keys extends Extension {
           },
           // we can't use the keys bindings for this as we want to preventDefault
           // on the original keyboard event when handled
-          handleKeyDown: ({ state, dispatch }, event) => {
+          handleKeyDown: (view, event) => {
+            const { state, dispatch } = view;
+
             if (state.selection instanceof AllSelection) {
               if (event.key === "ArrowUp") {
                 const selection = Selection.atStart(state.doc);
@@ -57,22 +58,6 @@ export default class Keys extends Extension {
                 );
                 return true;
               }
-            }
-
-            if (["Backspace", "ArrowLeft", "ArrowUp"].includes(event.key)) {
-              if (
-                state.selection.from === 1 &&
-                state.selection.to === 1 &&
-                state.doc.content.firstChild?.type.name === "paragraph"
-              ) {
-                // if the cursor is at the start of the document
-                // and we're in a paragraph (i.e, not in a special node like Heading)
-                event.preventDefault();
-                this.options.onGoToPreviousInput();
-                return true;
-              }
-
-              return false;
             }
 
             // All the following keys require mod to be down
