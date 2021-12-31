@@ -27,7 +27,7 @@ exports.default = {
         disableExtensions: [],
     },
 };
-const Template = args => react_1.default.createElement(index_1.default, Object.assign({}, args));
+const Template = (args) => react_1.default.createElement(index_1.default, Object.assign({}, args));
 exports.Default = Template.bind({});
 exports.Default.args = {
     defaultValue: `# Welcome
@@ -175,7 +175,7 @@ exports.Persisted.args = {
         `# Persisted
   
 The contents of this editor are persisted to local storage on change (edit and reload)`,
-    onChange: debounce_1.default(value => {
+    onChange: debounce_1.default((value) => {
         const text = value();
         localStorage.setItem("saved", text);
     }, 250),
@@ -184,6 +184,7 @@ exports.Placeholder = Template.bind({});
 exports.Placeholder.args = {
     defaultValue: "",
     placeholder: "This is a custom placeholder…",
+    onGoToPreviousInput: () => alert("iasdf"),
 };
 exports.Images = Template.bind({});
 exports.Images.args = {

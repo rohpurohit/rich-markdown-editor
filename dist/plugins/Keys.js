@@ -7,7 +7,6 @@ const prosemirror_state_1 = require("prosemirror-state");
 const prosemirror_gapcursor_1 = require("prosemirror-gapcursor");
 const Extension_1 = __importDefault(require("../lib/Extension"));
 const isModKey_1 = __importDefault(require("../lib/isModKey"));
-const isEmptyDoc_1 = __importDefault(require("../queries/isEmptyDoc"));
 class Keys extends Extension_1.default {
     get name() {
         return "keys";
@@ -20,28 +19,31 @@ class Keys extends Extension_1.default {
                         blur: this.options.onBlur,
                         focus: this.options.onFocus,
                     },
-                    handleKeyDown: (view, event) => {
-                        if (view.state.selection instanceof prosemirror_state_1.AllSelection) {
+                    handleKeyDown: ({ state, dispatch }, event) => {
+                        var _a;
+                        if (state.selection instanceof prosemirror_state_1.AllSelection) {
                             if (event.key === "ArrowUp") {
-                                const selection = prosemirror_state_1.Selection.atStart(view.state.doc);
-                                view.dispatch(view.state.tr.setSelection(selection));
+                                const selection = prosemirror_state_1.Selection.atStart(state.doc);
+                                dispatch(state.tr.setSelection(selection));
                                 return true;
                             }
                             if (event.key === "ArrowDown") {
-                                const selection = prosemirror_state_1.Selection.atEnd(view.state.doc);
-                                view.dispatch(view.state.tr.setSelection(selection));
+                                const selection = prosemirror_state_1.Selection.atEnd(state.doc);
+                                dispatch(state.tr.setSelection(selection));
                                 return true;
                             }
                         }
-                        if (view.state.selection instanceof prosemirror_gapcursor_1.GapCursor) {
+                        if (state.selection instanceof prosemirror_gapcursor_1.GapCursor) {
                             if (event.key === "Enter") {
-                                view.dispatch(view.state.tr.insert(view.state.selection.from, view.state.schema.nodes.paragraph.create({})));
-                                view.dispatch(view.state.tr.setSelection(prosemirror_state_1.TextSelection.near(view.state.doc.resolve(view.state.selection.from), -1)));
+                                dispatch(state.tr.insert(state.selection.from, state.schema.nodes.paragraph.create({})));
+                                dispatch(state.tr.setSelection(prosemirror_state_1.TextSelection.near(state.doc.resolve(state.selection.from), -1)));
                                 return true;
                             }
                         }
                         if (event.key === "Backspace") {
-                            if (isEmptyDoc_1.default(view.state.doc)) {
+                            if (state.selection.from === 1 &&
+                                state.selection.to === 1 &&
+                                ((_a = state.doc.content.firstChild) === null || _a === void 0 ? void 0 : _a.type.name) === "paragraph") {
                                 event.preventDefault();
                                 this.options.onGoToPreviousInput();
                                 return true;

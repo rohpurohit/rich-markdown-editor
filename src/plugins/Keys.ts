@@ -23,34 +23,34 @@ export default class Keys extends Extension {
           },
           // we can't use the keys bindings for this as we want to preventDefault
           // on the original keyboard event when handled
-          handleKeyDown: (view, event) => {
-            if (view.state.selection instanceof AllSelection) {
+          handleKeyDown: ({ state, dispatch }, event) => {
+            if (state.selection instanceof AllSelection) {
               if (event.key === "ArrowUp") {
-                const selection = Selection.atStart(view.state.doc);
-                view.dispatch(view.state.tr.setSelection(selection));
+                const selection = Selection.atStart(state.doc);
+                dispatch(state.tr.setSelection(selection));
                 return true;
               }
               if (event.key === "ArrowDown") {
-                const selection = Selection.atEnd(view.state.doc);
-                view.dispatch(view.state.tr.setSelection(selection));
+                const selection = Selection.atEnd(state.doc);
+                dispatch(state.tr.setSelection(selection));
                 return true;
               }
             }
 
             // edge case where horizontal gap cursor does nothing if Enter key
             // is pressed. Insert a newline and then move the cursor into it.
-            if (view.state.selection instanceof GapCursor) {
+            if (state.selection instanceof GapCursor) {
               if (event.key === "Enter") {
-                view.dispatch(
-                  view.state.tr.insert(
-                    view.state.selection.from,
-                    view.state.schema.nodes.paragraph.create({})
+                dispatch(
+                  state.tr.insert(
+                    state.selection.from,
+                    state.schema.nodes.paragraph.create({})
                   )
                 );
-                view.dispatch(
-                  view.state.tr.setSelection(
+                dispatch(
+                  state.tr.setSelection(
                     TextSelection.near(
-                      view.state.doc.resolve(view.state.selection.from),
+                      state.doc.resolve(state.selection.from),
                       -1
                     )
                   )
@@ -60,7 +60,13 @@ export default class Keys extends Extension {
             }
 
             if (event.key === "Backspace") {
-              if (isEmptyDoc(view.state.doc)) {
+              if (
+                state.selection.from === 1 &&
+                state.selection.to === 1 &&
+                state.doc.content.firstChild?.type.name === "paragraph"
+              ) {
+                // if the cursor is at the start of the document
+                // and we're in a paragraph (i.e, not in a special node like Heading)
                 event.preventDefault();
                 this.options.onGoToPreviousInput();
                 return true;
