@@ -7,6 +7,7 @@ const prosemirror_state_1 = require("prosemirror-state");
 const prosemirror_gapcursor_1 = require("prosemirror-gapcursor");
 const Extension_1 = __importDefault(require("../lib/Extension"));
 const isModKey_1 = __importDefault(require("../lib/isModKey"));
+const isEmptyDoc_1 = __importDefault(require("../queries/isEmptyDoc"));
 class Keys extends Extension_1.default {
     get name() {
         return "keys";
@@ -38,6 +39,14 @@ class Keys extends Extension_1.default {
                                 view.dispatch(view.state.tr.setSelection(prosemirror_state_1.TextSelection.near(view.state.doc.resolve(view.state.selection.from), -1)));
                                 return true;
                             }
+                        }
+                        if (event.key === "Backspace") {
+                            if (isEmptyDoc_1.default(view.state.doc)) {
+                                event.preventDefault();
+                                this.options.handleGoToPreviousInput();
+                                return true;
+                            }
+                            return false;
                         }
                         if (!isModKey_1.default(event)) {
                             return false;

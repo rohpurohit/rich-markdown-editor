@@ -127,6 +127,12 @@ class RichMarkdownEditor extends React.PureComponent {
                 return this.value();
             });
         };
+        this.handleGoToPreviousInput = () => {
+            const { onGoToPreviousInput } = this.props;
+            if (onGoToPreviousInput) {
+                onGoToPreviousInput();
+            }
+        };
         this.handleSave = () => {
             const { onSave } = this.props;
             if (onSave) {

@@ -129,6 +129,7 @@ export declare type Props = {
     onClickLink: (href: string, event: MouseEvent) => void;
     onHoverLink?: (event: MouseEvent) => boolean;
     onClickHashtag?: (tag: string, event: MouseEvent) => void;
+    onGoToPreviousInput?: () => void;
     onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
     embeds: EmbedDescriptor[];
     onShowToast?: (message: string, code: ToastType) => void;
@@ -213,6 +214,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     calculateDir: () => void;
     value: () => string;
     handleChange: () => void;
+    handleGoToPreviousInput: () => void;
     handleSave: () => void;
     handleSaveAndExit: () => void;
     handleEditorBlur: () => void;
