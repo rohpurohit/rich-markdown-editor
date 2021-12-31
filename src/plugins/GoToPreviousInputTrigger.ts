@@ -32,7 +32,7 @@ export default class GoToPreviousInputTrigger extends Extension {
 
             if (event.key === "ArrowLeft" && isFirstLine(view)) {
               if (
-                (isCursorAt(3, view.state) && isInList(view)) || // the cursor will be at pos 3 if the list is empty
+                (isCursorAt(3, view.state) && isInList(view.state)) || // the cursor will be at pos 3 if the list is empty
                 isCursorAt(1, view.state)
               ) {
                 event.preventDefault();

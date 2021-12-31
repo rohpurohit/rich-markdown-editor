@@ -31,7 +31,7 @@ class GoToPreviousInputTrigger extends Extension_1.default {
                             return true;
                         }
                         if (event.key === "ArrowLeft" && isFirstLine_1.default(view)) {
-                            if ((isCursorAt_1.default(3, view.state) && isInList_1.default(view)) ||
+                            if ((isCursorAt_1.default(3, view.state) && isInList_1.default(view.state)) ||
                                 isCursorAt_1.default(1, view.state)) {
                                 event.preventDefault();
                                 this.options.onGoToPreviousInput();
