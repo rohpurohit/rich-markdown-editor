@@ -154,6 +154,7 @@ export type Props = {
   onClickLink: (href: string, event: MouseEvent) => void;
   onHoverLink?: (event: MouseEvent) => boolean;
   onClickHashtag?: (tag: string, event: MouseEvent) => void;
+  onGoToPreviousInput?: () => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
   embeds: EmbedDescriptor[];
   onShowToast?: (message: string, code: ToastType) => void;
@@ -631,6 +632,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     this.props.onChange(() => {
       return this.value();
     });
+  };
+
+  handleGoToPreviousInput = () => {
+    const { onGoToPreviousInput } = this.props;
+    if (onGoToPreviousInput) {
+      onGoToPreviousInput();
+    }
   };
 
   handleSave = () => {

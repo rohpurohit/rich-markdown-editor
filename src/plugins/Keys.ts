@@ -7,6 +7,7 @@ import {
 import { GapCursor } from "prosemirror-gapcursor";
 import Extension from "../lib/Extension";
 import isModKey from "../lib/isModKey";
+import isEmptyDoc from "../queries/isEmptyDoc";
 export default class Keys extends Extension {
   get name() {
     return "keys";
@@ -56,6 +57,16 @@ export default class Keys extends Extension {
                 );
                 return true;
               }
+            }
+
+            if (event.key === "Backspace") {
+              if (isEmptyDoc(view.state.doc)) {
+                event.preventDefault();
+                this.options.handleGoToPreviousInput();
+                return true;
+              }
+
+              return false;
             }
 
             // All the following keys require mod to be down
