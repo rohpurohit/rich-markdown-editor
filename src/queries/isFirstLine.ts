@@ -1,9 +1,9 @@
 import { EditorView } from "prosemirror-view";
 import RichMarkdownEditor from "..";
 
-const THRESHOLD = 57;
+const THRESHOLD = 24;
 // no science behind this number, just testing..
-// the number is big because we're taking into account the case where the cursor in inside an H1
+// 24px is the case when the cursor is inside a H1 tag
 
 export default function isFirstLine(
   editor: RichMarkdownEditor,
@@ -18,5 +18,5 @@ export default function isFirstLine(
   const parentTop = editor.element.getBoundingClientRect().top;
   const selectionTop = view.coordsAtPos(view.state.selection.$from.pos).top;
 
-  return selectionTop - parentTop < THRESHOLD;
+  return selectionTop - parentTop <= THRESHOLD;
 }
