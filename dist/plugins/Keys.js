@@ -40,7 +40,7 @@ class Keys extends Extension_1.default {
                                 return true;
                             }
                         }
-                        if (event.key === "Backspace") {
+                        if (["Backspace", "ArrowLeft", "ArrowUp"].includes(event.key)) {
                             if (state.selection.from === 1 &&
                                 state.selection.to === 1 &&
                                 ((_a = state.doc.content.firstChild) === null || _a === void 0 ? void 0 : _a.type.name) === "paragraph") {

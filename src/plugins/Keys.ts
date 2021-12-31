@@ -59,7 +59,7 @@ export default class Keys extends Extension {
               }
             }
 
-            if (event.key === "Backspace") {
+            if (["Backspace", "ArrowLeft", "ArrowUp"].includes(event.key)) {
               if (
                 state.selection.from === 1 &&
                 state.selection.to === 1 &&
