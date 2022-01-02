@@ -1,6 +1,6 @@
 import React from "react";
 import { findParentNode } from "prosemirror-utils";
-import CommandMenu, { Props } from "./CommandMenu";
+import KnowtCommandMenu, { Props } from "./KnowtCommandMenu";
 import BlockMenuItem from "./BlockMenuItem";
 import getMenuItems from "../menus/block";
 
@@ -26,7 +26,7 @@ class BlockMenu extends React.Component<BlockMenuProps> {
 
   render() {
     return (
-      <CommandMenu
+      <KnowtCommandMenu
         {...this.props}
         filterable={true}
         onClearSearch={this.clearSearch}
