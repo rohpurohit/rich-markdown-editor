@@ -25,7 +25,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(require("react"));
 const smooth_scroll_into_view_if_needed_1 = __importDefault(require("smooth-scroll-into-view-if-needed"));
 const styled_components_1 = __importStar(require("styled-components"));
-const right_arrow_png_1 = __importDefault(require("../assets/right-arrow.png"));
+const ArrowIcon = require("../assets/right-arrow.png");
 function BlockGroupMenuItem(props) {
     const { title, selected, disabled = false, onClick, containerId = "block-menu-container", innerRef, } = props;
     const ref = React.useCallback((node) => {
@@ -43,7 +43,7 @@ function BlockGroupMenuItem(props) {
     return (React.createElement(MenuItem, { selected: selected, onClick: disabled ? undefined : onClick, ref: ref },
         title,
         React.createElement(Circle, null,
-            React.createElement(Icon, { src: right_arrow_png_1.default }))));
+            React.createElement(Icon, { src: ArrowIcon }))));
 }
 const MenuItem = styled_components_1.default.button `
   display: flex;

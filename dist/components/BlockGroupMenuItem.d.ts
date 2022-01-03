@@ -5,7 +5,7 @@ export declare type Props = {
     theme: typeof theme;
     selected: boolean;
     disabled?: boolean;
-    innerRef?: (ref: HTMLDivElement) => void;
+    innerRef: (ref: HTMLDivElement) => void;
     onClick: () => void;
     containerId?: string;
 };

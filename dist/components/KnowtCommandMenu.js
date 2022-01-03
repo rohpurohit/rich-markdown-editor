@@ -32,7 +32,6 @@ const types_1 = require("../types");
 const Input_1 = __importDefault(require("./Input"));
 const VisuallyHidden_1 = __importDefault(require("./VisuallyHidden"));
 const getDataTransferFiles_1 = __importDefault(require("../lib/getDataTransferFiles"));
-const filterExcessSeparators_1 = __importDefault(require("../lib/filterExcessSeparators"));
 const insertFiles_1 = __importDefault(require("../commands/insertFiles"));
 const SSR = typeof window === "undefined";
 const defaultMenuPosition = {
@@ -58,6 +57,7 @@ class KnowtCommandMenu extends React.Component {
             activeGroup: null,
         };
         this.handleKeyDown = (e) => {
+            var _a;
             if (!this.props.isActive)
                 return;
             const stateKey = this.state.nestedSelectedIndex === null
@@ -65,10 +65,11 @@ class KnowtCommandMenu extends React.Component {
                 : "nestedSelectedIndex";
             const currentGroup = this.filtered[this.state.selectedIndex];
             const currentArray = stateKey === "nestedSelectedIndex" ? currentGroup.items : this.filtered;
+            const currentIndex = (_a = this.state[stateKey]) !== null && _a !== void 0 ? _a : 0;
             if (e.key === "Enter") {
                 e.preventDefault();
                 e.stopPropagation();
-                const item = currentArray[this.state[stateKey]];
+                const item = currentArray[currentIndex];
                 if (item) {
                     if (stateKey === "nestedSelectedIndex") {
                         this.insertItem(item);
@@ -87,9 +88,16 @@ class KnowtCommandMenu extends React.Component {
                 e.preventDefault();
                 e.stopPropagation();
                 if (currentArray.length) {
-                    this.setState({
-                        [stateKey]: Math.max(0, this.state[stateKey] - 1),
-                    });
+                    if (stateKey === "nestedSelectedIndex") {
+                        this.setState({
+                            nestedSelectedIndex: Math.max(0, currentIndex - 1),
+                        });
+                    }
+                    else {
+                        this.setState({
+                            selectedIndex: Math.max(0, currentIndex - 1),
+                        });
+                    }
                 }
                 else {
                     this.close();
@@ -101,9 +109,16 @@ class KnowtCommandMenu extends React.Component {
                 e.preventDefault();
                 e.stopPropagation();
                 if (currentArray.length) {
-                    this.setState({
-                        [stateKey]: Math.min(this.state[stateKey] + 1, currentArray.length - 1),
-                    });
+                    if (stateKey === "nestedSelectedIndex") {
+                        this.setState({
+                            nestedSelectedIndex: Math.min(currentIndex + 1, currentArray.length - 1),
+                        });
+                    }
+                    else {
+                        this.setState({
+                            selectedIndex: Math.min(currentIndex + 1, currentArray.length - 1),
+                        });
+                    }
                 }
                 else {
                     this.close();
@@ -366,8 +381,6 @@ class KnowtCommandMenu extends React.Component {
     get filtered() {
         const { embeds = [], search = "", uploadImage, commands, filterable = true, } = this.props;
         return this.props.groupedItems;
-        const filtered = [];
-        return filterExcessSeparators_1.default(filtered);
     }
     render() {
         var _a, _b, _c;

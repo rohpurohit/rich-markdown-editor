@@ -3,14 +3,14 @@ import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import styled, { withTheme } from "styled-components";
 import { theme } from "..";
 
-import ArrowIcon from "../assets/right-arrow.png";
+const ArrowIcon = require("../assets/right-arrow.png");
 
 export type Props = {
   title: string;
   theme: typeof theme;
   selected: boolean;
   disabled?: boolean;
-  innerRef?: (ref: HTMLDivElement) => void;
+  innerRef: (ref: HTMLDivElement) => void;
   onClick: () => void;
   containerId?: string;
 };

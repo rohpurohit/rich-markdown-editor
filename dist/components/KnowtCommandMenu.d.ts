@@ -2,7 +2,7 @@ import * as React from "react";
 import { EditorView } from "prosemirror-view";
 import { EmbedDescriptor, MenuItem, MenuPosition, GroupMenuItem } from "../types";
 import baseDictionary from "../dictionary";
-export declare type Props<T extends MenuItem = MenuItem> = {
+export declare type Props = {
     rtl: boolean;
     isActive: boolean;
     commands: Record<string, any>;
@@ -17,17 +17,17 @@ export declare type Props<T extends MenuItem = MenuItem> = {
     onClose: () => void;
     onClearSearch: () => void;
     embeds?: EmbedDescriptor[];
-    renderMenuItem: (item: T, index: number, options: {
+    renderMenuItem: (item: MenuItem, index: number, options: {
         selected: boolean;
         onClick: () => void;
     }) => React.ReactNode;
-    renderGroupMenuItem: (item: GroupMenuItem<T>, index: number, callback: (ref: HTMLDivElement) => void, options: {
+    renderGroupMenuItem: (item: GroupMenuItem, index: number, callback: (ref: HTMLDivElement) => void, options: {
         selected: boolean;
         onClick: () => void;
     }) => React.ReactNode;
     filterable?: boolean;
-    items: T[];
-    groupedItems: GroupMenuItem<T>[];
+    items: MenuItem[];
+    groupedItems: GroupMenuItem[];
     id?: string;
 };
 declare type State = {
@@ -37,21 +37,21 @@ declare type State = {
     menu1Position: MenuPosition;
     menu2Position: MenuPosition;
     nestedMenuOpen: boolean;
-    activeGroup: GroupMenuItem;
+    activeGroup: GroupMenuItem | null;
 };
-declare class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
+declare class KnowtCommandMenu extends React.Component<Props, State> {
     menuRef: React.RefObject<HTMLDivElement>;
     nestedMenuRef: React.RefObject<HTMLDivElement>;
     inputRef: React.RefObject<HTMLInputElement>;
     groupItemsRef: HTMLDivElement[];
     state: State;
-    constructor(props: Props<T>);
+    constructor(props: Props);
     componentDidMount(): void;
-    shouldComponentUpdate(nextProps: Props<T>, nextState: State): boolean;
-    componentDidUpdate(prevProps: Props<T>): void;
+    shouldComponentUpdate(nextProps: Props, nextState: State): boolean;
+    componentDidUpdate(prevProps: Props): void;
     componentWillUnmount(): void;
     handleKeyDown: (e: KeyboardEvent) => void;
-    insertItem: (item: EmbedDescriptor) => void;
+    insertItem: (item: MenuItem | EmbedDescriptor) => void;
     close: () => void;
     closeNestedMenu(): void;
     handleLinkInputKeydown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -66,7 +66,7 @@ declare class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, S
         left: number;
     };
     onGroupSelect(index: number): void;
-    calculatePosition(props: Props<T>): MenuPosition;
+    calculatePosition(props: Props): MenuPosition;
     get filtered(): GroupMenuItem[];
     render(): JSX.Element;
 }

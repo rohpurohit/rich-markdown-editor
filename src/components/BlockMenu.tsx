@@ -9,7 +9,11 @@ import getMenuItems, {
 
 type BlockMenuProps = Omit<
   Props,
-  "renderMenuItem" | "items" | "onClearSearch"
+  | "renderMenuItem"
+  | "renderGroupMenuItem"
+  | "items"
+  | "groupedItems"
+  | "onClearSearch"
 > &
   Required<Pick<Props, "onLinkToolbarOpen" | "embeds">>;
 

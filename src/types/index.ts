@@ -31,9 +31,9 @@ export type MenuPosition = {
   isAbove: boolean;
 };
 
-export type GroupMenuItem<T = MenuItem> = {
+export type GroupMenuItem = {
   groupData: GroupData;
-  items: T[];
+  items: MenuItem[];
 };
 
 export type GroupData = {

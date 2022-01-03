@@ -26,9 +26,9 @@ export declare type MenuPosition = {
     bottom?: number;
     isAbove: boolean;
 };
-export declare type GroupMenuItem<T = MenuItem> = {
+export declare type GroupMenuItem = {
     groupData: GroupData;
-    items: T[];
+    items: MenuItem[];
 };
 export declare type GroupData = {
     name: string;

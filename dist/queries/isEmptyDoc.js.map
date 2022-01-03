@@ -1,1 +1,0 @@
-{"version":3,"file":"isEmptyDoc.js","sourceRoot":"","sources":["../../src/queries/isEmptyDoc.ts"],"names":[],"mappings":";;AAEA,SAAwB,kBAAkB,CAAC,GAAyB;;IAClE,OAAO,CACL,GAAG,CAAC,WAAW,KAAK,EAAE;QACtB,GAAG,CAAC,OAAO,CAAC,UAAU,KAAK,CAAC;QAC5B,OAAA,GAAG,CAAC,OAAO,CAAC,UAAU,0CAAE,IAAI,CAAC,IAAI,MAAK,WAAW,CAClD,CAAC;AACJ,CAAC;AAND,qCAMC"}

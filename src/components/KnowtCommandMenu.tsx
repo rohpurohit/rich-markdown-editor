@@ -27,7 +27,7 @@ const defaultMenuPosition: MenuPosition = {
   isAbove: false,
 };
 
-export type Props<T extends MenuItem = MenuItem> = {
+export type Props = {
   rtl: boolean;
   isActive: boolean;
   commands: Record<string, any>;
@@ -43,7 +43,7 @@ export type Props<T extends MenuItem = MenuItem> = {
   onClearSearch: () => void;
   embeds?: EmbedDescriptor[];
   renderMenuItem: (
-    item: T,
+    item: MenuItem,
     index: number,
     options: {
       selected: boolean;
@@ -51,7 +51,7 @@ export type Props<T extends MenuItem = MenuItem> = {
     }
   ) => React.ReactNode;
   renderGroupMenuItem: (
-    item: GroupMenuItem<T>,
+    item: GroupMenuItem,
     index: number,
     callback: (ref: HTMLDivElement) => void,
     options: {
@@ -60,8 +60,8 @@ export type Props<T extends MenuItem = MenuItem> = {
     }
   ) => React.ReactNode;
   filterable?: boolean;
-  items: T[];
-  groupedItems: GroupMenuItem<T>[];
+  items: MenuItem[];
+  groupedItems: GroupMenuItem[];
   id?: string;
 };
 
@@ -72,10 +72,10 @@ type State = {
   menu1Position: MenuPosition;
   menu2Position: MenuPosition;
   nestedMenuOpen: boolean;
-  activeGroup: GroupMenuItem;
+  activeGroup: GroupMenuItem | null;
 };
 
-class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
+class KnowtCommandMenu extends React.Component<Props, State> {
   menuRef = React.createRef<HTMLDivElement>();
   nestedMenuRef = React.createRef<HTMLDivElement>();
   inputRef = React.createRef<HTMLInputElement>();
@@ -89,10 +89,10 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     nestedSelectedIndex: null,
     insertItem: undefined,
     nestedMenuOpen: false,
-    activeGroup: null as GroupMenuItem,
+    activeGroup: null,
   };
 
-  constructor(props: Props<T>) {
+  constructor(props: Props) {
     super(props);
   }
 
@@ -104,7 +104,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   // standard optimization stuff
-  shouldComponentUpdate(nextProps: Props<T>, nextState: State): boolean {
+  shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
     return (
       nextProps.search !== this.props.search ||
       nextProps.isActive !== this.props.isActive ||
@@ -113,7 +113,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   // calculate new positioning if needed, and reset state
-  componentDidUpdate(prevProps: Props<T>): void {
+  componentDidUpdate(prevProps: Props): void {
     if (!prevProps.isActive && this.props.isActive) {
       this.setState({
         insertItem: undefined,
@@ -141,7 +141,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   handleKeyDown = (e: KeyboardEvent): void => {
     if (!this.props.isActive) return;
 
-    const stateKey =
+    const stateKey: "selectedIndex" | "nestedSelectedIndex" =
       this.state.nestedSelectedIndex === null
         ? "selectedIndex"
         : "nestedSelectedIndex";
@@ -149,16 +149,17 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     const currentGroup = this.filtered[this.state.selectedIndex];
     const currentArray =
       stateKey === "nestedSelectedIndex" ? currentGroup.items : this.filtered;
+    const currentIndex = this.state[stateKey] ?? 0;
 
     if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
 
-      const item = currentArray[this.state[stateKey]];
+      const item = currentArray[currentIndex];
 
       if (item) {
         if (stateKey === "nestedSelectedIndex") {
-          this.insertItem(item);
+          this.insertItem(item as MenuItem);
         } else {
           this.onGroupSelect(this.state.selectedIndex);
         }
@@ -176,9 +177,15 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       e.stopPropagation();
 
       if (currentArray.length) {
-        this.setState({
-          [stateKey]: Math.max(0, this.state[stateKey] - 1),
-        });
+        if (stateKey === "nestedSelectedIndex") {
+          this.setState({
+            nestedSelectedIndex: Math.max(0, currentIndex - 1),
+          });
+        } else {
+          this.setState({
+            selectedIndex: Math.max(0, currentIndex - 1),
+          });
+        }
       } else {
         this.close();
       }
@@ -193,12 +200,18 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       e.stopPropagation();
 
       if (currentArray.length) {
-        this.setState({
-          [stateKey]: Math.min(
-            this.state[stateKey] + 1,
-            currentArray.length - 1
-          ),
-        });
+        if (stateKey === "nestedSelectedIndex") {
+          this.setState({
+            nestedSelectedIndex: Math.min(
+              currentIndex + 1,
+              currentArray.length - 1
+            ),
+          });
+        } else {
+          this.setState({
+            selectedIndex: Math.min(currentIndex + 1, currentArray.length - 1),
+          });
+        }
       } else {
         this.close();
       }
@@ -224,12 +237,12 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   };
 
   // call an inserter function based on item.name (image, embed, link, or else)
-  insertItem = (item: EmbedDescriptor): void => {
+  insertItem = (item: MenuItem | EmbedDescriptor): void => {
     switch (item.name) {
       case "image":
         return this.triggerImagePick();
       case "embed":
-        return this.triggerLinkInput(item);
+        return this.triggerLinkInput(item as EmbedDescriptor);
       case "link": {
         this.clearSearch();
         this.props.onClose();
@@ -448,7 +461,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     });
   }
 
-  calculatePosition(props: Props<T>): MenuPosition {
+  calculatePosition(props: Props): MenuPosition {
     const { view } = props;
     const { selection } = view.state;
     let startPos;
@@ -558,8 +571,8 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     //   );
     // });
 
-    const filtered = [];
-    return filterExcessSeparators(filtered);
+    // const filtered = [];
+    // return filterExcessSeparators(filtered);
   }
 
   // renders a link input if we're in link input mode (ex: youtube link)
