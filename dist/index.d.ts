@@ -91,6 +91,7 @@ export declare const theme: {
     greyDark: string;
     knowtGreyLight: string;
     knowtGrey: string;
+    knowtGreyMid: string;
     knowtGreyStrong: string;
 };
 export declare type Props = {
@@ -312,6 +313,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
         greyDark: string;
         knowtGreyLight: string;
         knowtGrey: string;
+        knowtGreyMid: string;
         knowtGreyStrong: string;
     };
     dictionary: ((providedDictionary?: Partial<{

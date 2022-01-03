@@ -13,6 +13,7 @@ const colors = {
   greyDark: "#DAE1E9",
   knowtGreyLight: "#F1F0F1",
   knowtGrey: "#E9E9E9",
+  knowtGreyMid: "#BBB",
   knowtGreyStrong: "#666666",
 };
 
@@ -25,7 +26,7 @@ export const base = {
   fontWeight: 400,
   zIndex: 100,
   link: colors.primary,
-  placeholder: "#B1BECC",
+  placeholder: colors.knowtGreyMid,
   textSecondary: "#4E5C6E",
   textLight: colors.white,
   textHighlight: "#b3e7ff",

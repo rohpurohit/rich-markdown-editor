@@ -72,7 +72,7 @@ type State = {
   menu1Position: MenuPosition;
   menu2Position: MenuPosition;
   nestedMenuOpen: boolean;
-  activeNestedItems: MenuItem[];
+  activeGroup: GroupMenuItem;
 };
 
 class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
@@ -89,7 +89,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     nestedSelectedIndex: null,
     insertItem: undefined,
     nestedMenuOpen: false,
-    activeNestedItems: [],
+    activeGroup: null as GroupMenuItem,
   };
 
   constructor(props: Props<T>) {
@@ -251,7 +251,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.setState({
       nestedMenuOpen: false,
       menu2Position: defaultMenuPosition,
-      activeNestedItems: [],
+      activeGroup: null,
       nestedSelectedIndex: null,
     });
   }
@@ -420,12 +420,12 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   onGroupSelect(index: number): void {
-    const nestedItems = this.props.groupedItems[index].items;
+    const activeGroup = this.props.groupedItems[index];
     const ref = this.groupItemsRef[index];
 
     const { right, top: _top } = ref.getBoundingClientRect();
 
-    const menuHeight = nestedItems.length * 36 + 16;
+    const menuHeight = activeGroup.items.length * 36 + 16;
     const marginV = 50;
     const marginH = 15;
 
@@ -443,7 +443,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       nestedSelectedIndex: 0,
       selectedIndex: index,
       nestedMenuOpen: true,
-      activeNestedItems: nestedItems,
+      activeGroup,
       menu2Position,
     });
   }
@@ -635,7 +635,8 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
           {...menu2Position}
         >
           <List>
-            {this.state.activeNestedItems.map((item, index) => {
+            <MenuTitle>{this.state.activeGroup?.groupData.name}</MenuTitle>
+            {this.state.activeGroup?.items?.map((item, index) => {
               return this.props.renderMenuItem(item, index, {
                 selected: this.state.nestedSelectedIndex === index,
                 onClick: () => this.insertItem(item),
@@ -652,6 +653,14 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     );
   }
 }
+
+const MenuTitle = styled.div`
+  color: ${(props) => props.theme.placeholder};
+  padding: 12px 0 20px 18px;
+  font-family: Arial;
+  font-size: 14px;
+  font-weight: 600;
+`;
 
 const LinkInputWrapper = styled.div`
   margin: 8px;

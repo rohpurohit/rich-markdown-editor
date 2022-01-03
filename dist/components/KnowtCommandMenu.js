@@ -18,17 +18,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -46,73 +35,91 @@ const getDataTransferFiles_1 = __importDefault(require("../lib/getDataTransferFi
 const filterExcessSeparators_1 = __importDefault(require("../lib/filterExcessSeparators"));
 const insertFiles_1 = __importDefault(require("../commands/insertFiles"));
 const SSR = typeof window === "undefined";
-const defaultPosition = {
+const defaultMenuPosition = {
     left: -1000,
     top: 0,
     bottom: undefined,
     isAbove: false,
 };
 class KnowtCommandMenu extends React.Component {
-    constructor() {
-        super(...arguments);
+    constructor(props) {
+        super(props);
         this.menuRef = React.createRef();
+        this.nestedMenuRef = React.createRef();
         this.inputRef = React.createRef();
+        this.groupItemsRef = [];
         this.state = {
-            left: -1000,
-            top: 0,
-            bottom: undefined,
-            isAbove: false,
+            menu1Position: defaultMenuPosition,
+            menu2Position: defaultMenuPosition,
             selectedIndex: 0,
+            nestedSelectedIndex: null,
             insertItem: undefined,
+            nestedMenuOpen: false,
+            activeGroup: null,
         };
-        this.handleKeyDown = (event) => {
+        this.handleKeyDown = (e) => {
             if (!this.props.isActive)
                 return;
-            if (event.key === "Enter") {
-                event.preventDefault();
-                event.stopPropagation();
-                const item = this.filtered[this.state.selectedIndex];
+            const stateKey = this.state.nestedSelectedIndex === null
+                ? "selectedIndex"
+                : "nestedSelectedIndex";
+            const currentGroup = this.filtered[this.state.selectedIndex];
+            const currentArray = stateKey === "nestedSelectedIndex" ? currentGroup.items : this.filtered;
+            if (e.key === "Enter") {
+                e.preventDefault();
+                e.stopPropagation();
+                const item = currentArray[this.state[stateKey]];
                 if (item) {
-                    alert(item.groupData.name);
+                    if (stateKey === "nestedSelectedIndex") {
+                        this.insertItem(item);
+                    }
+                    else {
+                        this.onGroupSelect(this.state.selectedIndex);
+                    }
                 }
                 else {
                     this.props.onClose();
                 }
             }
-            if (event.key === "ArrowUp" ||
-                (event.key === "Tab" && event.shiftKey) ||
-                (event.ctrlKey && event.key === "p")) {
-                event.preventDefault();
-                event.stopPropagation();
-                if (this.filtered.length) {
-                    const prevIndex = this.state.selectedIndex - 1;
-                    const prev = this.filtered[prevIndex];
+            if (e.key === "ArrowUp" ||
+                (e.key === "Tab" && e.shiftKey) ||
+                (e.ctrlKey && e.key === "p")) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (currentArray.length) {
                     this.setState({
-                        selectedIndex: Math.max(0, prev && prev.name === "separator" ? prevIndex - 1 : prevIndex),
+                        [stateKey]: Math.max(0, this.state[stateKey] - 1),
                     });
                 }
                 else {
                     this.close();
                 }
             }
-            if (event.key === "ArrowDown" ||
-                (event.key === "Tab" && !event.shiftKey) ||
-                (event.ctrlKey && event.key === "n")) {
-                event.preventDefault();
-                event.stopPropagation();
-                if (this.filtered.length) {
-                    const total = this.filtered.length - 1;
-                    const nextIndex = this.state.selectedIndex + 1;
-                    const next = this.filtered[nextIndex];
+            if (e.key === "ArrowDown" ||
+                (e.key === "Tab" && !e.shiftKey) ||
+                (e.ctrlKey && e.key === "n")) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (currentArray.length) {
                     this.setState({
-                        selectedIndex: Math.min(next && next.name === "separator" ? nextIndex + 1 : nextIndex, total),
+                        [stateKey]: Math.min(this.state[stateKey] + 1, currentArray.length - 1),
                     });
                 }
                 else {
                     this.close();
                 }
             }
-            if (event.key === "Escape") {
+            if (["ArrowLeft", "ArrowRight"].includes(e.key)) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.setState({ nestedSelectedIndex: e.key === "ArrowRight" ? 0 : null });
+            }
+            if (e.key === "ArrowRight") {
+                e.preventDefault();
+                e.stopPropagation();
+                this.setState({ nestedSelectedIndex: 0 });
+            }
+            if (e.key === "Escape") {
                 this.close();
             }
         };
@@ -134,6 +141,7 @@ class KnowtCommandMenu extends React.Component {
             }
         };
         this.close = () => {
+            this.closeNestedMenu();
             this.props.onClose();
             this.props.view.focus();
         };
@@ -228,17 +236,31 @@ class KnowtCommandMenu extends React.Component {
     }
     componentDidUpdate(prevProps) {
         if (!prevProps.isActive && this.props.isActive) {
-            const position = this.calculatePosition(this.props);
-            this.setState(Object.assign({ insertItem: undefined, selectedIndex: 0 }, position));
+            this.setState({
+                insertItem: undefined,
+                selectedIndex: 0,
+                menu1Position: this.calculatePosition(this.props),
+            });
         }
         else if (prevProps.search !== this.props.search) {
             this.setState({ selectedIndex: 0 });
+        }
+        if (prevProps.isActive && !this.props.isActive) {
+            this.closeNestedMenu();
         }
     }
     componentWillUnmount() {
         if (!SSR) {
             window.removeEventListener("keydown", this.handleKeyDown);
         }
+    }
+    closeNestedMenu() {
+        this.setState({
+            nestedMenuOpen: false,
+            menu2Position: defaultMenuPosition,
+            activeGroup: null,
+            nestedSelectedIndex: null,
+        });
     }
     insertBlock(item) {
         this.clearSearch();
@@ -251,7 +273,7 @@ class KnowtCommandMenu extends React.Component {
         }
         this.props.onClose();
     }
-    get caretPosition() {
+    getCaretPosition() {
         const selection = window.document.getSelection();
         if (!selection || !selection.anchorNode || !selection.focusNode) {
             return {
@@ -274,6 +296,30 @@ class KnowtCommandMenu extends React.Component {
             left: rect.left,
         };
     }
+    onGroupSelect(index) {
+        var _a;
+        const activeGroup = this.props.groupedItems[index];
+        const ref = this.groupItemsRef[index];
+        const { right, top: _top } = ref.getBoundingClientRect();
+        const menuHeight = activeGroup.items.length * 36 + 16;
+        const marginV = 50;
+        const marginH = 15;
+        const top = _top + menuHeight + marginV < window.innerHeight ? _top : 0;
+        const left = right + ((_a = window.scrollX) !== null && _a !== void 0 ? _a : 0) + marginH;
+        const menu2Position = {
+            left,
+            top,
+            bottom: undefined,
+            isAbove: true,
+        };
+        this.setState({
+            nestedSelectedIndex: 0,
+            selectedIndex: index,
+            nestedMenuOpen: true,
+            activeGroup,
+            menu2Position,
+        });
+    }
     calculatePosition(props) {
         const { view } = props;
         const { selection } = view.state;
@@ -283,29 +329,26 @@ class KnowtCommandMenu extends React.Component {
         }
         catch (err) {
             console.warn(err);
-            return defaultPosition;
+            return defaultMenuPosition;
         }
-        const domAtPos = view.domAtPos.bind(view);
-        const ref = this.menuRef.current;
-        const offsetHeight = ref ? ref.offsetHeight : 0;
-        const node = prosemirror_utils_1.findDomRefAtPos(selection.from, domAtPos);
-        const paragraph = { node };
+        const menuRef = this.menuRef.current;
+        const offsetHeight = menuRef ? menuRef.offsetHeight : 0;
+        const paragraph = {
+            node: prosemirror_utils_1.findDomRefAtPos(selection.from, view.domAtPos.bind(view)),
+        };
         if (!props.isActive ||
             !paragraph.node ||
             !paragraph.node.getBoundingClientRect ||
             SSR) {
-            return defaultPosition;
+            return defaultMenuPosition;
         }
-        const { left } = this.caretPosition;
         const { top, bottom, right } = paragraph.node.getBoundingClientRect();
-        const margin = 24;
-        let leftPos = left + window.scrollX;
-        if (props.rtl && ref) {
-            leftPos = right - ref.scrollWidth;
-        }
-        if (startPos.top - offsetHeight > margin) {
+        const left = props.rtl && menuRef
+            ? right - menuRef.scrollWidth
+            : this.getCaretPosition().left + window.scrollX;
+        if (startPos.top - offsetHeight > 50) {
             return {
-                left: leftPos,
+                left,
                 top: undefined,
                 bottom: window.innerHeight - top - window.scrollY,
                 isAbove: false,
@@ -313,7 +356,7 @@ class KnowtCommandMenu extends React.Component {
         }
         else {
             return {
-                left: leftPos,
+                left,
                 top: bottom + window.scrollY,
                 bottom: undefined,
                 isAbove: true,
@@ -326,17 +369,12 @@ class KnowtCommandMenu extends React.Component {
         const filtered = [];
         return filterExcessSeparators_1.default(filtered);
     }
-    renderMenuGroup(item, selected) {
-        return (React.createElement(React.Fragment, null,
-            React.createElement("h3", { style: { color: selected ? "red" : "black" } }, item.groupData.name),
-            React.createElement("ul", null, item.items.map((item) => (React.createElement("li", { key: item.title, style: { position: "relative" } },
-                React.createElement("span", null, item.title)))))));
-    }
     render() {
+        var _a, _b, _c;
         const { dictionary, isActive, uploadImage } = this.props;
-        const _a = this.state, { insertItem } = _a, positioning = __rest(_a, ["insertItem"]);
+        const { insertItem, menu1Position, menu2Position } = this.state;
         return (React.createElement(react_portal_1.Portal, null,
-            React.createElement(exports.Wrapper, Object.assign({ id: this.props.id || "block-menu-container", active: isActive, ref: this.menuRef }, positioning),
+            React.createElement(exports.Wrapper, Object.assign({ id: this.props.id || "block-menu-container", active: isActive, ref: this.menuRef }, menu1Position),
                 insertItem ? (React.createElement(LinkInputWrapper, null,
                     React.createElement(LinkInput, { type: "text", placeholder: insertItem.title
                             ? dictionary.pasteLinkWithTitle(insertItem.title)
@@ -344,18 +382,37 @@ class KnowtCommandMenu extends React.Component {
                     this.props.search
                         ? this.props.search
                         : this.filtered.map((item, index) => {
-                            const selected = index === this.state.selectedIndex && isActive;
-                            return this.props.renderGroupMenuItem(item, index, {
-                                selected,
-                                onClick: () => alert(item.groupData.name),
+                            return this.props.renderGroupMenuItem(item, index, (node) => {
+                                this.groupItemsRef[index] = node;
+                            }, {
+                                selected: index === this.state.selectedIndex && isActive,
+                                onClick: () => this.onGroupSelect(index),
                             });
                         }),
                     this.filtered.length === 0 && (React.createElement(ListItem, null,
                         React.createElement(Empty, null, dictionary.noResults))))),
                 uploadImage && (React.createElement(VisuallyHidden_1.default, null,
-                    React.createElement("input", { type: "file", ref: this.inputRef, onChange: this.handleImagePicked, accept: "image/*" }))))));
+                    React.createElement("input", { type: "file", ref: this.inputRef, onChange: this.handleImagePicked, accept: "image/*" })))),
+            React.createElement(exports.Wrapper, Object.assign({ id: "block-menu-container-2", active: this.state.nestedMenuOpen, ref: this.nestedMenuRef }, menu2Position),
+                React.createElement(List, null,
+                    React.createElement(MenuTitle, null, (_a = this.state.activeGroup) === null || _a === void 0 ? void 0 : _a.groupData.name), (_c = (_b = this.state.activeGroup) === null || _b === void 0 ? void 0 : _b.items) === null || _c === void 0 ? void 0 :
+                    _c.map((item, index) => {
+                        return this.props.renderMenuItem(item, index, {
+                            selected: this.state.nestedSelectedIndex === index,
+                            onClick: () => this.insertItem(item),
+                        });
+                    }),
+                    this.filtered.length === 0 && (React.createElement(ListItem, null,
+                        React.createElement(Empty, null, dictionary.noResults)))))));
     }
 }
+const MenuTitle = styled_components_1.default.div `
+  color: ${(props) => props.theme.placeholder};
+  padding: 12px 0 20px 18px;
+  font-family: Arial;
+  font-size: 14px;
+  font-weight: 600;
+`;
 const LinkInputWrapper = styled_components_1.default.div `
   margin: 8px;
 `;
@@ -368,7 +425,7 @@ const List = styled_components_1.default.ol `
   list-style: none;
   text-align: left;
   height: 100%;
-  padding: 8px 0;
+  padding: 12px 0;
   margin: 0;
 `;
 const ListItem = styled_components_1.default.li `
@@ -393,7 +450,7 @@ exports.Wrapper = styled_components_1.default.div `
   ${(props) => props.bottom !== undefined && `bottom: ${props.bottom}px`};
   left: ${(props) => props.left}px;
   background-color: ${(props) => props.theme.blockToolbarBackground};
-  border-radius: 10px;
+  border-radius: 14px;
   box-shadow: rgb(0 0 0 / 8%) 0px 0.4rem 1.6rem 0px;
   opacity: 0;
   transform: scale(0.95);
@@ -404,8 +461,8 @@ exports.Wrapper = styled_components_1.default.div `
   box-sizing: border-box;
   pointer-events: none;
   white-space: nowrap;
-  width: 220px;
-  max-height: 246px;
+  min-width: 180px;
+  max-height: 300px;
   overflow: hidden;
   overflow-y: auto;
   * {

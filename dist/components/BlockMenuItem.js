@@ -28,12 +28,12 @@ const styled_components_1 = __importStar(require("styled-components"));
 const theme_1 = __importDefault(require("../styles/theme"));
 function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, containerId = "block-menu-container", }) {
     const Icon = icon;
-    const ref = React.useCallback(node => {
+    const ref = React.useCallback((node) => {
         if (selected && node) {
             smooth_scroll_into_view_if_needed_1.default(node, {
                 scrollMode: "if-needed",
                 block: "center",
-                boundary: parent => {
+                boundary: (parent) => {
                     return parent.id !== containerId;
                 },
             });
@@ -41,9 +41,9 @@ function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, con
     }, [selected, containerId]);
     return (React.createElement(MenuItem, { selected: selected, onClick: disabled ? undefined : onClick, ref: ref },
         Icon && (React.createElement(React.Fragment, null,
-            React.createElement(Icon, { color: selected ? theme_1.default.blockToolbarIconSelected : theme_1.default.blockToolbarIcon }),
+            React.createElement(Icon, { size: 19, color: selected ? theme_1.default.blockToolbarIconSelected : theme_1.default.blockToolbarIcon }),
             "\u00A0\u00A0")),
-        title,
+        React.createElement(Title, null, title),
         shortcut && React.createElement(Shortcut, null, shortcut)));
 }
 const MenuItem = styled_components_1.default.button `
@@ -57,11 +57,11 @@ const MenuItem = styled_components_1.default.button `
   height: 36px;
   cursor: pointer;
   border: none;
-  opacity: ${props => (props.disabled ? ".5" : "1")};
-  color: ${props => props.selected
+  opacity: ${(props) => (props.disabled ? ".5" : "1")};
+  color: ${(props) => props.selected
     ? props.theme.blockToolbarTextSelected
     : props.theme.blockToolbarText};
-  background: ${props => props.selected
+  background: ${(props) => props.selected
     ? props.theme.blockToolbarSelectedBackground ||
         props.theme.blockToolbarTrigger
     : "none"};
@@ -70,15 +70,19 @@ const MenuItem = styled_components_1.default.button `
 
   &:hover,
   &:active {
-    color: ${props => props.theme.blockToolbarTextSelected};
-    background: ${props => props.selected
+    color: ${(props) => props.theme.blockToolbarTextSelected};
+    background: ${(props) => props.selected
     ? props.theme.blockToolbarSelectedBackground ||
         props.theme.blockToolbarTrigger
     : props.theme.blockToolbarHoverBackground};
   }
 `;
+const Title = styled_components_1.default.span `
+  margin-right: 40px;
+`;
 const Shortcut = styled_components_1.default.span `
-  color: ${props => props.theme.textSecondary};
+  color: ${(props) => props.theme.textSecondary};
+  font-size: 9px;
   flex-grow: 1;
   text-align: right;
 `;

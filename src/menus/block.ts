@@ -16,7 +16,7 @@ import {
   InfoIcon,
   LinkIcon,
 } from "outline-icons";
-import { GroupMenuItem, ItemGroup, MenuItem } from "../types";
+import { GroupMenuItem, MenuItem } from "../types";
 import baseDictionary from "../dictionary";
 
 const SSR = typeof window === "undefined";

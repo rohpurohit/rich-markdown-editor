@@ -20,7 +20,7 @@ export declare type EmbedDescriptor = MenuItem & {
     matcher: (url: string) => boolean | [] | RegExpMatchArray;
     component: typeof React.Component | React.FC<any>;
 };
-export declare type MenuPos = {
+export declare type MenuPosition = {
     left: number;
     top?: number;
     bottom?: number;

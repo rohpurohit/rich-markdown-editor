@@ -52,6 +52,7 @@ function BlockMenuItem({
       {Icon && (
         <>
           <Icon
+            size={19}
             color={
               selected ? theme.blockToolbarIconSelected : theme.blockToolbarIcon
             }
@@ -108,6 +109,7 @@ const Title = styled.span`
 
 const Shortcut = styled.span`
   color: ${(props) => props.theme.textSecondary};
+  font-size: 9px;
   flex-grow: 1;
   text-align: right;
 `;

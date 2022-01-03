@@ -1,6 +1,6 @@
 import * as React from "react";
 import { EditorView } from "prosemirror-view";
-import { EmbedDescriptor, MenuItem, MenuPos, GroupMenuItem } from "../types";
+import { EmbedDescriptor, MenuItem, MenuPosition, GroupMenuItem } from "../types";
 import baseDictionary from "../dictionary";
 export declare type Props<T extends MenuItem = MenuItem> = {
     rtl: boolean;
@@ -21,7 +21,7 @@ export declare type Props<T extends MenuItem = MenuItem> = {
         selected: boolean;
         onClick: () => void;
     }) => React.ReactNode;
-    renderGroupMenuItem: (item: GroupMenuItem<T>, index: number, options: {
+    renderGroupMenuItem: (item: GroupMenuItem<T>, index: number, callback: (ref: HTMLDivElement) => void, options: {
         selected: boolean;
         onClick: () => void;
     }) => React.ReactNode;
@@ -32,23 +32,28 @@ export declare type Props<T extends MenuItem = MenuItem> = {
 };
 declare type State = {
     insertItem?: EmbedDescriptor;
-    left?: number;
-    top?: number;
-    bottom?: number;
-    isAbove: boolean;
     selectedIndex: number;
+    nestedSelectedIndex: number | null;
+    menu1Position: MenuPosition;
+    menu2Position: MenuPosition;
+    nestedMenuOpen: boolean;
+    activeGroup: GroupMenuItem;
 };
 declare class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     menuRef: React.RefObject<HTMLDivElement>;
+    nestedMenuRef: React.RefObject<HTMLDivElement>;
     inputRef: React.RefObject<HTMLInputElement>;
+    groupItemsRef: HTMLDivElement[];
     state: State;
+    constructor(props: Props<T>);
     componentDidMount(): void;
     shouldComponentUpdate(nextProps: Props<T>, nextState: State): boolean;
     componentDidUpdate(prevProps: Props<T>): void;
     componentWillUnmount(): void;
-    handleKeyDown: (event: KeyboardEvent) => void;
+    handleKeyDown: (e: KeyboardEvent) => void;
     insertItem: (item: EmbedDescriptor) => void;
     close: () => void;
+    closeNestedMenu(): void;
     handleLinkInputKeydown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     handleLinkInputPaste: (event: React.ClipboardEvent<HTMLInputElement>) => void;
     triggerImagePick: () => void;
@@ -56,13 +61,13 @@ declare class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, S
     handleImagePicked: (event: any) => void;
     clearSearch: () => void;
     insertBlock(item: any): void;
-    get caretPosition(): {
+    getCaretPosition(): {
         top: number;
         left: number;
     };
-    calculatePosition(props: Props<T>): MenuPos;
+    onGroupSelect(index: number): void;
+    calculatePosition(props: Props<T>): MenuPosition;
     get filtered(): GroupMenuItem[];
-    renderMenuGroup(item: GroupMenuItem, selected: boolean): JSX.Element;
     render(): JSX.Element;
 }
 export declare const Wrapper: import("styled-components").StyledComponent<"div", any, {
