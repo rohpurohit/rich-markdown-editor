@@ -4,7 +4,13 @@ import { Portal } from "react-portal";
 import { EditorView } from "prosemirror-view";
 import { findDomRefAtPos, findParentNode } from "prosemirror-utils";
 import styled from "styled-components";
-import { EmbedDescriptor, MenuItem, ToastType } from "../types";
+import {
+  EmbedDescriptor,
+  MenuItem,
+  ToastType,
+  MenuPosition,
+  GroupMenuItem,
+} from "../types";
 import Input from "./Input";
 import VisuallyHidden from "./VisuallyHidden";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
@@ -14,7 +20,7 @@ import baseDictionary from "../dictionary";
 
 const SSR = typeof window === "undefined";
 
-const defaultPosition = {
+const defaultMenuPosition: MenuPosition = {
   left: -1000,
   top: 0,
   bottom: undefined,
@@ -44,42 +50,61 @@ export type Props<T extends MenuItem = MenuItem> = {
       onClick: () => void;
     }
   ) => React.ReactNode;
+  renderGroupMenuItem: (
+    item: GroupMenuItem<T>,
+    index: number,
+    callback: (ref: HTMLDivElement) => void,
+    options: {
+      selected: boolean;
+      onClick: () => void;
+    }
+  ) => React.ReactNode;
   filterable?: boolean;
   items: T[];
+  groupedItems: GroupMenuItem<T>[];
   id?: string;
 };
 
 type State = {
   insertItem?: EmbedDescriptor;
-  left?: number;
-  top?: number;
-  bottom?: number;
-  isAbove: boolean;
   selectedIndex: number;
+  nestedSelectedIndex: number | null;
+  menu1Position: MenuPosition;
+  menu2Position: MenuPosition;
+  nestedMenuOpen: boolean;
+  activeNestedItems: MenuItem[];
 };
 
 class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   menuRef = React.createRef<HTMLDivElement>();
+  nestedMenuRef = React.createRef<HTMLDivElement>();
   inputRef = React.createRef<HTMLInputElement>();
 
+  groupItemsRef: HTMLDivElement[] = [];
+
   state: State = {
-    left: -1000,
-    top: 0,
-    bottom: undefined,
-    isAbove: false,
+    menu1Position: defaultMenuPosition,
+    menu2Position: defaultMenuPosition,
     selectedIndex: 0,
+    nestedSelectedIndex: null,
     insertItem: undefined,
+    nestedMenuOpen: false,
+    activeNestedItems: [],
   };
 
+  constructor(props: Props<T>) {
+    super(props);
+  }
+
   // register keyDown event
-  componentDidMount() {
+  componentDidMount(): void {
     if (!SSR) {
       window.addEventListener("keydown", this.handleKeyDown);
     }
   }
 
   // standard optimization stuff
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps: Props<T>, nextState: State): boolean {
     return (
       nextProps.search !== this.props.search ||
       nextProps.isActive !== this.props.isActive ||
@@ -88,22 +113,24 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   // calculate new positioning if needed, and reset state
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props<T>): void {
     if (!prevProps.isActive && this.props.isActive) {
-      const position = this.calculatePosition(this.props);
-
       this.setState({
         insertItem: undefined,
         selectedIndex: 0,
-        ...position,
+        menu1Position: this.calculatePosition(this.props),
       });
     } else if (prevProps.search !== this.props.search) {
       this.setState({ selectedIndex: 0 });
     }
+
+    if (prevProps.isActive && !this.props.isActive) {
+      this.closeNestedMenu();
+    }
   }
 
   // remove keyDown listener
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     if (!SSR) {
       window.removeEventListener("keydown", this.handleKeyDown);
     }
@@ -111,39 +138,46 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
   // on Enter, calls insertItem with the current Item
   // on up/down arrows, changes selectedIndex / close if not items
-  handleKeyDown = (event: KeyboardEvent) => {
+  handleKeyDown = (e: KeyboardEvent): void => {
     if (!this.props.isActive) return;
 
-    if (event.key === "Enter") {
-      event.preventDefault();
-      event.stopPropagation();
+    const stateKey =
+      this.state.nestedSelectedIndex === null
+        ? "selectedIndex"
+        : "nestedSelectedIndex";
 
-      const item = this.filtered[this.state.selectedIndex];
+    const currentGroup = this.filtered[this.state.selectedIndex];
+    const currentArray =
+      stateKey === "nestedSelectedIndex" ? currentGroup.items : this.filtered;
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const item = currentArray[this.state[stateKey]];
 
       if (item) {
-        this.insertItem(item);
+        if (stateKey === "nestedSelectedIndex") {
+          this.insertItem(item);
+        } else {
+          this.onGroupSelect(this.state.selectedIndex);
+        }
       } else {
         this.props.onClose();
       }
     }
 
     if (
-      event.key === "ArrowUp" ||
-      (event.key === "Tab" && event.shiftKey) ||
-      (event.ctrlKey && event.key === "p")
+      e.key === "ArrowUp" ||
+      (e.key === "Tab" && e.shiftKey) ||
+      (e.ctrlKey && e.key === "p")
     ) {
-      event.preventDefault();
-      event.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
 
-      if (this.filtered.length) {
-        const prevIndex = this.state.selectedIndex - 1;
-        const prev = this.filtered[prevIndex];
-
+      if (currentArray.length) {
         this.setState({
-          selectedIndex: Math.max(
-            0,
-            prev && prev.name === "separator" ? prevIndex - 1 : prevIndex
-          ),
+          [stateKey]: Math.max(0, this.state[stateKey] - 1),
         });
       } else {
         this.close();
@@ -151,22 +185,18 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
 
     if (
-      event.key === "ArrowDown" ||
-      (event.key === "Tab" && !event.shiftKey) ||
-      (event.ctrlKey && event.key === "n")
+      e.key === "ArrowDown" ||
+      (e.key === "Tab" && !e.shiftKey) ||
+      (e.ctrlKey && e.key === "n")
     ) {
-      event.preventDefault();
-      event.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
 
-      if (this.filtered.length) {
-        const total = this.filtered.length - 1;
-        const nextIndex = this.state.selectedIndex + 1;
-        const next = this.filtered[nextIndex];
-
+      if (currentArray.length) {
         this.setState({
-          selectedIndex: Math.min(
-            next && next.name === "separator" ? nextIndex + 1 : nextIndex,
-            total
+          [stateKey]: Math.min(
+            this.state[stateKey] + 1,
+            currentArray.length - 1
           ),
         });
       } else {
@@ -174,13 +204,27 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       }
     }
 
-    if (event.key === "Escape") {
+    if (["ArrowLeft", "ArrowRight"].includes(e.key)) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.setState({ nestedSelectedIndex: e.key === "ArrowRight" ? 0 : null });
+    }
+
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.setState({ nestedSelectedIndex: 0 });
+    }
+
+    if (e.key === "Escape") {
       this.close();
     }
   };
 
   // call an inserter function based on item.name (image, embed, link, or else)
-  insertItem = (item) => {
+  insertItem = (item: EmbedDescriptor): void => {
     switch (item.name) {
       case "image":
         return this.triggerImagePick();
@@ -197,14 +241,26 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  close = () => {
+  close = (): void => {
+    this.closeNestedMenu();
     this.props.onClose();
     this.props.view.focus();
   };
 
+  closeNestedMenu(): void {
+    this.setState({
+      nestedMenuOpen: false,
+      menu2Position: defaultMenuPosition,
+      activeNestedItems: [],
+      nestedSelectedIndex: null,
+    });
+  }
+
   // onEnter: check for valid link type (ex: youtube link), and insert the imbed component if so.
   // onEsc: close the menu
-  handleLinkInputKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  handleLinkInputKeydown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ): void => {
     if (!this.props.isActive) return;
     if (!this.state.insertItem) return;
 
@@ -237,8 +293,10 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  // will directly try to match (as pressing onEnter from hadleLinkInputKeydown)
-  handleLinkInputPaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+  // will directly try to match (as pressing onEnter from handleLinkInputKeydown)
+  handleLinkInputPaste = (
+    event: React.ClipboardEvent<HTMLInputElement>
+  ): void => {
     if (!this.props.isActive) return;
     if (!this.state.insertItem) return;
 
@@ -259,20 +317,20 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   };
 
   // open the image picker
-  triggerImagePick = () => {
+  triggerImagePick = (): void => {
     if (this.inputRef.current) {
       this.inputRef.current.click();
     }
   };
 
   // open the link input (ex: youtube link)
-  triggerLinkInput = (item) => {
+  triggerLinkInput = (item: EmbedDescriptor): void => {
     this.setState({ insertItem: item });
   };
 
   // get file metadata, and insert it at the parent pos,
   // using insertFilles, then close the menu
-  handleImagePicked = (event) => {
+  handleImagePicked = (event): void => {
     const files = getDataTransferFiles(event);
 
     const {
@@ -309,12 +367,12 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   };
 
   // this.props.clearSearch()
-  clearSearch = () => {
+  clearSearch = (): void => {
     this.props.onClearSearch();
   };
 
   // run a command by item.name, and close
-  insertBlock(item) {
+  insertBlock(item): void {
     this.clearSearch();
 
     const command = this.props.commands[item.name];
@@ -329,7 +387,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   // returns getBoundingRect top/left of the current selection range
-  get caretPosition(): { top: number; left: number } {
+  getCaretPosition(): { top: number; left: number } {
     const selection = window.document.getSelection();
     if (!selection || !selection.anchorNode || !selection.focusNode) {
       return {
@@ -361,25 +419,53 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     };
   }
 
-  // returns left using the caretPosition,
-  // top and bottom using the current dom at the current position getBoundingClientRect
-  calculatePosition(props) {
+  onGroupSelect(index: number): void {
+    const nestedItems = this.props.groupedItems[index].items;
+    const ref = this.groupItemsRef[index];
+
+    const { right, top: _top } = ref.getBoundingClientRect();
+
+    const menuHeight = nestedItems.length * 36 + 16;
+    const marginV = 50;
+    const marginH = 15;
+
+    const top = _top + menuHeight + marginV < window.innerHeight ? _top : 0;
+    const left = right + (window.scrollX ?? 0) + marginH;
+
+    const menu2Position = {
+      left,
+      top,
+      bottom: undefined,
+      isAbove: true,
+    };
+
+    this.setState({
+      nestedSelectedIndex: 0,
+      selectedIndex: index,
+      nestedMenuOpen: true,
+      activeNestedItems: nestedItems,
+      menu2Position,
+    });
+  }
+
+  calculatePosition(props: Props<T>): MenuPosition {
     const { view } = props;
     const { selection } = view.state;
     let startPos;
+
     try {
       startPos = view.coordsAtPos(selection.from);
     } catch (err) {
       console.warn(err);
-      return defaultPosition;
+      return defaultMenuPosition;
     }
 
-    const domAtPos = view.domAtPos.bind(view);
+    const menuRef = this.menuRef.current;
+    const offsetHeight = menuRef ? menuRef.offsetHeight : 0;
 
-    const ref = this.menuRef.current;
-    const offsetHeight = ref ? ref.offsetHeight : 0;
-    const node = findDomRefAtPos(selection.from, domAtPos);
-    const paragraph: any = { node };
+    const paragraph: { node: any } = {
+      node: findDomRefAtPos(selection.from, view.domAtPos.bind(view)),
+    };
 
     if (
       !props.isActive ||
@@ -387,28 +473,26 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       !paragraph.node.getBoundingClientRect ||
       SSR
     ) {
-      return defaultPosition;
+      return defaultMenuPosition;
     }
 
-    const { left } = this.caretPosition;
     const { top, bottom, right } = paragraph.node.getBoundingClientRect();
-    const margin = 24;
 
-    let leftPos = left + window.scrollX;
-    if (props.rtl && ref) {
-      leftPos = right - ref.scrollWidth;
-    }
+    const left =
+      props.rtl && menuRef
+        ? right - menuRef.scrollWidth
+        : this.getCaretPosition().left + window.scrollX;
 
-    if (startPos.top - offsetHeight > margin) {
+    if (startPos.top - offsetHeight > 50) {
       return {
-        left: leftPos,
+        left,
         top: undefined,
         bottom: window.innerHeight - top - window.scrollY,
         isAbove: false,
       };
     } else {
       return {
-        left: leftPos,
+        left,
         top: bottom + window.scrollY,
         bottom: undefined,
         isAbove: true,
@@ -417,7 +501,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   // filter items (search..) and add embeds
-  get filtered() {
+  get filtered(): GroupMenuItem[] {
     const {
       embeds = [],
       search = "",
@@ -425,53 +509,56 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       commands,
       filterable = true,
     } = this.props;
-    let items: (EmbedDescriptor | MenuItem)[] = this.props.items;
-    const embedItems: EmbedDescriptor[] = [];
 
-    for (const embed of embeds) {
-      if (embed.title && embed.icon) {
-        embedItems.push({
-          ...embed,
-          name: "embed",
-        });
-      }
-    }
+    return this.props.groupedItems;
 
-    if (embedItems.length) {
-      items.push({
-        name: "separator",
-      });
-      items = items.concat(embedItems);
-    }
+    // const embedItems: EmbedDescriptor[] = [];
 
-    const filtered = items.filter((item) => {
-      if (item.name === "separator") return true;
+    // for (const embed of embeds) {
+    //   if (embed.title && embed.icon) {
+    //     embedItems.push({
+    //       ...embed,
+    //       name: "embed",
+    //     });
+    //   }
+    // }
 
-      // Some extensions may be disabled, remove corresponding menu items
-      if (
-        item.name &&
-        !commands[item.name] &&
-        !commands[`create${capitalize(item.name)}`]
-      ) {
-        return false;
-      }
+    // if (embedItems.length) {
+    //   items.push({
+    //     name: "separator",
+    //   });
+    //   items = items.concat(embedItems);
+    // }
 
-      // If no image upload callback has been passed, filter the image block out
-      if (!uploadImage && item.name === "image") return false;
+    // const filtered = items.filter((item) => {
+    //   if (item.name === "separator") return true;
 
-      // some items (defaultHidden) are not visible until a search query exists
-      if (!search) return !item.defaultHidden;
+    //   // Some extensions may be disabled, remove corresponding menu items
+    //   if (
+    //     item.name &&
+    //     !commands[item.name] &&
+    //     !commands[`create${capitalize(item.name)}`]
+    //   ) {
+    //     return false;
+    //   }
 
-      const n = search.toLowerCase();
-      if (!filterable) {
-        return item;
-      }
-      return (
-        (item.title || "").toLowerCase().includes(n) ||
-        (item.keywords || "").toLowerCase().includes(n)
-      );
-    });
+    //   // If no image upload callback has been passed, filter the image block out
+    //   if (!uploadImage && item.name === "image") return false;
 
+    //   // some items (defaultHidden) are not visible until a search query exists
+    //   if (!search) return !item.defaultHidden;
+
+    //   const n = search.toLowerCase();
+    //   if (!filterable) {
+    //     return item;
+    //   }
+    //   return (
+    //     (item.title || "").toLowerCase().includes(n) ||
+    //     (item.keywords || "").toLowerCase().includes(n)
+    //   );
+    // });
+
+    const filtered = [];
     return filterExcessSeparators(filtered);
   }
 
@@ -480,8 +567,8 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   // also renders a file input element if we provided an `uploadImage` prop
   render() {
     const { dictionary, isActive, uploadImage } = this.props;
-    const items = this.filtered;
-    const { insertItem, ...positioning } = this.state;
+    // const items = this.getFilterItems(this.props.items);
+    const { insertItem, menu1Position, menu2Position } = this.state;
 
     return (
       <Portal>
@@ -489,7 +576,7 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
           id={this.props.id || "block-menu-container"}
           active={isActive}
           ref={this.menuRef}
-          {...positioning}
+          {...menu1Position}
         >
           {insertItem ? (
             <LinkInputWrapper>
@@ -507,30 +594,23 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
             </LinkInputWrapper>
           ) : (
             <List>
-              {items.map((item, index) => {
-                if (item.name === "separator") {
-                  return (
-                    <ListItem key={index}>
-                      <hr />
-                    </ListItem>
-                  );
-                }
-                const selected = index === this.state.selectedIndex && isActive;
-
-                if (!item.title) {
-                  return null;
-                }
-
-                return (
-                  <ListItem key={index}>
-                    {this.props.renderMenuItem(item as any, index, {
-                      selected,
-                      onClick: () => this.insertItem(item),
-                    })}
-                  </ListItem>
-                );
-              })}
-              {items.length === 0 && (
+              {this.props.search
+                ? this.props.search
+                : this.filtered.map((item, index) => {
+                    return this.props.renderGroupMenuItem(
+                      item,
+                      index,
+                      (node) => {
+                        this.groupItemsRef[index] = node;
+                      },
+                      {
+                        selected:
+                          index === this.state.selectedIndex && isActive,
+                        onClick: () => this.onGroupSelect(index),
+                      }
+                    );
+                  })}
+              {this.filtered.length === 0 && (
                 <ListItem>
                   <Empty>{dictionary.noResults}</Empty>
                 </ListItem>
@@ -547,6 +627,26 @@ class KnowtCommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
               />
             </VisuallyHidden>
           )}
+        </Wrapper>
+        <Wrapper
+          id={"block-menu-container-2"}
+          active={this.state.nestedMenuOpen}
+          ref={this.nestedMenuRef}
+          {...menu2Position}
+        >
+          <List>
+            {this.state.activeNestedItems.map((item, index) => {
+              return this.props.renderMenuItem(item, index, {
+                selected: this.state.nestedSelectedIndex === index,
+                onClick: () => this.insertItem(item),
+              });
+            })}
+            {this.filtered.length === 0 && (
+              <ListItem>
+                <Empty>{dictionary.noResults}</Empty>
+              </ListItem>
+            )}
+          </List>
         </Wrapper>
       </Portal>
     );
@@ -567,7 +667,7 @@ const List = styled.ol`
   list-style: none;
   text-align: left;
   height: 100%;
-  padding: 8px 0;
+  padding: 12px 0;
   margin: 0;
 `;
 
@@ -601,7 +701,7 @@ export const Wrapper = styled.div<{
   ${(props) => props.bottom !== undefined && `bottom: ${props.bottom}px`};
   left: ${(props) => props.left}px;
   background-color: ${(props) => props.theme.blockToolbarBackground};
-  border-radius: 10px;
+  border-radius: 14px;
   box-shadow: rgb(0 0 0 / 8%) 0px 0.4rem 1.6rem 0px;
   opacity: 0;
   transform: scale(0.95);
@@ -612,8 +712,8 @@ export const Wrapper = styled.div<{
   box-sizing: border-box;
   pointer-events: none;
   white-space: nowrap;
-  width: 300px;
-  max-height: 246px;
+  min-width: 180px;
+  max-height: 300px;
   overflow: hidden;
   overflow-y: auto;
   * {

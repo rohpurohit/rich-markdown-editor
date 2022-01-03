@@ -232,6 +232,9 @@ class RichMarkdownEditor extends React.PureComponent {
         if (this.props.autoFocus) {
             this.focusAtEnd();
         }
+        setTimeout(() => {
+            this.handleOpenBlockMenu("");
+        }, 0);
     }
     componentDidUpdate(prevProps) {
         if (this.props.value && prevProps.value !== this.props.value) {

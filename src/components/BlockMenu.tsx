@@ -2,7 +2,10 @@ import React from "react";
 import { findParentNode } from "prosemirror-utils";
 import KnowtCommandMenu, { Props } from "./KnowtCommandMenu";
 import BlockMenuItem from "./BlockMenuItem";
-import getMenuItems from "../menus/block";
+import BlockGroupMenuItem from "./BlockGroupMenuItem";
+import getMenuItems, {
+  groupedBlockMenu as getGroupedMenuItems,
+} from "../menus/block";
 
 type BlockMenuProps = Omit<
   Props,
@@ -13,6 +16,10 @@ type BlockMenuProps = Omit<
 class BlockMenu extends React.Component<BlockMenuProps> {
   get items() {
     return getMenuItems(this.props.dictionary);
+  }
+
+  get groupedItems() {
+    return getGroupedMenuItems(this.props.dictionary);
   }
 
   clearSearch = () => {
@@ -33,6 +40,7 @@ class BlockMenu extends React.Component<BlockMenuProps> {
         renderMenuItem={(item, _index, options) => {
           return (
             <BlockMenuItem
+              key={item.title}
               onClick={options.onClick}
               selected={options.selected}
               icon={item.icon}
@@ -41,7 +49,19 @@ class BlockMenu extends React.Component<BlockMenuProps> {
             />
           );
         }}
+        renderGroupMenuItem={(item, _index, innerRef, options) => {
+          return (
+            <BlockGroupMenuItem
+              innerRef={innerRef}
+              key={item.groupData.name}
+              title={item.groupData.name}
+              selected={options.selected}
+              onClick={options.onClick}
+            />
+          );
+        }}
         items={this.items}
+        groupedItems={this.groupedItems}
       />
     );
   }

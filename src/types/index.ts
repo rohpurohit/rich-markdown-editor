@@ -23,3 +23,19 @@ export type EmbedDescriptor = MenuItem & {
   matcher: (url: string) => boolean | [] | RegExpMatchArray;
   component: typeof React.Component | React.FC<any>;
 };
+
+export type MenuPosition = {
+  left: number;
+  top?: number;
+  bottom?: number;
+  isAbove: boolean;
+};
+
+export type GroupMenuItem<T = MenuItem> = {
+  groupData: GroupData;
+  items: T[];
+};
+
+export type GroupData = {
+  name: string;
+};

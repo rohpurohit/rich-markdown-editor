@@ -20,4 +20,17 @@ export declare type EmbedDescriptor = MenuItem & {
     matcher: (url: string) => boolean | [] | RegExpMatchArray;
     component: typeof React.Component | React.FC<any>;
 };
+export declare type MenuPos = {
+    left: number;
+    top?: number;
+    bottom?: number;
+    isAbove: boolean;
+};
+export declare type GroupMenuItem<T = MenuItem> = {
+    groupData: GroupData;
+    items: T[];
+};
+export declare type GroupData = {
+    name: string;
+};
 //# sourceMappingURL=index.d.ts.map
