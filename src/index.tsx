@@ -64,7 +64,8 @@ import TableRow from "./nodes/TableRow";
 // marks
 import Bold from "./marks/Bold";
 import Code from "./marks/Code";
-import Highlight from "./marks/Highlight";
+import DefaultHighlight from "./marks/highlights/DefaultHighlight";
+import BlueHighlight from "./marks/highlights/BlueHighlight";
 import Italic from "./marks/Italic";
 import Link from "./marks/Link";
 import Strikethrough from "./marks/Strikethrough";
@@ -375,7 +376,8 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new TableRow(),
           new Bold(),
           new Code(),
-          new Highlight(),
+          new BlueHighlight(),
+          new DefaultHighlight(),
           new Italic(),
           new TemplatePlaceholder(),
           new Underline(),
@@ -524,7 +526,19 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   createState(value?: string) {
-    const doc = this.createDocument(value || this.props.defaultValue);
+    const html_test = `
+      <p><mark>red paragraph</mark></p>
+      <p style="background-color: blue;">blue paragraph</p>
+      <mark class="blue">blue paragraph</mark>
+      `;
+
+    const md_test = `
+      ==red paragraph==
+      `;
+
+    const doc = this.createDocument(
+      md_test || html_test || value || this.props.defaultValue
+    );
 
     return EditorState.create({
       schema: this.schema,
@@ -636,6 +650,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   };
 
   handleChange = () => {
+    console.log(this.value());
     if (!this.props.onChange) return;
 
     this.props.onChange(() => {

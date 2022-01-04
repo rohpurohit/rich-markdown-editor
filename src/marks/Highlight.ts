@@ -63,12 +63,6 @@ export default class Highlight extends Mark {
   parseMarkdown() {
     return {
       mark: "highlight",
-      getAttrs: (token) => {
-        console.log(token);
-        return {
-          level: +token.tag.slice(1),
-        };
-      },
     };
   }
 }
