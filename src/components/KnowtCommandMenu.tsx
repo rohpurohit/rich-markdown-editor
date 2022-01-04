@@ -440,9 +440,10 @@ class KnowtCommandMenu extends React.Component<Props, State> {
 
     const menuHeight = activeGroup.items.length * 36 + 16;
     const marginV = 50;
-    const marginH = 15;
+    const marginH = 10;
 
-    const top = _top + menuHeight + marginV < window.innerHeight ? _top : 0;
+    const top =
+      _top + menuHeight + marginV < window.innerHeight ? _top - 16 : 0;
     const left = right + (window.scrollX ?? 0) + marginH;
 
     const menu2Position = {
@@ -735,7 +736,7 @@ export const Wrapper = styled.div<{
   pointer-events: none;
   white-space: nowrap;
   min-width: 180px;
-  max-height: 300px;
+  max-height: 320px;
   overflow: hidden;
   overflow-y: auto;
   * {

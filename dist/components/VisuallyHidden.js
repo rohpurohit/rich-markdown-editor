@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const styled_components_1 = __importDefault(require("styled-components"));
 const VisuallyHidden = styled_components_1.default.span `
   position: absolute !important;
-  height: 1px;
-  width: 1px;
+  height: 0px;
+  width: 0px;
   overflow: hidden;
   clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
   clip: rect(1px, 1px, 1px, 1px);

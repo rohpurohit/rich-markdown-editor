@@ -64,9 +64,14 @@ class BlockMenuTrigger extends Extension_1.default {
         return [
             new prosemirror_state_1.Plugin({
                 props: {
-                    handleClick: () => {
-                        this.options.onClose();
-                        return false;
+                    handleDOMEvents: {
+                        contextmenu: (view, event) => {
+                            event.preventDefault();
+                            view.focus();
+                            this.options.onClose();
+                            this.options.onOpen();
+                            return true;
+                        },
                     },
                     handleKeyDown: (view, event) => {
                         if (event.key === "Backspace") {

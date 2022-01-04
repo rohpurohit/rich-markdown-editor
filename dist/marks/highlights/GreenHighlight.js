@@ -13,6 +13,8 @@ class GreenHighlight extends Mark_1.default {
     }
     get schema() {
         return {
+            excludes: "highlight",
+            group: "highlight",
             parseDOM: [
                 {
                     tag: "mark",

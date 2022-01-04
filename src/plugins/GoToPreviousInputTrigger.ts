@@ -19,13 +19,11 @@ export default class GoToPreviousInputTrigger extends Extension {
               isCursorAt(1, view.state) &&
               view.state.doc.content.firstChild?.type.name === "paragraph" // if there is another node type, we should let prosemirror handle it and remove this node
             ) {
-              event.preventDefault();
               this.options.onGoToPreviousInput();
               return true;
             }
 
             if (event.key === "ArrowUp" && isFirstLine(this.editor, view)) {
-              event.preventDefault();
               this.options.onGoToPreviousInput();
               return true;
             }
@@ -35,7 +33,6 @@ export default class GoToPreviousInputTrigger extends Extension {
                 (isCursorAt(3, view.state) && isInList(view.state)) || // the cursor will be at pos 3 if the list is empty
                 isCursorAt(1, view.state)
               ) {
-                event.preventDefault();
                 this.options.onGoToPreviousInput();
                 return true;
               }

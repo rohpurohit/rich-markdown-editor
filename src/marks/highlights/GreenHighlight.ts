@@ -10,6 +10,8 @@ export default class GreenHighlight extends Mark {
 
   get schema() {
     return {
+      excludes: "highlight",
+      group: "highlight",
       parseDOM: [
         {
           tag: "mark",

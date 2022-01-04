@@ -318,8 +318,8 @@ class KnowtCommandMenu extends React.Component {
         const { right, top: _top } = ref.getBoundingClientRect();
         const menuHeight = activeGroup.items.length * 36 + 16;
         const marginV = 50;
-        const marginH = 15;
-        const top = _top + menuHeight + marginV < window.innerHeight ? _top : 0;
+        const marginH = 10;
+        const top = _top + menuHeight + marginV < window.innerHeight ? _top - 16 : 0;
         const left = right + ((_a = window.scrollX) !== null && _a !== void 0 ? _a : 0) + marginH;
         const menu2Position = {
             left,
@@ -475,7 +475,7 @@ exports.Wrapper = styled_components_1.default.div `
   pointer-events: none;
   white-space: nowrap;
   min-width: 180px;
-  max-height: 300px;
+  max-height: 320px;
   overflow: hidden;
   overflow-y: auto;
   * {

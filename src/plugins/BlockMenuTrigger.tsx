@@ -51,9 +51,14 @@ export default class BlockMenuTrigger extends Extension {
     return [
       new Plugin({
         props: {
-          handleClick: () => {
-            this.options.onClose();
-            return false;
+          handleDOMEvents: {
+            contextmenu: (view, event: MouseEvent) => {
+              event.preventDefault();
+              view.focus();
+              this.options.onClose();
+              this.options.onOpen();
+              return true;
+            },
           },
           handleKeyDown: (view, event) => {
             // Prosemirror input rules are not triggered on backspace, however

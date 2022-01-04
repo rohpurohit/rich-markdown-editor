@@ -10,6 +10,8 @@ export default class BlueHighlight extends Mark {
 
   get schema() {
     return {
+      excludes: "highlight",
+      group: "highlight",
       parseDOM: [
         {
           tag: "mark",
