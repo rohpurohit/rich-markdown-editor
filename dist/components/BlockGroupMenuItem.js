@@ -25,7 +25,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(require("react"));
 const smooth_scroll_into_view_if_needed_1 = __importDefault(require("smooth-scroll-into-view-if-needed"));
 const styled_components_1 = __importStar(require("styled-components"));
-const ArrowIcon = require("../assets/right-arrow.png");
 function BlockGroupMenuItem(props) {
     const { title, selected, disabled = false, onClick, containerId = "block-menu-container", innerRef, } = props;
     const ref = React.useCallback((node) => {
@@ -40,10 +39,12 @@ function BlockGroupMenuItem(props) {
             });
         }
     }, [selected, containerId, innerRef]);
+    const ArrowIcon = (React.createElement("svg", { width: "8", x: "0px", y: "0px", viewBox: "0 0 1000 1000" },
+        React.createElement("g", { transform: "translate(0.000000,511.000000) scale(0.100000,-0.100000)" },
+            React.createElement("path", { d: "M2608.4,4961.2c-156.9-68.9-317.7-264.1-348.3-424.9c-61.2-344.5-134-260.3,2024.8-2419.1L6283,115.3L4284.9-1882.7C2122.3-4053,2195-3961.2,2263.9-4313.3c34.4-187.5,264.1-417.2,451.7-451.6c356-68.9,233.5-168.4,2713.9,2308.1C7446.7-435.8,7718.4-156.4,7737.5-26.3c65.1,356,164.6,237.3-2269.8,2683.2C4177.8,3950.7,3167.3,4930.6,3098.4,4961.2C2945.3,5026.3,2757.7,5026.3,2608.4,4961.2z" }))));
     return (React.createElement(MenuItem, { selected: selected, onClick: disabled ? undefined : onClick, ref: ref },
         title,
-        React.createElement(Circle, null,
-            React.createElement(Icon, { src: ArrowIcon }))));
+        React.createElement(Circle, null, ArrowIcon)));
 }
 const MenuItem = styled_components_1.default.button `
   display: flex;
@@ -90,10 +91,6 @@ const Circle = styled_components_1.default.div `
   min-height: ${CIRCLE_RADIUS}px;
   max-height: ${CIRCLE_RADIUS}px;
   border: 1px solid ${(props) => props.theme.blockToolbarDivider};
-`;
-const Icon = styled_components_1.default.img `
-  width: ${ICON_DIMENSIONS}px;
-  height: ${ICON_DIMENSIONS}px;
 `;
 exports.default = styled_components_1.withTheme(BlockGroupMenuItem);
 //# sourceMappingURL=BlockGroupMenuItem.js.map

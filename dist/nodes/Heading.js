@@ -150,6 +150,7 @@ class Heading extends Node_1.default {
         };
     }
     toMarkdown(state, node) {
+        console.log("heading", node.attrs);
         state.write(state.repeat("#", node.attrs.level) + " ");
         state.renderInline(node);
         state.closeBlock(node);

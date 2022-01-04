@@ -19,7 +19,9 @@ class Mark extends Extension_1.default {
         return {};
     }
     commands({ type }) {
-        return () => prosemirror_commands_1.toggleMark(type);
+        return (attrs) => {
+            return prosemirror_commands_1.toggleMark(type, attrs);
+        };
     }
 }
 exports.default = Mark;

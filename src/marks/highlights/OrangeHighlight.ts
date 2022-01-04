@@ -35,9 +35,7 @@ export default class OrangeHighlight extends Mark {
   }
 
   commands({ type }) {
-    return (attrs: any) => {
-      return toggleMark(type, attrs);
-    };
+    return () => toggleMark(type);
   }
 
   get rulePlugins() {

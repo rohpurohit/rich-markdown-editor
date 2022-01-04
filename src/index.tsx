@@ -66,7 +66,7 @@ import Bold from "./marks/Bold";
 import Code from "./marks/Code";
 import DefaultHighlight from "./marks/highlights/DefaultHighlight";
 import OrangeHighlight from "./marks/highlights/OrangeHighlight";
-import YellowHighlight from "./marks/highlights/YelloHighlight";
+import YellowHighlight from "./marks/highlights/YellowHighlight";
 import GreenHighlight from "./marks/highlights/GreenHighlight";
 import BlueHighlight from "./marks/highlights/BlueHighlight";
 import Italic from "./marks/Italic";

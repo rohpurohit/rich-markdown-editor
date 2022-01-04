@@ -58,6 +58,13 @@ export declare const base: {
     knowtGrey: string;
     knowtGreyMid: string;
     knowtGreyStrong: string;
+    highlights: {
+        red: string;
+        orange: string;
+        yellow: string;
+        green: string;
+        blue: string;
+    };
 };
 export declare const light: {
     background: string;
@@ -138,6 +145,13 @@ export declare const light: {
     knowtGrey: string;
     knowtGreyMid: string;
     knowtGreyStrong: string;
+    highlights: {
+        red: string;
+        orange: string;
+        yellow: string;
+        green: string;
+        blue: string;
+    };
 };
 export declare const dark: {
     background: string;
@@ -218,6 +232,13 @@ export declare const dark: {
     knowtGrey: string;
     knowtGreyMid: string;
     knowtGreyStrong: string;
+    highlights: {
+        red: string;
+        orange: string;
+        yellow: string;
+        green: string;
+        blue: string;
+    };
 };
 export default light;
 //# sourceMappingURL=theme.d.ts.map

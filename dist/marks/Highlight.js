@@ -13,14 +13,24 @@ class Highlight extends Mark_1.default {
     }
     get schema() {
         return {
+            attrs: {
+                class: {
+                    default: "red",
+                },
+            },
             parseDOM: [
-                { tag: "mark" },
+                {
+                    tag: "mark",
+                    getAttrs: (node) => {
+                        return { class: node.getAttribute("class") };
+                    },
+                },
                 {
                     style: "background-color",
                     getAttrs: (value) => !!value && value !== "transparent",
                 },
             ],
-            toDOM: () => ["mark"],
+            toDOM: (node) => ["mark", { class: node.attrs.class }],
         };
     }
     inputRules({ type }) {
@@ -29,6 +39,11 @@ class Highlight extends Mark_1.default {
     keys({ type }) {
         return {
             "Mod-Ctrl-h": prosemirror_commands_1.toggleMark(type),
+        };
+    }
+    commands({ type }) {
+        return (attrs) => {
+            return prosemirror_commands_1.toggleMark(type, attrs);
         };
     }
     get rulePlugins() {
@@ -43,7 +58,9 @@ class Highlight extends Mark_1.default {
         };
     }
     parseMarkdown() {
-        return { mark: "highlight" };
+        return {
+            mark: "highlight",
+        };
     }
 }
 exports.default = Highlight;

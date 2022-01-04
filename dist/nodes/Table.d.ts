@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import Node from "./Node";
 import { addColumnAfter, addColumnBefore, deleteColumn, deleteRow, deleteTable, fixTables, setCellAttr, toggleHeaderCell, toggleHeaderColumn, toggleHeaderRow } from "prosemirror-tables";
 import { Plugin } from "prosemirror-state";
@@ -16,7 +17,7 @@ export default class Table extends Node {
             class: string;
         } | (string | {
             class: string;
-        } | (string | (string | number)[] | {
+        } | (string | import("react").ReactText[] | {
             class: string;
         })[])[])[];
     };

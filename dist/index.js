@@ -71,7 +71,11 @@ const TableHeadCell_1 = __importDefault(require("./nodes/TableHeadCell"));
 const TableRow_1 = __importDefault(require("./nodes/TableRow"));
 const Bold_1 = __importDefault(require("./marks/Bold"));
 const Code_1 = __importDefault(require("./marks/Code"));
-const Highlight_1 = __importDefault(require("./marks/Highlight"));
+const DefaultHighlight_1 = __importDefault(require("./marks/highlights/DefaultHighlight"));
+const OrangeHighlight_1 = __importDefault(require("./marks/highlights/OrangeHighlight"));
+const YellowHighlight_1 = __importDefault(require("./marks/highlights/YellowHighlight"));
+const GreenHighlight_1 = __importDefault(require("./marks/highlights/GreenHighlight"));
+const BlueHighlight_1 = __importDefault(require("./marks/highlights/BlueHighlight"));
 const Italic_1 = __importDefault(require("./marks/Italic"));
 const Link_1 = __importDefault(require("./marks/Link"));
 const Strikethrough_1 = __importDefault(require("./marks/Strikethrough"));
@@ -122,6 +126,7 @@ class RichMarkdownEditor extends React.PureComponent {
             return this.serializer.serialize(this.view.state.doc);
         };
         this.handleChange = () => {
+            console.log(this.value());
             if (!this.props.onChange)
                 return;
             this.props.onChange(() => {
@@ -341,7 +346,11 @@ class RichMarkdownEditor extends React.PureComponent {
                 new TableRow_1.default(),
                 new Bold_1.default(),
                 new Code_1.default(),
-                new Highlight_1.default(),
+                new OrangeHighlight_1.default(),
+                new YellowHighlight_1.default(),
+                new BlueHighlight_1.default(),
+                new GreenHighlight_1.default(),
+                new DefaultHighlight_1.default(),
                 new Italic_1.default(),
                 new Placeholder_1.default(),
                 new Underline_1.default(),
@@ -467,7 +476,19 @@ class RichMarkdownEditor extends React.PureComponent {
         });
     }
     createState(value) {
-        const doc = this.createDocument(value || this.props.defaultValue);
+        const html_test = `
+      <p><mark>red paragraph</mark></p>
+      <p style="background-color: blue;">blue paragraph</p>
+      <mark class="blue">blue paragraph</mark><br />
+      <mark class="green">green paragraph</mark> <br />
+      <span style="background-color: yellow;">yellow paragraph</span>
+      `;
+        const md_test = `==red==
+            @@orange@@
+            $$yellow$$
+            %%green%%
+        ^^blue^^` && null;
+        const doc = this.createDocument(md_test || html_test || value || this.props.defaultValue);
         return prosemirror_state_1.EditorState.create({
             schema: this.schema,
             doc,

@@ -28,7 +28,7 @@ export default class DefaultHighlight extends Mark {
   }
 
   commands({ type }) {
-    return (attrs: any) => toggleMark(type, attrs);
+    return () => toggleMark(type);
   }
 
   get rulePlugins() {
