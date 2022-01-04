@@ -530,12 +530,32 @@ export const StyledEditor = styled("div")<{
 
   mark {
     border-radius: 1px;
-    color: ${(props) => props.theme.textHighlightForeground};
-    background: ${(props) => props.theme.textHighlight};
+    background: transparent;
 
     a {
       color: ${(props) => props.theme.textHighlightForeground};
     }
+
+    &.red {
+        background: ${(props) => props.theme.highlights["red"]};
+    }
+
+    &.orange {
+        background: ${(props) => props.theme.highlights["orange"]};
+    }
+
+    &.yellow {
+        background: ${(props) => props.theme.highlights["yellow"]};
+    }
+
+    &.green {
+        background: ${(props) => props.theme.highlights["green"]};
+    }
+
+    &.blue {
+        background: ${(props) => props.theme.highlights["blue"]};
+    }
+
   }
 
   .code-block,

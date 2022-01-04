@@ -10,14 +10,24 @@ export default class Highlight extends Mark {
 
   get schema() {
     return {
+      attrs: {
+        class: {
+          default: "red",
+        },
+      },
       parseDOM: [
-        { tag: "mark" },
+        {
+          tag: "mark",
+          getAttrs: (node) => {
+            return { class: node.getAttribute("class") };
+          },
+        },
         {
           style: "background-color",
           getAttrs: (value) => !!value && value !== "transparent",
         },
       ],
-      toDOM: () => ["mark"],
+      toDOM: (node) => ["mark", { class: node.attrs.class }],
     };
   }
 
@@ -28,6 +38,12 @@ export default class Highlight extends Mark {
   keys({ type }) {
     return {
       "Mod-Ctrl-h": toggleMark(type),
+    };
+  }
+
+  commands({ type }) {
+    return (attrs: any) => {
+      return toggleMark(type, attrs);
     };
   }
 
@@ -45,6 +61,14 @@ export default class Highlight extends Mark {
   }
 
   parseMarkdown() {
-    return { mark: "highlight" };
+    return {
+      mark: "highlight",
+      getAttrs: (token) => {
+        console.log(token);
+        return {
+          level: +token.tag.slice(1),
+        };
+      },
+    };
   }
 }

@@ -15,6 +15,13 @@ const colors = {
   knowtGrey: "#E9E9E9",
   knowtGreyMid: "#BBB",
   knowtGreyStrong: "#666666",
+  highlights: {
+    red: "#FFDBDB",
+    orange: "#FCE7D2",
+    yellow: "#FFFCCF",
+    green: "#E4FCD7",
+    blue: "#D9EDFF",
+  },
 };
 
 export const base = {
