@@ -13,6 +13,11 @@ class YellowHighlight extends Mark_1.default {
     }
     get schema() {
         return {
+            attrs: {
+                color: {
+                    default: "#FFFCCF",
+                },
+            },
             excludes: "highlight",
             group: "highlight",
             parseDOM: [

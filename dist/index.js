@@ -126,7 +126,6 @@ class RichMarkdownEditor extends React.PureComponent {
             return this.serializer.serialize(this.view.state.doc);
         };
         this.handleChange = () => {
-            console.log(this.value());
             if (!this.props.onChange)
                 return;
             this.props.onChange(() => {

@@ -53,6 +53,10 @@ export default class BlockMenuTrigger extends Extension {
         props: {
           handleDOMEvents: {
             contextmenu: (view, event: MouseEvent) => {
+              if (!view.hasFocus()) {
+                return false;
+              }
+
               event.preventDefault();
               view.focus();
               this.options.onClose();

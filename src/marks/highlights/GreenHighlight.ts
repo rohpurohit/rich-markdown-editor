@@ -10,6 +10,11 @@ export default class GreenHighlight extends Mark {
 
   get schema() {
     return {
+      attrs: {
+        color: {
+          default: "#E4FCD7",
+        },
+      },
       excludes: "highlight",
       group: "highlight",
       parseDOM: [

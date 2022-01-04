@@ -11,7 +11,7 @@ type Props = {
   commands: Record<string, any>;
   view: EditorView;
   theme: typeof theme;
-  items: MenuItem[];
+  items: (MenuItem & { iconColor?: string })[];
 };
 
 const FlexibleWrapper = styled.div`
@@ -39,13 +39,13 @@ class ToolbarMenu extends React.Component<Props> {
           return (
             <ToolbarButton
               key={index}
+              active={isActive}
               onClick={() =>
                 item.name && this.props.commands[item.name](item.attrs)
               }
-              active={isActive}
             >
               <Tooltip tooltip={item.tooltip} placement="top">
-                <Icon color={this.props.theme.toolbarItem} />
+                <Icon color={item.iconColor || this.props.theme.toolbarItem} />
               </Tooltip>
             </ToolbarButton>
           );

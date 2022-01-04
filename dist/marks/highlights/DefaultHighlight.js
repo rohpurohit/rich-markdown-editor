@@ -13,6 +13,11 @@ class DefaultHighlight extends Mark_1.default {
     }
     get schema() {
         return {
+            attrs: {
+                color: {
+                    default: "#FFDBDB",
+                },
+            },
             excludes: "highlight",
             group: "highlight",
             parseDOM: [

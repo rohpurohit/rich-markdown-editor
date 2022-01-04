@@ -24,7 +24,9 @@ export default function formattingMenuItems(
   state: EditorState,
   isTemplate: boolean,
   dictionary: typeof baseDictionary
-): MenuItem[] {
+): (MenuItem & {
+  iconColor?: string;
+})[] {
   const { schema } = state;
   const isTable = isInTable(state);
   const isList = isInList(state);
@@ -55,10 +57,43 @@ export default function formattingMenuItems(
       active: isMarkActive(schema.marks.strikethrough),
     },
     {
-      name: "highlight",
-      tooltip: dictionary.mark,
+      name: "highlight_default",
+      tooltip: "Red Highlight",
       icon: HighlightIcon,
-      active: isMarkActive(schema.marks.highlight),
+      iconColor: schema.marks.highlight_default.attrs.color.default,
+      active: isMarkActive(schema.marks.highlight_default),
+      visible: !isTemplate,
+    },
+    {
+      name: "highlight_orange",
+      tooltip: "Orange Highlight",
+      icon: HighlightIcon,
+      iconColor: schema.marks.highlight_orange.attrs.color.default,
+      active: isMarkActive(schema.marks.highlight_orange),
+      visible: !isTemplate,
+    },
+    {
+      name: "highlight_yellow",
+      tooltip: "Yellow Highlight",
+      icon: HighlightIcon,
+      iconColor: schema.marks.highlight_yellow.attrs.color.default,
+      active: isMarkActive(schema.marks.highlight_yellow),
+      visible: !isTemplate,
+    },
+    {
+      name: "highlight_green",
+      tooltip: "Green Highlight",
+      icon: HighlightIcon,
+      iconColor: schema.marks.highlight_green.attrs.color.default,
+      active: isMarkActive(schema.marks.highlight_green),
+      visible: !isTemplate,
+    },
+    {
+      name: "highlight_blue",
+      tooltip: "Blue Highlight",
+      icon: HighlightIcon,
+      iconColor: schema.marks.highlight_blue.attrs.color.default,
+      active: isMarkActive(schema.marks.highlight_blue),
       visible: !isTemplate,
     },
     {

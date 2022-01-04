@@ -2,6 +2,11 @@ import Mark from "../Mark";
 export default class DefaultHighlight extends Mark {
     get name(): string;
     get schema(): {
+        attrs: {
+            color: {
+                default: string;
+            };
+        };
         excludes: string;
         group: string;
         parseDOM: ({

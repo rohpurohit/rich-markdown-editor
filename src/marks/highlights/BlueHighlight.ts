@@ -10,6 +10,11 @@ export default class BlueHighlight extends Mark {
 
   get schema() {
     return {
+      attrs: {
+        color: {
+          default: "#D9EDFF",
+        },
+      },
       excludes: "highlight",
       group: "highlight",
       parseDOM: [
