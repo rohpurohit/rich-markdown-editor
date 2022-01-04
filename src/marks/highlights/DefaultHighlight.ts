@@ -24,29 +24,21 @@ export default class DefaultHighlight extends Mark {
   }
 
   inputRules({ type }) {
-    return [markInputRule(/(?:=r=)([^=]+)(?:=r=)$/, type)];
-  }
-
-  keys({ type }) {
-    return {
-      //   "Mod-Ctrl-h": toggleMark(type),
-    };
+    return [markInputRule(/(?:==)([^=]+)(?:==)$/, type)];
   }
 
   commands({ type }) {
-    return (attrs: any) => {
-      return toggleMark(type, attrs);
-    };
+    return (attrs: any) => toggleMark(type, attrs);
   }
 
   get rulePlugins() {
-    return [markRule({ delim: "=r=", mark: "highlight_default" })];
+    return [markRule({ delim: "==", mark: "highlight_default" })];
   }
 
   get toMarkdown() {
     return {
-      open: "=r=",
-      close: "=r=",
+      open: "==",
+      close: "==",
       mixable: true,
       expelEnclosingWhitespace: true,
     };

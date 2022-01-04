@@ -3,9 +3,9 @@ import markInputRule from "../../lib/markInputRule";
 import Mark from "../Mark";
 import markRule from "../../rules/mark";
 
-export default class BlueHighlight extends Mark {
+export default class OrangeHighlight extends Mark {
   get name() {
-    return "highlight_blue";
+    return "highlight_orange";
   }
 
   get schema() {
@@ -13,19 +13,19 @@ export default class BlueHighlight extends Mark {
       parseDOM: [
         {
           tag: "mark",
-          getAttrs: (node) => node.getAttribute("class") === "blue",
+          getAttrs: (node) => node.getAttribute("class") === "orange",
         },
         {
           style: "background-color",
-          getAttrs: (value) => !!value && value === "blue",
+          getAttrs: (value) => !!value && value === "orange",
         },
       ],
-      toDOM: () => ["mark", { class: "blue" }],
+      toDOM: () => ["mark", { class: "orange" }],
     };
   }
 
   inputRules({ type }) {
-    return [markInputRule(/(?:\^\^)([^=]+)(?:\^\^)$/, type)];
+    return [markInputRule(/(?:@@)([^=]+)(?:@@)$/, type)];
   }
 
   keys({ type }) {
@@ -41,19 +41,19 @@ export default class BlueHighlight extends Mark {
   }
 
   get rulePlugins() {
-    return [markRule({ delim: "^^", mark: "highlight_blue" })];
+    return [markRule({ delim: "@@", mark: "highlight_orange" })];
   }
 
   get toMarkdown() {
     return {
-      open: "^^",
-      close: "^^",
+      open: "@@",
+      close: "@@",
       mixable: true,
       expelEnclosingWhitespace: true,
     };
   }
 
   parseMarkdown() {
-    return { mark: "highlight_blue" };
+    return { mark: "highlight_orange" };
   }
 }

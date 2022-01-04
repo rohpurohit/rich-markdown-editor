@@ -65,6 +65,9 @@ import TableRow from "./nodes/TableRow";
 import Bold from "./marks/Bold";
 import Code from "./marks/Code";
 import DefaultHighlight from "./marks/highlights/DefaultHighlight";
+import OrangeHighlight from "./marks/highlights/OrangeHighlight";
+import YellowHighlight from "./marks/highlights/YelloHighlight";
+import GreenHighlight from "./marks/highlights/GreenHighlight";
 import BlueHighlight from "./marks/highlights/BlueHighlight";
 import Italic from "./marks/Italic";
 import Link from "./marks/Link";
@@ -376,8 +379,11 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new TableRow(),
           new Bold(),
           new Code(),
+          new OrangeHighlight(),
+          new YellowHighlight(),
           new BlueHighlight(),
-          new DefaultHighlight(),
+          new GreenHighlight(),
+          new DefaultHighlight(), // the order matters here!! since it's the default marker
           new Italic(),
           new TemplatePlaceholder(),
           new Underline(),
@@ -529,12 +535,17 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     const html_test = `
       <p><mark>red paragraph</mark></p>
       <p style="background-color: blue;">blue paragraph</p>
-      <mark class="blue">blue paragraph</mark>
+      <mark class="blue">blue paragraph</mark><br />
+      <mark class="green">green paragraph</mark> <br />
+      <span style="background-color: yellow;">yellow paragraph</span>
       `;
 
-    const md_test = `
-      ==red paragraph==
-      `;
+    const md_test =
+      `==red==
+            @@orange@@
+            $$yellow$$
+            %%green%%
+        ^^blue^^` && null;
 
     const doc = this.createDocument(
       md_test || html_test || value || this.props.defaultValue
