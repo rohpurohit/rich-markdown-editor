@@ -88,15 +88,12 @@ class KnowtCommandMenu extends React.Component {
                 e.preventDefault();
                 e.stopPropagation();
                 if (currentArray.length) {
+                    const newIndex = currentIndex - 1 < 0 ? currentArray.length - 1 : currentIndex - 1;
                     if (stateKey === "nestedSelectedIndex") {
-                        this.setState({
-                            nestedSelectedIndex: Math.max(0, currentIndex - 1),
-                        });
+                        this.setState({ nestedSelectedIndex: newIndex });
                     }
                     else {
-                        this.setState({
-                            selectedIndex: Math.max(0, currentIndex - 1),
-                        });
+                        this.setState({ selectedIndex: newIndex });
                     }
                 }
                 else {
@@ -109,15 +106,12 @@ class KnowtCommandMenu extends React.Component {
                 e.preventDefault();
                 e.stopPropagation();
                 if (currentArray.length) {
+                    const newIndex = currentIndex + 1 === currentArray.length ? 0 : currentIndex + 1;
                     if (stateKey === "nestedSelectedIndex") {
-                        this.setState({
-                            nestedSelectedIndex: Math.min(currentIndex + 1, currentArray.length - 1),
-                        });
+                        this.setState({ nestedSelectedIndex: newIndex });
                     }
                     else {
-                        this.setState({
-                            selectedIndex: Math.min(currentIndex + 1, currentArray.length - 1),
-                        });
+                        this.setState({ selectedIndex: newIndex });
                     }
                 }
                 else {
