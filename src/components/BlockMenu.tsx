@@ -3,27 +3,44 @@ import { findParentNode } from "prosemirror-utils";
 import KnowtCommandMenu, { Props } from "./KnowtCommandMenu";
 import BlockMenuItem from "./BlockMenuItem";
 import BlockGroupMenuItem from "./BlockGroupMenuItem";
-import getMenuItems, {
+import {
+  getEmbedsGroup,
   groupedBlockMenu as getGroupedMenuItems,
 } from "../menus/block";
+import { GroupMenuItem } from "../types";
 
 type BlockMenuProps = Omit<
   Props,
   | "renderMenuItem"
   | "renderGroupMenuItem"
-  | "items"
-  | "groupedItems"
+  | "allGroups"
+  | "visibleGroups"
   | "onClearSearch"
 > &
   Required<Pick<Props, "onLinkToolbarOpen" | "embeds">>;
 
 class BlockMenu extends React.Component<BlockMenuProps> {
-  get items() {
-    return getMenuItems(this.props.dictionary);
+  // grouped items without embeds
+  get groupedItems(): GroupMenuItem[] {
+    return getGroupedMenuItems(this.props.dictionary);
   }
 
-  get groupedItems() {
-    return getGroupedMenuItems(this.props.dictionary);
+  get embedsGroup(): GroupMenuItem {
+    return getEmbedsGroup(this.props.embeds);
+  }
+
+  get allGroups(): GroupMenuItem[] {
+    return [...this.groupedItems, this.embedsGroup];
+  }
+
+  // items + embeds groups - filter out default hidden items
+  get visibleGroups(): GroupMenuItem[] {
+    return this.allGroups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter(({ defaultHidden }) => !defaultHidden),
+      }))
+      .filter(({ items }) => items.length > 0);
   }
 
   clearSearch = () => {
@@ -47,9 +64,11 @@ class BlockMenu extends React.Component<BlockMenuProps> {
               key={item.title}
               onClick={options.onClick}
               selected={options.selected}
+              isSearch={options.isSearch}
               icon={item.icon}
               title={item.title}
               shortcut={item.shortcut}
+              mainSearchKeyword={item.mainKeyword}
             />
           );
         }}
@@ -64,8 +83,8 @@ class BlockMenu extends React.Component<BlockMenuProps> {
             />
           );
         }}
-        items={this.items}
-        groupedItems={this.groupedItems}
+        visibleGroups={this.visibleGroups}
+        allGroups={this.allGroups}
       />
     );
   }

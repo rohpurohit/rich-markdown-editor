@@ -12,6 +12,8 @@ export type Props = {
   title: React.ReactNode;
   shortcut?: string;
   containerId?: string;
+  isSearch?: boolean;
+  mainSearchKeyword?: string;
 };
 
 function BlockMenuItem({
@@ -21,6 +23,8 @@ function BlockMenuItem({
   title,
   shortcut,
   icon,
+  isSearch,
+  mainSearchKeyword,
   containerId = "block-menu-container",
 }: Props) {
   const Icon = icon;
@@ -49,19 +53,28 @@ function BlockMenuItem({
       onClick={disabled ? undefined : onClick}
       ref={ref}
     >
-      {Icon && (
-        <>
-          <Icon
-            size={19}
-            color={
-              selected ? theme.blockToolbarIconSelected : theme.blockToolbarIcon
-            }
-          />
-          &nbsp;&nbsp;
-        </>
-      )}
-      <Title>{title}</Title>
-      {shortcut && <Shortcut>{shortcut}</Shortcut>}
+      <Group>
+        {Icon && (
+          <>
+            <Icon
+              size={16}
+              color={
+                selected
+                  ? theme.blockToolbarIconSelected
+                  : theme.blockToolbarIcon
+              }
+            />
+            &nbsp;&nbsp;
+          </>
+        )}
+        <Title>{title}</Title>
+      </Group>
+      <Group>
+        {isSearch && mainSearchKeyword && (
+          <SearchKeyword>{mainSearchKeyword}</SearchKeyword>
+        )}
+        {!isSearch && shortcut && <Shortcut>{shortcut}</Shortcut>}
+      </Group>
     </MenuItem>
   );
 }
@@ -71,8 +84,8 @@ const MenuItem = styled.button<{
 }>`
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  font-weight: 500;
+  justify-content: space-between;
+  font-weight: 600;
   font-size: 14px;
   line-height: 1;
   width: 100%;
@@ -103,15 +116,31 @@ const MenuItem = styled.button<{
   }
 `;
 
+const Group = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const Title = styled.span`
-  margin-right: 40px;
+  margin-right: 50px;
+`;
+
+const SearchKeyword = styled.span`
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 5px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  color: ${(props) => props.theme.knowtGreen};
+  background-color: #ecf9f7;
 `;
 
 const Shortcut = styled.span`
   color: ${(props) => props.theme.textSecondary};
   font-size: 9px;
-  flex-grow: 1;
-  text-align: right;
 `;
 
 export default withTheme(BlockMenuItem);

@@ -47,6 +47,7 @@ export type Props = {
     index: number,
     options: {
       selected: boolean;
+      isSearch: boolean;
       onClick: () => void;
     }
   ) => React.ReactNode;
@@ -60,8 +61,8 @@ export type Props = {
     }
   ) => React.ReactNode;
   filterable?: boolean;
-  items: MenuItem[];
-  groupedItems: GroupMenuItem[];
+  allGroups: GroupMenuItem[];
+  visibleGroups: GroupMenuItem[];
   id?: string;
 };
 
@@ -69,6 +70,7 @@ type State = {
   insertItem?: EmbedDescriptor;
   selectedIndex: number;
   nestedSelectedIndex: number | null;
+  searchItemsSelectedIndex: number;
   menu1Position: MenuPosition;
   menu2Position: MenuPosition;
   nestedMenuOpen: boolean;
@@ -87,6 +89,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     menu2Position: defaultMenuPosition,
     selectedIndex: 0,
     nestedSelectedIndex: null,
+    searchItemsSelectedIndex: 0,
     insertItem: undefined,
     nestedMenuOpen: false,
     activeGroup: null,
@@ -121,7 +124,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         menu1Position: this.calculatePosition(this.props),
       });
     } else if (prevProps.search !== this.props.search) {
-      this.setState({ selectedIndex: 0 });
+      this.setState({ selectedIndex: 0, searchItemsSelectedIndex: 0 });
     }
 
     if (prevProps.isActive && !this.props.isActive) {
@@ -141,14 +144,19 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   handleKeyDown = (e: KeyboardEvent): void => {
     if (!this.props.isActive) return;
 
-    const stateKey: "selectedIndex" | "nestedSelectedIndex" =
-      this.state.nestedSelectedIndex === null
-        ? "selectedIndex"
-        : "nestedSelectedIndex";
+    const stateKey = this.props.search
+      ? "searchItemsSelectedIndex"
+      : this.state.nestedSelectedIndex === null
+      ? "selectedIndex"
+      : "nestedSelectedIndex";
 
-    const currentGroup = this.filtered[this.state.selectedIndex];
     const currentArray =
-      stateKey === "nestedSelectedIndex" ? currentGroup.items : this.filtered;
+      stateKey === "searchItemsSelectedIndex"
+        ? this.filtered.map(({ items }) => items).flat()
+        : stateKey === "nestedSelectedIndex"
+        ? this.filtered[this.state.selectedIndex].items
+        : this.filtered;
+
     const currentIndex = this.state[stateKey] ?? 0;
 
     if (e.key === "Enter") {
@@ -158,49 +166,42 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       const item = currentArray[currentIndex];
 
       if (item) {
-        if (stateKey === "nestedSelectedIndex") {
-          this.insertItem(item as MenuItem);
-        } else {
+        if (stateKey === "selectedIndex") {
           this.onGroupSelect(this.state.selectedIndex);
+        } else {
+          this.insertItem(item as MenuItem);
         }
       } else {
         this.props.onClose();
       }
     }
 
-    if (
+    const isUpKey =
       e.key === "ArrowUp" ||
       (e.key === "Tab" && e.shiftKey) ||
-      (e.ctrlKey && e.key === "p")
-    ) {
-      e.preventDefault();
-      e.stopPropagation();
+      (e.ctrlKey && e.key === "p");
 
-      if (currentArray.length) {
-        const newIndex =
-          currentIndex - 1 < 0 ? currentArray.length - 1 : currentIndex - 1;
-        if (stateKey === "nestedSelectedIndex") {
-          this.setState({ nestedSelectedIndex: newIndex });
-        } else {
-          this.setState({ selectedIndex: newIndex });
-        }
-      } else {
-        this.close();
-      }
-    }
-
-    if (
+    const isDownKey =
       e.key === "ArrowDown" ||
       (e.key === "Tab" && !e.shiftKey) ||
-      (e.ctrlKey && e.key === "n")
-    ) {
+      (e.ctrlKey && e.key === "n");
+
+    if (isUpKey || isDownKey) {
       e.preventDefault();
       e.stopPropagation();
 
+      const newIndex = isUpKey
+        ? currentIndex - 1 < 0
+          ? currentArray.length - 1
+          : currentIndex - 1
+        : currentIndex + 1 === currentArray.length
+        ? 0
+        : currentIndex + 1;
+
       if (currentArray.length) {
-        const newIndex =
-          currentIndex + 1 === currentArray.length ? 0 : currentIndex + 1;
-        if (stateKey === "nestedSelectedIndex") {
+        if (stateKey === "searchItemsSelectedIndex") {
+          this.setState({ searchItemsSelectedIndex: newIndex });
+        } else if (stateKey === "nestedSelectedIndex") {
           this.setState({ nestedSelectedIndex: newIndex });
         } else {
           this.setState({ selectedIndex: newIndex });
@@ -426,7 +427,8 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   }
 
   onGroupSelect(index: number): void {
-    const activeGroup = this.props.groupedItems[index];
+    console.log("hi");
+    const activeGroup = this.filtered[index];
     const ref = this.groupItemsRef[index];
 
     const { right, top: _top } = ref.getBoundingClientRect();
@@ -507,66 +509,85 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     }
   }
 
-  // filter items (search..) and add embeds
   get filtered(): GroupMenuItem[] {
-    const {
-      embeds = [],
-      search = "",
-      uploadImage,
-      commands,
-      filterable = true,
-    } = this.props;
+    if (!this.props.search) {
+      return this.props.visibleGroups;
+    }
 
-    return this.props.groupedItems;
+    // now that we're searching, filter based on this.props.allGroups,
+    // taking into account items with `defaultHidden: true`
+    return this.props.allGroups
+      .map((group) => {
+        const filteredItems = group.items.filter(
+          ({ name, title, keywords, mainKeyword }) => {
+            if (!this.props.filterable) return true;
 
-    // const embedItems: EmbedDescriptor[] = [];
+            // Some extensions may be disabled, remove corresponding menu items
+            if (
+              name &&
+              !this.props.commands[name] &&
+              !this.props.commands[`create${capitalize(name)}`]
+            ) {
+              return false;
+            }
 
-    // for (const embed of embeds) {
-    //   if (embed.title && embed.icon) {
-    //     embedItems.push({
-    //       ...embed,
-    //       name: "embed",
-    //     });
-    //   }
-    // }
+            // If no image upload callback has been passed, filter the image block out
+            if (!this.props.uploadImage && name === "image") return false;
 
-    // if (embedItems.length) {
-    //   items.push({
-    //     name: "separator",
-    //   });
-    //   items = items.concat(embedItems);
-    // }
+            return [
+              group.groupData.name,
+              title,
+              keywords,
+              mainKeyword,
+            ].some((str) =>
+              str?.toLowerCase().includes(this.props.search?.toLowerCase())
+            );
+          }
+        );
 
-    // const filtered = items.filter((item) => {
-    //   if (item.name === "separator") return true;
+        return {
+          ...group,
+          items: filteredItems,
+        };
+      })
+      .filter(({ items }) => items.length);
+  }
 
-    //   // Some extensions may be disabled, remove corresponding menu items
-    //   if (
-    //     item.name &&
-    //     !commands[item.name] &&
-    //     !commands[`create${capitalize(item.name)}`]
-    //   ) {
-    //     return false;
-    //   }
+  renderGroups(): React.ReactNode {
+    // only show the groups of this.props.visibleGroups,
+    // that will exclude items with `defaultHidden: true`
+    return this.filtered.map((item, index) => {
+      return this.props.renderGroupMenuItem(
+        item,
+        index,
+        (node) => {
+          this.groupItemsRef[index] = node;
+        },
+        {
+          selected: index === this.state.selectedIndex && this.props.isActive,
+          onClick: () => this.onGroupSelect(index),
+        }
+      );
+    });
+  }
 
-    //   // If no image upload callback has been passed, filter the image block out
-    //   if (!uploadImage && item.name === "image") return false;
-
-    //   // some items (defaultHidden) are not visible until a search query exists
-    //   if (!search) return !item.defaultHidden;
-
-    //   const n = search.toLowerCase();
-    //   if (!filterable) {
-    //     return item;
-    //   }
-    //   return (
-    //     (item.title || "").toLowerCase().includes(n) ||
-    //     (item.keywords || "").toLowerCase().includes(n)
-    //   );
-    // });
-
-    // const filtered = [];
-    // return filterExcessSeparators(filtered);
+  renderSearchResults(): React.ReactNode {
+    let currentIndex = 0;
+    return this.filtered.map((group) => {
+      return (
+        <div key={group.groupData.name}>
+          <MenuTitle>{group.groupData.name}</MenuTitle>
+          {group.items.map((item, index) => {
+            const itemGlobalIndex = currentIndex++;
+            return this.props.renderMenuItem(item, index, {
+              selected: itemGlobalIndex === this.state.searchItemsSelectedIndex,
+              isSearch: true,
+              onClick: () => this.insertItem(item),
+            });
+          })}
+        </div>
+      );
+    });
   }
 
   // renders a link input if we're in link input mode (ex: youtube link)
@@ -600,24 +621,11 @@ class KnowtCommandMenu extends React.Component<Props, State> {
               />
             </LinkInputWrapper>
           ) : (
-            <List>
+            <List style={{ rowGap: this.props.search ? 8 : 0 }}>
               {this.props.search
-                ? this.props.search
-                : this.filtered.map((item, index) => {
-                    return this.props.renderGroupMenuItem(
-                      item,
-                      index,
-                      (node) => {
-                        this.groupItemsRef[index] = node;
-                      },
-                      {
-                        selected:
-                          index === this.state.selectedIndex && isActive,
-                        onClick: () => this.onGroupSelect(index),
-                      }
-                    );
-                  })}
-              {this.filtered.length === 0 && (
+                ? this.renderSearchResults()
+                : this.renderGroups()}
+              {this.props.search && this.filtered.length === 0 && (
                 <ListItem>
                   <Empty>{dictionary.noResults}</Empty>
                 </ListItem>
@@ -646,6 +654,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
             {this.state.activeGroup?.items?.map((item, index) => {
               return this.props.renderMenuItem(item, index, {
                 selected: this.state.nestedSelectedIndex === index,
+                isSearch: false,
                 onClick: () => this.insertItem(item),
               });
             })}
@@ -680,6 +689,8 @@ const LinkInput = styled(Input)`
 `;
 
 const List = styled.ol`
+  display: flex;
+  flex-direction: column;
   list-style: none;
   text-align: left;
   height: 100%;
@@ -728,8 +739,8 @@ export const Wrapper = styled.div<{
   box-sizing: border-box;
   pointer-events: none;
   white-space: nowrap;
-  min-width: 180px;
-  max-height: 320px;
+  min-width: 185px;
+  max-height: 520px;
   overflow: hidden;
   overflow-y: auto;
   * {

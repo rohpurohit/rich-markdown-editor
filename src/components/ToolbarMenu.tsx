@@ -11,7 +11,7 @@ type Props = {
   commands: Record<string, any>;
   view: EditorView;
   theme: typeof theme;
-  items: (MenuItem & { iconColor?: string })[];
+  items: MenuItem[];
 };
 
 const FlexibleWrapper = styled.div`

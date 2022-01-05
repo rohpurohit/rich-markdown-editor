@@ -68,7 +68,7 @@ const MenuItem = styled.button<{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   line-height: 1;
   width: 100%;
@@ -100,7 +100,6 @@ const MenuItem = styled.button<{
 `;
 
 const CIRCLE_RADIUS = 20;
-const ICON_DIMENSIONS = 15;
 
 const Circle = styled.div`
   display: flex;

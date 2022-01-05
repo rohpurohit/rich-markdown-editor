@@ -89,6 +89,7 @@ export declare const theme: {
     grey: string;
     greyMid: string;
     greyDark: string;
+    knowtGreen: string;
     knowtGreyLight: string;
     knowtGrey: string;
     knowtGreyMid: string;
@@ -318,6 +319,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
         grey: string;
         greyMid: string;
         greyDark: string;
+        knowtGreen: string;
         knowtGreyLight: string;
         knowtGrey: string;
         knowtGreyMid: string;

@@ -19,6 +19,7 @@ export declare type Props = {
     embeds?: EmbedDescriptor[];
     renderMenuItem: (item: MenuItem, index: number, options: {
         selected: boolean;
+        isSearch: boolean;
         onClick: () => void;
     }) => React.ReactNode;
     renderGroupMenuItem: (item: GroupMenuItem, index: number, callback: (ref: HTMLDivElement) => void, options: {
@@ -26,14 +27,15 @@ export declare type Props = {
         onClick: () => void;
     }) => React.ReactNode;
     filterable?: boolean;
-    items: MenuItem[];
-    groupedItems: GroupMenuItem[];
+    allGroups: GroupMenuItem[];
+    visibleGroups: GroupMenuItem[];
     id?: string;
 };
 declare type State = {
     insertItem?: EmbedDescriptor;
     selectedIndex: number;
     nestedSelectedIndex: number | null;
+    searchItemsSelectedIndex: number;
     menu1Position: MenuPosition;
     menu2Position: MenuPosition;
     nestedMenuOpen: boolean;
@@ -68,6 +70,8 @@ declare class KnowtCommandMenu extends React.Component<Props, State> {
     onGroupSelect(index: number): void;
     calculatePosition(props: Props): MenuPosition;
     get filtered(): GroupMenuItem[];
+    renderGroups(): React.ReactNode;
+    renderSearchResults(): React.ReactNode;
     render(): JSX.Element;
 }
 export declare const Wrapper: import("styled-components").StyledComponent<"div", any, {

@@ -26,7 +26,7 @@ const React = __importStar(require("react"));
 const smooth_scroll_into_view_if_needed_1 = __importDefault(require("smooth-scroll-into-view-if-needed"));
 const styled_components_1 = __importStar(require("styled-components"));
 const theme_1 = __importDefault(require("../styles/theme"));
-function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, containerId = "block-menu-container", }) {
+function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, isSearch, mainSearchKeyword, containerId = "block-menu-container", }) {
     const Icon = icon;
     const ref = React.useCallback((node) => {
         if (selected && node) {
@@ -40,17 +40,22 @@ function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, con
         }
     }, [selected, containerId]);
     return (React.createElement(MenuItem, { selected: selected, onClick: disabled ? undefined : onClick, ref: ref },
-        Icon && (React.createElement(React.Fragment, null,
-            React.createElement(Icon, { size: 19, color: selected ? theme_1.default.blockToolbarIconSelected : theme_1.default.blockToolbarIcon }),
-            "\u00A0\u00A0")),
-        React.createElement(Title, null, title),
-        shortcut && React.createElement(Shortcut, null, shortcut)));
+        React.createElement(Group, null,
+            Icon && (React.createElement(React.Fragment, null,
+                React.createElement(Icon, { size: 16, color: selected
+                        ? theme_1.default.blockToolbarIconSelected
+                        : theme_1.default.blockToolbarIcon }),
+                "\u00A0\u00A0")),
+            React.createElement(Title, null, title)),
+        React.createElement(Group, null,
+            isSearch && mainSearchKeyword && (React.createElement(SearchKeyword, null, mainSearchKeyword)),
+            !isSearch && shortcut && React.createElement(Shortcut, null, shortcut))));
 }
 const MenuItem = styled_components_1.default.button `
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  font-weight: 500;
+  justify-content: space-between;
+  font-weight: 600;
   font-size: 14px;
   line-height: 1;
   width: 100%;
@@ -77,14 +82,28 @@ const MenuItem = styled_components_1.default.button `
     : props.theme.blockToolbarHoverBackground};
   }
 `;
+const Group = styled_components_1.default.div `
+  display: flex;
+  align-items: center;
+`;
 const Title = styled_components_1.default.span `
-  margin-right: 40px;
+  margin-right: 50px;
+`;
+const SearchKeyword = styled_components_1.default.span `
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 5px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  color: ${(props) => props.theme.knowtGreen};
+  background-color: #ecf9f7;
 `;
 const Shortcut = styled_components_1.default.span `
   color: ${(props) => props.theme.textSecondary};
   font-size: 9px;
-  flex-grow: 1;
-  text-align: right;
 `;
 exports.default = styled_components_1.withTheme(BlockMenuItem);
 //# sourceMappingURL=BlockMenuItem.js.map

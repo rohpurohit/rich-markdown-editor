@@ -52,6 +52,7 @@ class KnowtCommandMenu extends React.Component {
             menu2Position: defaultMenuPosition,
             selectedIndex: 0,
             nestedSelectedIndex: null,
+            searchItemsSelectedIndex: 0,
             insertItem: undefined,
             nestedMenuOpen: false,
             activeGroup: null,
@@ -60,54 +61,54 @@ class KnowtCommandMenu extends React.Component {
             var _a;
             if (!this.props.isActive)
                 return;
-            const stateKey = this.state.nestedSelectedIndex === null
-                ? "selectedIndex"
-                : "nestedSelectedIndex";
-            const currentGroup = this.filtered[this.state.selectedIndex];
-            const currentArray = stateKey === "nestedSelectedIndex" ? currentGroup.items : this.filtered;
+            const stateKey = this.props.search
+                ? "searchItemsSelectedIndex"
+                : this.state.nestedSelectedIndex === null
+                    ? "selectedIndex"
+                    : "nestedSelectedIndex";
+            const currentArray = stateKey === "searchItemsSelectedIndex"
+                ? this.filtered.map(({ items }) => items).flat()
+                : stateKey === "nestedSelectedIndex"
+                    ? this.filtered[this.state.selectedIndex].items
+                    : this.filtered;
             const currentIndex = (_a = this.state[stateKey]) !== null && _a !== void 0 ? _a : 0;
             if (e.key === "Enter") {
                 e.preventDefault();
                 e.stopPropagation();
                 const item = currentArray[currentIndex];
                 if (item) {
-                    if (stateKey === "nestedSelectedIndex") {
-                        this.insertItem(item);
+                    if (stateKey === "selectedIndex") {
+                        this.onGroupSelect(this.state.selectedIndex);
                     }
                     else {
-                        this.onGroupSelect(this.state.selectedIndex);
+                        this.insertItem(item);
                     }
                 }
                 else {
                     this.props.onClose();
                 }
             }
-            if (e.key === "ArrowUp" ||
+            const isUpKey = e.key === "ArrowUp" ||
                 (e.key === "Tab" && e.shiftKey) ||
-                (e.ctrlKey && e.key === "p")) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (currentArray.length) {
-                    const newIndex = currentIndex - 1 < 0 ? currentArray.length - 1 : currentIndex - 1;
-                    if (stateKey === "nestedSelectedIndex") {
-                        this.setState({ nestedSelectedIndex: newIndex });
-                    }
-                    else {
-                        this.setState({ selectedIndex: newIndex });
-                    }
-                }
-                else {
-                    this.close();
-                }
-            }
-            if (e.key === "ArrowDown" ||
+                (e.ctrlKey && e.key === "p");
+            const isDownKey = e.key === "ArrowDown" ||
                 (e.key === "Tab" && !e.shiftKey) ||
-                (e.ctrlKey && e.key === "n")) {
+                (e.ctrlKey && e.key === "n");
+            if (isUpKey || isDownKey) {
                 e.preventDefault();
                 e.stopPropagation();
+                const newIndex = isUpKey
+                    ? currentIndex - 1 < 0
+                        ? currentArray.length - 1
+                        : currentIndex - 1
+                    : currentIndex + 1 === currentArray.length
+                        ? 0
+                        : currentIndex + 1;
                 if (currentArray.length) {
-                    const newIndex = currentIndex + 1 === currentArray.length ? 0 : currentIndex + 1;
-                    if (stateKey === "nestedSelectedIndex") {
+                    if (stateKey === "searchItemsSelectedIndex") {
+                        this.setState({ searchItemsSelectedIndex: newIndex });
+                    }
+                    else if (stateKey === "nestedSelectedIndex") {
                         this.setState({ nestedSelectedIndex: newIndex });
                     }
                     else {
@@ -252,7 +253,7 @@ class KnowtCommandMenu extends React.Component {
             });
         }
         else if (prevProps.search !== this.props.search) {
-            this.setState({ selectedIndex: 0 });
+            this.setState({ selectedIndex: 0, searchItemsSelectedIndex: 0 });
         }
         if (prevProps.isActive && !this.props.isActive) {
             this.closeNestedMenu();
@@ -307,7 +308,8 @@ class KnowtCommandMenu extends React.Component {
     }
     onGroupSelect(index) {
         var _a;
-        const activeGroup = this.props.groupedItems[index];
+        console.log("hi");
+        const activeGroup = this.filtered[index];
         const ref = this.groupItemsRef[index];
         const { right, top: _top } = ref.getBoundingClientRect();
         const menuHeight = activeGroup.items.length * 36 + 16;
@@ -373,8 +375,56 @@ class KnowtCommandMenu extends React.Component {
         }
     }
     get filtered() {
-        const { embeds = [], search = "", uploadImage, commands, filterable = true, } = this.props;
-        return this.props.groupedItems;
+        if (!this.props.search) {
+            return this.props.visibleGroups;
+        }
+        return this.props.allGroups
+            .map((group) => {
+            const filteredItems = group.items.filter(({ name, title, keywords, mainKeyword }) => {
+                if (!this.props.filterable)
+                    return true;
+                if (name &&
+                    !this.props.commands[name] &&
+                    !this.props.commands[`create${capitalize_1.default(name)}`]) {
+                    return false;
+                }
+                if (!this.props.uploadImage && name === "image")
+                    return false;
+                return [
+                    group.groupData.name,
+                    title,
+                    keywords,
+                    mainKeyword,
+                ].some((str) => { var _a; return str === null || str === void 0 ? void 0 : str.toLowerCase().includes((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.toLowerCase()); });
+            });
+            return Object.assign(Object.assign({}, group), { items: filteredItems });
+        })
+            .filter(({ items }) => items.length);
+    }
+    renderGroups() {
+        return this.filtered.map((item, index) => {
+            return this.props.renderGroupMenuItem(item, index, (node) => {
+                this.groupItemsRef[index] = node;
+            }, {
+                selected: index === this.state.selectedIndex && this.props.isActive,
+                onClick: () => this.onGroupSelect(index),
+            });
+        });
+    }
+    renderSearchResults() {
+        let currentIndex = 0;
+        return this.filtered.map((group) => {
+            return (React.createElement("div", { key: group.groupData.name },
+                React.createElement(MenuTitle, null, group.groupData.name),
+                group.items.map((item, index) => {
+                    const itemGlobalIndex = currentIndex++;
+                    return this.props.renderMenuItem(item, index, {
+                        selected: itemGlobalIndex === this.state.searchItemsSelectedIndex,
+                        isSearch: true,
+                        onClick: () => this.insertItem(item),
+                    });
+                })));
+        });
     }
     render() {
         var _a, _b, _c;
@@ -385,18 +435,11 @@ class KnowtCommandMenu extends React.Component {
                 insertItem ? (React.createElement(LinkInputWrapper, null,
                     React.createElement(LinkInput, { type: "text", placeholder: insertItem.title
                             ? dictionary.pasteLinkWithTitle(insertItem.title)
-                            : dictionary.pasteLink, onKeyDown: this.handleLinkInputKeydown, onPaste: this.handleLinkInputPaste, autoFocus: true }))) : (React.createElement(List, null,
+                            : dictionary.pasteLink, onKeyDown: this.handleLinkInputKeydown, onPaste: this.handleLinkInputPaste, autoFocus: true }))) : (React.createElement(List, { style: { rowGap: this.props.search ? 8 : 0 } },
                     this.props.search
-                        ? this.props.search
-                        : this.filtered.map((item, index) => {
-                            return this.props.renderGroupMenuItem(item, index, (node) => {
-                                this.groupItemsRef[index] = node;
-                            }, {
-                                selected: index === this.state.selectedIndex && isActive,
-                                onClick: () => this.onGroupSelect(index),
-                            });
-                        }),
-                    this.filtered.length === 0 && (React.createElement(ListItem, null,
+                        ? this.renderSearchResults()
+                        : this.renderGroups(),
+                    this.props.search && this.filtered.length === 0 && (React.createElement(ListItem, null,
                         React.createElement(Empty, null, dictionary.noResults))))),
                 uploadImage && (React.createElement(VisuallyHidden_1.default, null,
                     React.createElement("input", { type: "file", ref: this.inputRef, onChange: this.handleImagePicked, accept: "image/*" })))),
@@ -406,6 +449,7 @@ class KnowtCommandMenu extends React.Component {
                     _c.map((item, index) => {
                         return this.props.renderMenuItem(item, index, {
                             selected: this.state.nestedSelectedIndex === index,
+                            isSearch: false,
                             onClick: () => this.insertItem(item),
                         });
                     }),
@@ -429,6 +473,8 @@ const LinkInput = styled_components_1.default(Input_1.default) `
   color: ${(props) => props.theme.blockToolbarText};
 `;
 const List = styled_components_1.default.ol `
+  display: flex;
+  flex-direction: column;
   list-style: none;
   text-align: left;
   height: 100%;
@@ -468,8 +514,8 @@ exports.Wrapper = styled_components_1.default.div `
   box-sizing: border-box;
   pointer-events: none;
   white-space: nowrap;
-  min-width: 180px;
-  max-height: 320px;
+  min-width: 185px;
+  max-height: 520px;
   overflow: hidden;
   overflow-y: auto;
   * {

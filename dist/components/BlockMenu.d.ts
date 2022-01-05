@@ -1,9 +1,12 @@
 import React from "react";
 import { Props } from "./KnowtCommandMenu";
-declare type BlockMenuProps = Omit<Props, "renderMenuItem" | "renderGroupMenuItem" | "items" | "groupedItems" | "onClearSearch"> & Required<Pick<Props, "onLinkToolbarOpen" | "embeds">>;
+import { GroupMenuItem } from "../types";
+declare type BlockMenuProps = Omit<Props, "renderMenuItem" | "renderGroupMenuItem" | "allGroups" | "visibleGroups" | "onClearSearch"> & Required<Pick<Props, "onLinkToolbarOpen" | "embeds">>;
 declare class BlockMenu extends React.Component<BlockMenuProps> {
-    get items(): import("../types").MenuItem[];
-    get groupedItems(): import("../types").GroupMenuItem[];
+    get groupedItems(): GroupMenuItem[];
+    get embedsGroup(): GroupMenuItem;
+    get allGroups(): GroupMenuItem[];
+    get visibleGroups(): GroupMenuItem[];
     clearSearch: () => void;
     render(): JSX.Element;
 }

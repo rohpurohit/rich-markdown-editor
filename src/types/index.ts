@@ -8,10 +8,12 @@ export enum ToastType {
 
 export type MenuItem = {
   icon?: typeof React.Component | React.FC<any>;
+  iconColor?: string;
   name?: string;
   title?: string;
   shortcut?: string;
   keywords?: string;
+  mainKeyword?: string;
   tooltip?: string;
   defaultHidden?: boolean;
   attrs?: Record<string, any>;
@@ -33,7 +35,7 @@ export type MenuPosition = {
 
 export type GroupMenuItem = {
   groupData: GroupData;
-  items: MenuItem[];
+  items: (MenuItem | EmbedDescriptor)[];
 };
 
 export type GroupData = {
