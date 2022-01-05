@@ -37,7 +37,9 @@ class GreenHighlight extends Mark_1.default {
         return [markInputRule_1.default(/(?:%%)([^=]+)(?:%%)$/, type)];
     }
     keys({ type }) {
-        return {};
+        return {
+            "Alt-Shift-4": prosemirror_commands_1.toggleMark(type),
+        };
     }
     commands({ type }) {
         return () => prosemirror_commands_1.toggleMark(type);

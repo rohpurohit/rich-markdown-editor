@@ -35,6 +35,11 @@ class DefaultHighlight extends Mark_1.default {
     inputRules({ type }) {
         return [markInputRule_1.default(/(?:==)([^=]+)(?:==)$/, type)];
     }
+    keys({ type }) {
+        return {
+            "Alt-Shift-1": prosemirror_commands_1.toggleMark(type),
+        };
+    }
     commands({ type }) {
         return () => prosemirror_commands_1.toggleMark(type);
     }

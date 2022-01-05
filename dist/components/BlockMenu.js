@@ -21,7 +21,7 @@ class BlockMenu extends react_1.default.Component {
         };
     }
     get groupedItems() {
-        return block_1.groupedBlockMenu(this.props.dictionary);
+        return block_1.groupedBlockMenu(this.props.view.state, this.props.dictionary);
     }
     get embedsGroup() {
         return block_1.getEmbedsGroup(this.props.embeds);
@@ -36,7 +36,7 @@ class BlockMenu extends react_1.default.Component {
     }
     render() {
         return (react_1.default.createElement(KnowtCommandMenu_1.default, Object.assign({}, this.props, { filterable: true, onClearSearch: this.clearSearch, renderMenuItem: (item, _index, options) => {
-                return (react_1.default.createElement(BlockMenuItem_1.default, { key: item.title, onClick: options.onClick, selected: options.selected, isSearch: options.isSearch, icon: item.icon, title: item.title, shortcut: item.shortcut, mainSearchKeyword: item.mainKeyword }));
+                return (react_1.default.createElement(BlockMenuItem_1.default, { key: item.title, onClick: options.onClick, selected: options.selected, isSearch: options.isSearch, icon: item.icon, iconColor: item.iconColor, iconSize: item.iconSize, title: item.title, shortcut: item.shortcut, mainSearchKeyword: item.mainKeyword }));
             }, renderGroupMenuItem: (item, _index, innerRef, options) => {
                 return (react_1.default.createElement(BlockGroupMenuItem_1.default, { innerRef: innerRef, key: item.groupData.name, title: item.groupData.name, selected: options.selected, onClick: options.onClick }));
             }, visibleGroups: this.visibleGroups, allGroups: this.allGroups })));

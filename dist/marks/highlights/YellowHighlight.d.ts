@@ -27,7 +27,9 @@ export default class YellowHighlight extends Mark {
     }): import("prosemirror-inputrules").InputRule<any>[];
     keys({ type }: {
         type: any;
-    }): {};
+    }): {
+        "Alt-Shift-3": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
+    };
     commands({ type }: {
         type: any;
     }): () => (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;

@@ -1,5 +1,6 @@
 import { EmbedDescriptor, GroupMenuItem } from "../types";
 import baseDictionary from "../dictionary";
-export declare const groupedBlockMenu: (dictionary: typeof baseDictionary) => GroupMenuItem[];
+import { EditorState } from "prosemirror-state";
+export declare const groupedBlockMenu: (state: EditorState, dictionary: typeof baseDictionary) => GroupMenuItem[];
 export declare const getEmbedsGroup: (embeds: EmbedDescriptor[]) => GroupMenuItem;
 //# sourceMappingURL=block.d.ts.map
