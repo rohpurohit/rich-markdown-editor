@@ -37,7 +37,7 @@ export default class BlueHighlight extends Mark {
 
   keys({ type }) {
     return {
-      //   "Mod-Ctrl-h": toggleMark(type),
+      "Alt-Shift-5": toggleMark(type),
     };
   }
 

@@ -15,14 +15,19 @@ import {
 } from "outline-icons";
 import { EmbedDescriptor, GroupMenuItem } from "../types";
 import baseDictionary from "../dictionary";
+import { CircleIcon } from "../icons";
+import { EditorState } from "prosemirror-state";
 
 const SSR = typeof window === "undefined";
 const isMac = !SSR && window.navigator.platform === "MacIntel";
 const mod = isMac ? "⌘" : "ctrl";
 
 export const groupedBlockMenu = (
+  state: EditorState,
   dictionary: typeof baseDictionary
 ): GroupMenuItem[] => {
+  const { schema } = state;
+
   return [
     {
       groupData: {
@@ -157,37 +162,52 @@ export const groupedBlockMenu = (
         {
           name: "highlight_default",
           title: "Red",
-          icon: undefined,
+          icon: CircleIcon,
+          iconColor: schema.marks.highlight_default.attrs.color.default,
+          iconSize: 22,
           keywords: "highlight red",
           mainKeyword: "red",
+          shortcut: "alt shift 1",
         },
         {
           name: "highlight_orange",
           title: "Orange",
-          icon: undefined,
+          icon: CircleIcon,
+          iconColor: schema.marks.highlight_orange.attrs.color.default,
+          iconSize: 22,
           keywords: "highlight orange",
           mainKeyword: "orange",
+          shortcut: "alt shift 2",
         },
         {
           name: "highlight_yellow",
           title: "Yellow",
-          icon: undefined,
+          icon: CircleIcon,
+          iconColor: schema.marks.highlight_yellow.attrs.color.default,
+          iconSize: 22,
           keywords: "highlight yellow",
           mainKeyword: "yellow",
+          shortcut: "alt shift 3",
         },
         {
           name: "highlight_green",
           title: "Green",
-          icon: undefined,
+          icon: CircleIcon,
+          iconColor: schema.marks.highlight_green.attrs.color.default,
+          iconSize: 22,
           keywords: "highlight green",
           mainKeyword: "green",
+          shortcut: "alt shift 4",
         },
         {
           name: "highlight_blue",
           title: "Blue",
-          icon: undefined,
+          icon: CircleIcon,
+          iconColor: schema.marks.highlight_blue.attrs.color.default,
+          iconSize: 22,
           keywords: "highlight blue",
           mainKeyword: "blue",
+          shortcut: "alt shift 5",
         },
         // {
         //   name: "highlight",

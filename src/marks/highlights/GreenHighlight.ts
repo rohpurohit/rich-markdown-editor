@@ -37,7 +37,7 @@ export default class GreenHighlight extends Mark {
 
   keys({ type }) {
     return {
-      //   "Mod-Ctrl-h": toggleMark(type),
+      "Alt-Shift-4": toggleMark(type),
     };
   }
 

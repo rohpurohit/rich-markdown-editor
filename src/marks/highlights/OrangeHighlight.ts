@@ -37,7 +37,7 @@ export default class OrangeHighlight extends Mark {
 
   keys({ type }) {
     return {
-      //   "Mod-Ctrl-h": toggleMark(type),
+      "Alt-Shift-2": toggleMark(type),
     };
   }
 
