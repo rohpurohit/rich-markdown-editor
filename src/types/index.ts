@@ -31,7 +31,7 @@ export type MenuPosition = {
   left: number;
   top?: number;
   bottom?: number;
-  isAbove: boolean;
+  isAbove?: boolean;
 };
 
 export type GroupMenuItem = {

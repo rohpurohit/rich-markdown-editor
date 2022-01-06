@@ -61,7 +61,7 @@ const embeds = [
   {
     title: "YouTube",
     keywords: "youtube video tube google",
-    defaultHidden: true,
+    // defaultHidden: true,
     // eslint-disable-next-line react/display-name
     icon: () => (
       <img

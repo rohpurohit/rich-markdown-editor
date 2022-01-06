@@ -8,7 +8,7 @@ export type Props = {
   theme: typeof theme;
   selected: boolean;
   disabled?: boolean;
-  innerRef: (ref: HTMLDivElement) => void;
+  innerRef?: (ref: HTMLDivElement) => void;
   onClick: () => void;
   containerId?: string;
 };
@@ -25,7 +25,7 @@ function BlockGroupMenuItem(props: Props) {
 
   const ref = React.useCallback(
     (node) => {
-      innerRef(node);
+      innerRef?.(node);
       if (selected && node) {
         scrollIntoView(node, {
           scrollMode: "if-needed",

@@ -14,9 +14,9 @@ import {
 import Input from "./Input";
 import VisuallyHidden from "./VisuallyHidden";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
-import filterExcessSeparators from "../lib/filterExcessSeparators";
 import insertFiles from "../commands/insertFiles";
 import baseDictionary from "../dictionary";
+import { getStyleValue } from "../domHelpers";
 
 const SSR = typeof window === "undefined";
 
@@ -24,7 +24,6 @@ const defaultMenuPosition: MenuPosition = {
   left: -1000,
   top: 0,
   bottom: undefined,
-  isAbove: false,
 };
 
 export type Props = {
@@ -45,6 +44,7 @@ export type Props = {
   renderMenuItem: (
     item: MenuItem,
     index: number,
+    callback?: (ref: HTMLDivElement) => void,
     options: {
       selected: boolean;
       isSearch: boolean;
@@ -74,15 +74,15 @@ type State = {
   menu1Position: MenuPosition;
   menu2Position: MenuPosition;
   nestedMenuOpen: boolean;
-  activeGroup: GroupMenuItem | null;
 };
 
 class KnowtCommandMenu extends React.Component<Props, State> {
   menuRef = React.createRef<HTMLDivElement>();
-  nestedMenuRef = React.createRef<HTMLDivElement>();
+  listRef = React.createRef<HTMLOListElement>();
   inputRef = React.createRef<HTMLInputElement>();
+  menuTitleRef = React.createRef<HTMLDivElement>();
 
-  groupItemsRef: HTMLDivElement[] = [];
+  primaryItemsRef: HTMLDivElement[] = [];
 
   state: State = {
     menu1Position: defaultMenuPosition,
@@ -92,7 +92,6 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     searchItemsSelectedIndex: 0,
     insertItem: undefined,
     nestedMenuOpen: false,
-    activeGroup: null,
   };
 
   constructor(props: Props) {
@@ -117,17 +116,22 @@ class KnowtCommandMenu extends React.Component<Props, State> {
 
   // calculate new positioning if needed, and reset state
   componentDidUpdate(prevProps: Props): void {
-    if (!prevProps.isActive && this.props.isActive) {
+    if (
+      (this.props.isActive && !prevProps.isActive) ||
+      (this.props.search && this.props.search !== prevProps.search)
+    ) {
+      // menu became active, or search term has changed
+      // -> reset selection state and find the new pos
       this.setState({
         insertItem: undefined,
         selectedIndex: 0,
-        menu1Position: this.calculatePosition(this.props),
+        searchItemsSelectedIndex: 0,
+        menu1Position: this.calculateMenu1Position(),
       });
-    } else if (prevProps.search !== this.props.search) {
-      this.setState({ selectedIndex: 0, searchItemsSelectedIndex: 0 });
     }
 
     if (prevProps.isActive && !this.props.isActive) {
+      // menu became inactive -> update the state accordingly
       this.closeNestedMenu();
     }
   }
@@ -204,7 +208,14 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         } else if (stateKey === "nestedSelectedIndex") {
           this.setState({ nestedSelectedIndex: newIndex });
         } else {
-          this.setState({ selectedIndex: newIndex });
+          let updatedState = { selectedIndex: newIndex };
+          if (this.state.nestedMenuOpen) {
+            // update nested menu position
+            updatedState = Object.assign(updatedState, {
+              menu2Position: this.calculateMenu2Position(newIndex),
+            });
+          }
+          this.setState(updatedState);
         }
       } else {
         this.close();
@@ -258,7 +269,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     this.setState({
       nestedMenuOpen: false,
       menu2Position: defaultMenuPosition,
-      activeGroup: null,
+      selectedIndex: 0,
       nestedSelectedIndex: null,
     });
   }
@@ -427,38 +438,57 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   }
 
   onGroupSelect(index: number): void {
-    console.log("hi");
-    const activeGroup = this.filtered[index];
-    const ref = this.groupItemsRef[index];
-
-    const { right, top: _top } = ref.getBoundingClientRect();
-
-    const menuHeight = activeGroup.items.length * 36 + 16;
-    const marginV = 50;
-    const marginH = 10;
-
-    const top =
-      _top + menuHeight + marginV < window.innerHeight ? _top - 16 : 0;
-    const left = right + (window.scrollX ?? 0) + marginH;
-
-    const menu2Position = {
-      left,
-      top,
-      bottom: undefined,
-      isAbove: true,
-    };
-
     this.setState({
-      nestedSelectedIndex: 0,
       selectedIndex: index,
+      nestedSelectedIndex: 0,
       nestedMenuOpen: true,
-      activeGroup,
-      menu2Position,
+      menu2Position: this.calculateMenu2Position(index),
     });
   }
 
-  calculatePosition(props: Props): MenuPosition {
-    const { view } = props;
+  calculateMenu2Position(groupIndex: number): MenuPosition {
+    const [SAFE_MARGIN_X, SAFE_MARGIN_Y] = [10, 50];
+    const menuHeight = this.getMenu2Height(groupIndex);
+
+    const { right, top: _top } = this.primaryItemsRef[
+      groupIndex
+    ].getBoundingClientRect();
+
+    const bottomToBottomDistance =
+      window.innerHeight - (_top + menuHeight + SAFE_MARGIN_Y);
+    const left = right + window.scrollX + SAFE_MARGIN_X;
+
+    const offset = bottomToBottomDistance > 0 ? 0 : bottomToBottomDistance;
+
+    return {
+      left,
+      top: _top + window.scrollY + offset,
+      bottom: undefined,
+    };
+  }
+
+  calculateMenu1Position(): MenuPosition {
+    if (this.props.search) {
+      // the menu is already opened, update its position
+      return this.getSearchMenuPosition();
+    }
+
+    return this.getMenu1InitialPosition();
+  }
+
+  getSearchMenuPosition(): MenuPosition {
+    if (this.filtered.length === 0) {
+      return this.state.menu1Position;
+    }
+
+    const searchMenuHeight = this.getSearchMenuHeight();
+    console.log(searchMenuHeight);
+
+    return this.state.menu1Position;
+  }
+
+  getMenu1InitialPosition(): MenuPosition {
+    const { view, isActive, rtl } = this.props;
     const { selection } = view.state;
     let startPos;
 
@@ -470,14 +500,14 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     }
 
     const menuRef = this.menuRef.current;
-    const offsetHeight = menuRef ? menuRef.offsetHeight : 0;
+    const menuHeight = menuRef ? menuRef.offsetHeight : 0;
 
     const paragraph: { node: any } = {
       node: findDomRefAtPos(selection.from, view.domAtPos.bind(view)),
     };
 
     if (
-      !props.isActive ||
+      !isActive ||
       !paragraph.node ||
       !paragraph.node.getBoundingClientRect ||
       SSR
@@ -486,27 +516,57 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     }
 
     const { top, bottom, right } = paragraph.node.getBoundingClientRect();
-
     const left =
-      props.rtl && menuRef
+      rtl && menuRef
         ? right - menuRef.scrollWidth
         : this.getCaretPosition().left + window.scrollX;
 
-    if (startPos.top - offsetHeight > 50) {
-      return {
-        left,
-        top: undefined,
-        bottom: window.innerHeight - top - window.scrollY,
-        isAbove: false,
-      };
-    } else {
+    const SAFE_MARGIN_Y = 60;
+
+    if (startPos.top + menuHeight + SAFE_MARGIN_Y < window.innerHeight) {
       return {
         left,
         top: bottom + window.scrollY,
         bottom: undefined,
         isAbove: true,
       };
+    } else {
+      return {
+        left,
+        top: undefined,
+        bottom: window.innerHeight - top - window.scrollY,
+        isAbove: false,
+      };
     }
+  }
+
+  getMenu2Height(groupIndex: number): number {
+    const contentHeight = this.getGroupHeight(this.filtered[groupIndex]);
+    const menuPaddingY =
+      getStyleValue(this.listRef.current, "paddingBlock") * 2;
+
+    return contentHeight + menuPaddingY;
+  }
+
+  getSearchMenuHeight(): number {
+    let searchMenuHeight = 0;
+    searchMenuHeight +=
+      getStyleValue(this.listRef.current, "rowGap") *
+      (this.filtered.length - 1);
+    searchMenuHeight += getStyleValue(this.listRef.current, "paddingBlock") * 2;
+
+    return this.filtered.reduce(
+      (acc, group) => (acc += this.getGroupHeight(group)),
+      searchMenuHeight
+    );
+  }
+
+  getGroupHeight(group: GroupMenuItem): number {
+    const titleHeight = this.menuTitleRef.current?.offsetHeight || 0;
+    const itemsHeight =
+      group.items.length * (this.primaryItemsRef[0]?.offsetHeight || 0);
+
+    return titleHeight + itemsHeight;
   }
 
   get filtered(): GroupMenuItem[] {
@@ -561,7 +621,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         item,
         index,
         (node) => {
-          this.groupItemsRef[index] = node;
+          this.primaryItemsRef[index] = node;
         },
         {
           selected: index === this.state.selectedIndex && this.props.isActive,
@@ -578,12 +638,19 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         <div key={group.groupData.name}>
           <MenuTitle>{group.groupData.name}</MenuTitle>
           {group.items.map((item, index) => {
-            const itemGlobalIndex = currentIndex++;
-            return this.props.renderMenuItem(item, index, {
-              selected: itemGlobalIndex === this.state.searchItemsSelectedIndex,
-              isSearch: true,
-              onClick: () => this.insertItem(item),
-            });
+            const itemIndex = currentIndex++;
+            return this.props.renderMenuItem(
+              item,
+              index,
+              (node) => {
+                this.primaryItemsRef[itemIndex] = node;
+              },
+              {
+                selected: itemIndex === this.state.searchItemsSelectedIndex,
+                isSearch: true,
+                onClick: () => this.insertItem(item),
+              }
+            );
           })}
         </div>
       );
@@ -595,8 +662,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   // also renders a file input element if we provided an `uploadImage` prop
   render() {
     const { dictionary, isActive, uploadImage } = this.props;
-    // const items = this.getFilterItems(this.props.items);
-    const { insertItem, menu1Position, menu2Position } = this.state;
+    const selectedGroup = this.filtered[this.state.selectedIndex];
 
     return (
       <Portal>
@@ -604,15 +670,15 @@ class KnowtCommandMenu extends React.Component<Props, State> {
           id={this.props.id || "block-menu-container"}
           active={isActive}
           ref={this.menuRef}
-          {...menu1Position}
+          {...this.state.menu1Position}
         >
-          {insertItem ? (
+          {this.state.insertItem ? (
             <LinkInputWrapper>
               <LinkInput
                 type="text"
                 placeholder={
-                  insertItem.title
-                    ? dictionary.pasteLinkWithTitle(insertItem.title)
+                  this.state.insertItem.title
+                    ? dictionary.pasteLinkWithTitle(this.state.insertItem.title)
                     : dictionary.pasteLink
                 }
                 onKeyDown={this.handleLinkInputKeydown}
@@ -621,7 +687,10 @@ class KnowtCommandMenu extends React.Component<Props, State> {
               />
             </LinkInputWrapper>
           ) : (
-            <List style={{ rowGap: this.props.search ? 8 : 0 }}>
+            <List
+              ref={this.listRef}
+              style={{ rowGap: this.props.search ? 8 : 0 }}
+            >
               {this.props.search
                 ? this.renderSearchResults()
                 : this.renderGroups()}
@@ -646,13 +715,14 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         <Wrapper
           id={"block-menu-container-2"}
           active={this.state.nestedMenuOpen}
-          ref={this.nestedMenuRef}
-          {...menu2Position}
+          {...this.state.menu2Position}
         >
           <List>
-            <MenuTitle>{this.state.activeGroup?.groupData.name}</MenuTitle>
-            {this.state.activeGroup?.items?.map((item, index) => {
-              return this.props.renderMenuItem(item, index, {
+            <MenuTitle ref={this.menuTitleRef}>
+              {selectedGroup?.groupData.name}
+            </MenuTitle>
+            {selectedGroup?.items?.map((item, index) => {
+              return this.props.renderMenuItem(item, index, undefined, {
                 selected: this.state.nestedSelectedIndex === index,
                 isSearch: false,
                 onClick: () => this.insertItem(item),
@@ -718,7 +788,7 @@ export const Wrapper = styled.div<{
   top?: number;
   bottom?: number;
   left?: number;
-  isAbove: boolean;
+  isAbove?: boolean;
 }>`
   color: ${(props) => props.theme.text};
   font-family: ${(props) => props.theme.fontFamilyMono};
@@ -731,7 +801,9 @@ export const Wrapper = styled.div<{
   border-radius: 14px;
   box-shadow: rgb(0 0 0 / 8%) 0px 0.4rem 1.6rem 0px;
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(
+    ${({ isAbove }) => (typeof isAbove === "boolean" ? 0.95 : 1)}
+  );
   transition: opacity 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
     transform 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
   transition-delay: 150ms;
@@ -765,13 +837,18 @@ export const Wrapper = styled.div<{
     border-top: 1px solid ${(props) => props.theme.blockToolbarDivider};
   }
 
-  ${({ active, isAbove }) =>
+  ${({ active }) =>
     active &&
     `
-    transform: translateY(${isAbove ? "6px" : "-6px"}) scale(1);
     pointer-events: all;
     opacity: 1;
-  `};
+    `};
+
+  ${({ isAbove }) =>
+    typeof isAbove === "boolean" &&
+    `
+    transform: translateY(${isAbove ? "6px" : "-6px"}) scale(1);
+  `}
 
   @media print {
     display: none;

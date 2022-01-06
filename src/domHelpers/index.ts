@@ -43,3 +43,7 @@ export const isValidHeading = (fontSize, level) => {
       return false;
   }
 };
+
+export const getStyleValue = (el, prop: string): number => {
+  return el ? getParsedValue(window.getComputedStyle(el)[prop]) : 0;
+};

@@ -11,6 +11,7 @@ export type Props = {
   icon?: typeof React.Component | React.FC<any>;
   iconColor?: string;
   iconSize?: number;
+  innerRef?: (ref: HTMLDivElement) => void;
   title: React.ReactNode;
   shortcut?: string;
   containerId?: string;
@@ -27,6 +28,7 @@ function BlockMenuItem({
   icon,
   iconColor,
   iconSize,
+  innerRef,
   isSearch,
   mainSearchKeyword,
   containerId = "block-menu-container",
@@ -35,6 +37,7 @@ function BlockMenuItem({
 
   const ref = React.useCallback(
     (node) => {
+      innerRef?.(node);
       if (selected && node) {
         scrollIntoView(node, {
           scrollMode: "if-needed",

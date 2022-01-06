@@ -58,10 +58,11 @@ class BlockMenu extends React.Component<BlockMenuProps> {
         {...this.props}
         filterable={true}
         onClearSearch={this.clearSearch}
-        renderMenuItem={(item, _index, options) => {
+        renderMenuItem={(item, _index, innerRef, options) => {
           return (
             <BlockMenuItem
               key={item.title}
+              innerRef={innerRef}
               onClick={options.onClick}
               selected={options.selected}
               isSearch={options.isSearch}
