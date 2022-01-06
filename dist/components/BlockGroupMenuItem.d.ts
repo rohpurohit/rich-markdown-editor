@@ -5,11 +5,11 @@ export declare type Props = {
     theme: typeof theme;
     selected: boolean;
     disabled?: boolean;
-    innerRef: (ref: HTMLDivElement) => void;
+    innerRef?: (ref: HTMLDivElement) => void;
     onClick: () => void;
     containerId?: string;
 };
-declare const _default: React.ForwardRefExoticComponent<Pick<Props, "disabled" | "title" | "onClick" | "selected" | "containerId" | "innerRef"> & {
+declare const _default: React.ForwardRefExoticComponent<Pick<Props, "disabled" | "title" | "onClick" | "selected" | "innerRef" | "containerId"> & {
     theme?: any;
 }>;
 export default _default;

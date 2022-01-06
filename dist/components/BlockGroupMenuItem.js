@@ -28,7 +28,7 @@ const styled_components_1 = __importStar(require("styled-components"));
 function BlockGroupMenuItem(props) {
     const { title, selected, disabled = false, onClick, containerId = "block-menu-container", innerRef, } = props;
     const ref = React.useCallback((node) => {
-        innerRef(node);
+        innerRef === null || innerRef === void 0 ? void 0 : innerRef(node);
         if (selected && node) {
             smooth_scroll_into_view_if_needed_1.default(node, {
                 scrollMode: "if-needed",

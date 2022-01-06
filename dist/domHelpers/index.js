@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isValidHeading = exports.getHeadingLevelByFontSize = exports.getParsedValue = exports.remToPx = exports.isHTML = void 0;
+exports.getStyleValue = exports.isValidHeading = exports.getHeadingLevelByFontSize = exports.getParsedValue = exports.remToPx = exports.isHTML = void 0;
 const isHTML = (str) => {
     const doc = new DOMParser().parseFromString(str, "text/html");
     return Array.from(doc.body.childNodes).some((node) => node.nodeType === 1);
@@ -46,4 +46,8 @@ const isValidHeading = (fontSize, level) => {
     }
 };
 exports.isValidHeading = isValidHeading;
+const getStyleValue = (el, prop) => {
+    return el ? exports.getParsedValue(window.getComputedStyle(el)[prop]) : 0;
+};
+exports.getStyleValue = getStyleValue;
 //# sourceMappingURL=index.js.map

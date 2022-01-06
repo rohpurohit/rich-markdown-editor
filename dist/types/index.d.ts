@@ -27,7 +27,7 @@ export declare type MenuPosition = {
     left: number;
     top?: number;
     bottom?: number;
-    isAbove: boolean;
+    isAbove?: boolean;
 };
 export declare type GroupMenuItem = {
     groupData: GroupData;

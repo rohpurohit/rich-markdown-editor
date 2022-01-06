@@ -44,7 +44,7 @@ export type Props = {
   renderMenuItem: (
     item: MenuItem,
     index: number,
-    callback?: (ref: HTMLDivElement) => void,
+    callback: (ref: HTMLDivElement) => void,
     options: {
       selected: boolean;
       isSearch: boolean;
@@ -722,7 +722,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
               {selectedGroup?.groupData.name}
             </MenuTitle>
             {selectedGroup?.items?.map((item, index) => {
-              return this.props.renderMenuItem(item, index, undefined, {
+              return this.props.renderMenuItem(item, index, () => {}, {
                 selected: this.state.nestedSelectedIndex === index,
                 isSearch: false,
                 onClick: () => this.insertItem(item),

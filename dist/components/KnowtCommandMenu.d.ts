@@ -17,7 +17,7 @@ export declare type Props = {
     onClose: () => void;
     onClearSearch: () => void;
     embeds?: EmbedDescriptor[];
-    renderMenuItem: (item: MenuItem, index: number, options: {
+    renderMenuItem: (item: MenuItem, index: number, callback: (ref: HTMLDivElement) => void, options: {
         selected: boolean;
         isSearch: boolean;
         onClick: () => void;
@@ -39,13 +39,13 @@ declare type State = {
     menu1Position: MenuPosition;
     menu2Position: MenuPosition;
     nestedMenuOpen: boolean;
-    activeGroup: GroupMenuItem | null;
 };
 declare class KnowtCommandMenu extends React.Component<Props, State> {
     menuRef: React.RefObject<HTMLDivElement>;
-    nestedMenuRef: React.RefObject<HTMLDivElement>;
+    listRef: React.RefObject<HTMLOListElement>;
     inputRef: React.RefObject<HTMLInputElement>;
-    groupItemsRef: HTMLDivElement[];
+    menuTitleRef: React.RefObject<HTMLDivElement>;
+    primaryItemsRef: HTMLDivElement[];
     state: State;
     constructor(props: Props);
     componentDidMount(): void;
@@ -68,7 +68,13 @@ declare class KnowtCommandMenu extends React.Component<Props, State> {
         left: number;
     };
     onGroupSelect(index: number): void;
-    calculatePosition(props: Props): MenuPosition;
+    calculateMenu2Position(groupIndex: number): MenuPosition;
+    calculateMenu1Position(): MenuPosition;
+    getSearchMenuPosition(): MenuPosition;
+    getMenu1InitialPosition(): MenuPosition;
+    getMenu2Height(groupIndex: number): number;
+    getSearchMenuHeight(): number;
+    getGroupHeight(group: GroupMenuItem): number;
     get filtered(): GroupMenuItem[];
     renderGroups(): React.ReactNode;
     renderSearchResults(): React.ReactNode;
@@ -79,7 +85,7 @@ export declare const Wrapper: import("styled-components").StyledComponent<"div",
     top?: number | undefined;
     bottom?: number | undefined;
     left?: number | undefined;
-    isAbove: boolean;
+    isAbove?: boolean | undefined;
 }, never>;
 export default KnowtCommandMenu;
 //# sourceMappingURL=KnowtCommandMenu.d.ts.map

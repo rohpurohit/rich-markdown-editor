@@ -26,9 +26,10 @@ const React = __importStar(require("react"));
 const smooth_scroll_into_view_if_needed_1 = __importDefault(require("smooth-scroll-into-view-if-needed"));
 const styled_components_1 = __importStar(require("styled-components"));
 const theme_1 = __importDefault(require("../styles/theme"));
-function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, iconColor, iconSize, isSearch, mainSearchKeyword, containerId = "block-menu-container", }) {
+function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, iconColor, iconSize, innerRef, isSearch, mainSearchKeyword, containerId = "block-menu-container", }) {
     const Icon = icon;
     const ref = React.useCallback((node) => {
+        innerRef === null || innerRef === void 0 ? void 0 : innerRef(node);
         if (selected && node) {
             smooth_scroll_into_view_if_needed_1.default(node, {
                 scrollMode: "if-needed",
