@@ -26,6 +26,10 @@ const defaultMenuPosition: MenuPosition = {
   bottom: undefined,
 };
 
+const defaultMenuMaxHeight = 250;
+const SAFE_MARGIN_Y = 50;
+const SAFE_MARGIN_X = 10;
+
 export type Props = {
   rtl: boolean;
   isActive: boolean;
@@ -67,12 +71,13 @@ export type Props = {
 };
 
 type State = {
+  menu1Position: MenuPosition;
+  menu2Position: MenuPosition;
+  menu1MaxHeight: number;
   insertItem?: EmbedDescriptor;
   selectedIndex: number;
   nestedSelectedIndex: number | null;
   searchItemsSelectedIndex: number;
-  menu1Position: MenuPosition;
-  menu2Position: MenuPosition;
   nestedMenuOpen: boolean;
 };
 
@@ -87,10 +92,11 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   state: State = {
     menu1Position: defaultMenuPosition,
     menu2Position: defaultMenuPosition,
+    menu1MaxHeight: defaultMenuMaxHeight,
+    insertItem: undefined,
     selectedIndex: 0,
     nestedSelectedIndex: null,
     searchItemsSelectedIndex: 0,
-    insertItem: undefined,
     nestedMenuOpen: false,
   };
 
@@ -447,7 +453,6 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   }
 
   calculateMenu2Position(groupIndex: number): MenuPosition {
-    const [SAFE_MARGIN_X, SAFE_MARGIN_Y] = [10, 50];
     const menuHeight = this.getMenu2Height(groupIndex);
 
     const { right, top: _top } = this.primaryItemsRef[
@@ -469,22 +474,27 @@ class KnowtCommandMenu extends React.Component<Props, State> {
 
   calculateMenu1Position(): MenuPosition {
     if (this.props.search) {
-      // the menu is already opened, update its position
-      return this.getSearchMenuPosition();
+      // the menu is already opened, only update its maxHeight..
+      this.updateSearchMenuMaxHeight();
+      return this.state.menu1Position;
     }
 
     return this.getMenu1InitialPosition();
   }
 
-  getSearchMenuPosition(): MenuPosition {
-    if (this.filtered.length === 0) {
-      return this.state.menu1Position;
-    }
-
+  updateSearchMenuMaxHeight(): void {
     const searchMenuHeight = this.getSearchMenuHeight();
-    console.log(searchMenuHeight);
+    const { top = 0, bottom = 0, isAbove } = this.state.menu1Position;
 
-    return this.state.menu1Position;
+    // how much of the search menu is non-visible
+    // negative number indicates that its fully visible
+    const menuClippedHeight =
+      (isAbove ? top : bottom) +
+      searchMenuHeight +
+      SAFE_MARGIN_Y -
+      window.innerHeight;
+
+    this.setState({ menu1MaxHeight: searchMenuHeight - menuClippedHeight });
   }
 
   getMenu1InitialPosition(): MenuPosition {
@@ -520,8 +530,6 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       rtl && menuRef
         ? right - menuRef.scrollWidth
         : this.getCaretPosition().left + window.scrollX;
-
-    const SAFE_MARGIN_Y = 60;
 
     if (startPos.top + menuHeight + SAFE_MARGIN_Y < window.innerHeight) {
       return {
@@ -670,6 +678,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
           id={this.props.id || "block-menu-container"}
           active={isActive}
           ref={this.menuRef}
+          maxHeight={this.state.menu1MaxHeight}
           {...this.state.menu1Position}
         >
           {this.state.insertItem ? (
@@ -812,7 +821,7 @@ export const Wrapper = styled.div<{
   pointer-events: none;
   white-space: nowrap;
   min-width: 185px;
-  max-height: 520px;
+  max-height: ${({ maxHeight }) => maxHeight || defaultMenuMaxHeight}px;
   overflow: hidden;
   overflow-y: auto;
   * {
