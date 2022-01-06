@@ -40,6 +40,9 @@ const defaultMenuPosition = {
     top: 0,
     bottom: undefined,
 };
+const defaultMenuMaxHeight = 250;
+const SAFE_MARGIN_Y = 50;
+const SAFE_MARGIN_X = 10;
 class KnowtCommandMenu extends React.Component {
     constructor(props) {
         super(props);
@@ -51,10 +54,11 @@ class KnowtCommandMenu extends React.Component {
         this.state = {
             menu1Position: defaultMenuPosition,
             menu2Position: defaultMenuPosition,
+            menu1MaxHeight: defaultMenuMaxHeight,
+            insertItem: undefined,
             selectedIndex: 0,
             nestedSelectedIndex: null,
             searchItemsSelectedIndex: 0,
-            insertItem: undefined,
             nestedMenuOpen: false,
         };
         this.handleKeyDown = (e) => {
@@ -112,13 +116,10 @@ class KnowtCommandMenu extends React.Component {
                         this.setState({ nestedSelectedIndex: newIndex });
                     }
                     else {
-                        let updatedState = { selectedIndex: newIndex };
+                        this.setState({ selectedIndex: newIndex });
                         if (this.state.nestedMenuOpen) {
-                            updatedState = Object.assign(updatedState, {
-                                menu2Position: this.calculateMenu2Position(newIndex),
-                            });
+                            this.updateMenu2Position(newIndex);
                         }
-                        this.setState(updatedState);
                     }
                 }
                 else {
@@ -252,12 +253,14 @@ class KnowtCommandMenu extends React.Component {
     }
     componentDidUpdate(prevProps) {
         if ((this.props.isActive && !prevProps.isActive) ||
-            (this.props.search && this.props.search !== prevProps.search)) {
+            this.props.search !== prevProps.search) {
+            this.updateMenu1Position();
             this.setState({
                 insertItem: undefined,
                 selectedIndex: 0,
                 searchItemsSelectedIndex: 0,
-                menu1Position: this.calculateMenu1Position(),
+                nestedSelectedIndex: null,
+                nestedMenuOpen: false,
             });
         }
         if (prevProps.isActive && !this.props.isActive) {
@@ -311,40 +314,47 @@ class KnowtCommandMenu extends React.Component {
             left: rect.left,
         };
     }
-    onGroupSelect(index) {
+    onGroupSelect(groupIndex) {
         this.setState({
-            selectedIndex: index,
+            selectedIndex: groupIndex,
             nestedSelectedIndex: 0,
             nestedMenuOpen: true,
-            menu2Position: this.calculateMenu2Position(index),
         });
+        this.updateMenu2Position(groupIndex);
     }
-    calculateMenu2Position(groupIndex) {
-        const [SAFE_MARGIN_X, SAFE_MARGIN_Y] = [10, 50];
+    updateMenu2Position(groupIndex) {
         const menuHeight = this.getMenu2Height(groupIndex);
         const { right, top: _top } = this.primaryItemsRef[groupIndex].getBoundingClientRect();
         const bottomToBottomDistance = window.innerHeight - (_top + menuHeight + SAFE_MARGIN_Y);
         const left = right + window.scrollX + SAFE_MARGIN_X;
         const offset = bottomToBottomDistance > 0 ? 0 : bottomToBottomDistance;
-        return {
-            left,
-            top: _top + window.scrollY + offset,
-            bottom: undefined,
-        };
+        this.setState({
+            menu2Position: {
+                left,
+                top: _top + window.scrollY + offset,
+                bottom: undefined,
+            },
+        });
     }
-    calculateMenu1Position() {
+    updateMenu1Position() {
         if (this.props.search) {
-            return this.getSearchMenuPosition();
+            this.updateSearchMenuMaxHeight();
         }
-        return this.getMenu1InitialPosition();
+        else {
+            this.setState({
+                menu1Position: this.getMenu1InitialPosition(),
+                menu1MaxHeight: defaultMenuMaxHeight,
+            });
+        }
     }
-    getSearchMenuPosition() {
-        if (this.filtered.length === 0) {
-            return this.state.menu1Position;
-        }
+    updateSearchMenuMaxHeight() {
         const searchMenuHeight = this.getSearchMenuHeight();
-        console.log(searchMenuHeight);
-        return this.state.menu1Position;
+        const menuSpace = searchMenuHeight + SAFE_MARGIN_Y;
+        const { top = 0, bottom = 0, isAbove } = this.state.menu1Position;
+        const menuClippedHeight = isAbove
+            ? top - window.scrollY + menuSpace - window.innerHeight
+            : bottom + window.scrollY + menuSpace - window.innerHeight;
+        this.setState({ menu1MaxHeight: searchMenuHeight - menuClippedHeight });
     }
     getMenu1InitialPosition() {
         const { view, isActive, rtl } = this.props;
@@ -372,7 +382,6 @@ class KnowtCommandMenu extends React.Component {
         const left = rtl && menuRef
             ? right - menuRef.scrollWidth
             : this.getCaretPosition().left + window.scrollX;
-        const SAFE_MARGIN_Y = 60;
         if (startPos.top + menuHeight + SAFE_MARGIN_Y < window.innerHeight) {
             return {
                 left,
@@ -468,7 +477,7 @@ class KnowtCommandMenu extends React.Component {
         const { dictionary, isActive, uploadImage } = this.props;
         const selectedGroup = this.filtered[this.state.selectedIndex];
         return (React.createElement(react_portal_1.Portal, null,
-            React.createElement(exports.Wrapper, Object.assign({ id: this.props.id || "block-menu-container", active: isActive, ref: this.menuRef }, this.state.menu1Position),
+            React.createElement(exports.Wrapper, Object.assign({ id: this.props.id || "block-menu-container", active: isActive, ref: this.menuRef, style: { maxHeight: this.state.menu1MaxHeight } }, this.state.menu1Position),
                 this.state.insertItem ? (React.createElement(LinkInputWrapper, null,
                     React.createElement(LinkInput, { type: "text", placeholder: this.state.insertItem.title
                             ? dictionary.pasteLinkWithTitle(this.state.insertItem.title)
@@ -480,7 +489,7 @@ class KnowtCommandMenu extends React.Component {
                         React.createElement(Empty, null, dictionary.noResults))))),
                 uploadImage && (React.createElement(VisuallyHidden_1.default, null,
                     React.createElement("input", { type: "file", ref: this.inputRef, onChange: this.handleImagePicked, accept: "image/*" })))),
-            React.createElement(exports.Wrapper, Object.assign({ id: "block-menu-container-2", active: this.state.nestedMenuOpen }, this.state.menu2Position),
+            React.createElement(exports.Wrapper, Object.assign({ id: "block-menu-container-2", active: this.state.nestedMenuOpen && !this.props.search }, this.state.menu2Position),
                 React.createElement(List, null,
                     React.createElement(MenuTitle, { ref: this.menuTitleRef }, selectedGroup === null || selectedGroup === void 0 ? void 0 : selectedGroup.groupData.name), (_a = selectedGroup === null || selectedGroup === void 0 ? void 0 : selectedGroup.items) === null || _a === void 0 ? void 0 :
                     _a.map((item, index) => {
@@ -554,7 +563,6 @@ exports.Wrapper = styled_components_1.default.div `
   pointer-events: none;
   white-space: nowrap;
   min-width: 185px;
-  max-height: 520px;
   overflow: hidden;
   overflow-y: auto;
   * {

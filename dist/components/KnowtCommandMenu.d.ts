@@ -32,12 +32,13 @@ export declare type Props = {
     id?: string;
 };
 declare type State = {
+    menu1Position: MenuPosition;
+    menu2Position: MenuPosition;
+    menu1MaxHeight: number;
     insertItem?: EmbedDescriptor;
     selectedIndex: number;
     nestedSelectedIndex: number | null;
     searchItemsSelectedIndex: number;
-    menu1Position: MenuPosition;
-    menu2Position: MenuPosition;
     nestedMenuOpen: boolean;
 };
 declare class KnowtCommandMenu extends React.Component<Props, State> {
@@ -67,10 +68,10 @@ declare class KnowtCommandMenu extends React.Component<Props, State> {
         top: number;
         left: number;
     };
-    onGroupSelect(index: number): void;
-    calculateMenu2Position(groupIndex: number): MenuPosition;
-    calculateMenu1Position(): MenuPosition;
-    getSearchMenuPosition(): MenuPosition;
+    onGroupSelect(groupIndex: number): void;
+    updateMenu2Position(groupIndex: number): void;
+    updateMenu1Position(): void;
+    updateSearchMenuMaxHeight(): void;
     getMenu1InitialPosition(): MenuPosition;
     getMenu2Height(groupIndex: number): number;
     getSearchMenuHeight(): number;
