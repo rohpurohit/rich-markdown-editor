@@ -140,6 +140,7 @@ export declare type Props = {
     onClickHashtag?: (tag: string, event: MouseEvent) => void;
     onGoToPreviousInput?: () => void;
     onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+    defaultEmbeds: EmbedDescriptor[];
     embeds: EmbedDescriptor[];
     onShowToast?: (message: string, code: ToastType) => void;
     tooltip: typeof React.Component | React.FC<any>;
@@ -163,6 +164,19 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
         onImageUploadStart: () => void;
         onImageUploadStop: () => void;
         onClickLink: (href: any) => void;
+        defaultEmbeds: {
+            title: string;
+            keywords: string;
+            icon: () => JSX.Element;
+            matcher: (url: any) => any;
+            component: ({ attrs, isSelected, }: {
+                attrs: any;
+                isSelected: any;
+            }) => React.ReactElement<{
+                attrs: any;
+                isSelected: boolean;
+            }, string | ((props: any) => React.ReactElement<any, any> | null) | (new (props: any) => React.Component<any, any, any>)>;
+        }[];
         embeds: never[];
         extensions: never[];
         tooltip: typeof Tooltip;

@@ -93,6 +93,7 @@ const TrailingNode_1 = __importDefault(require("./plugins/TrailingNode"));
 const PasteHandler_1 = __importDefault(require("./plugins/PasteHandler"));
 const domHelpers_1 = require("./domHelpers");
 const GoToPreviousInputTrigger_1 = __importDefault(require("./plugins/GoToPreviousInputTrigger"));
+const embeds_1 = __importDefault(require("./embeds"));
 var server_1 = require("./server");
 Object.defineProperty(exports, "schema", { enumerable: true, get: function () { return server_1.schema; } });
 Object.defineProperty(exports, "parser", { enumerable: true, get: function () { return server_1.parser; } });
@@ -313,7 +314,9 @@ class RichMarkdownEditor extends React.PureComponent {
                 new CheckboxList_1.default(),
                 new CheckboxItem_1.default(),
                 new BulletList_1.default(),
-                new Embed_1.default({ embeds: this.props.embeds }),
+                new Embed_1.default({
+                    embeds: [...this.props.defaultEmbeds, ...this.props.embeds],
+                }),
                 new ListItem_1.default(),
                 new Notice_1.default({
                     dictionary,
@@ -565,7 +568,7 @@ class RichMarkdownEditor extends React.PureComponent {
                         React.createElement(SelectionToolbar_1.default, { view: this.view, dictionary: dictionary, commands: this.commands, rtl: isRTL, isTemplate: this.props.template === true, onOpen: this.handleOpenSelectionMenu, onClose: this.handleCloseSelectionMenu, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onCreateLink: this.props.onCreateLink, tooltip: tooltip }),
                         React.createElement(LinkToolbar_1.default, { view: this.view, dictionary: dictionary, isActive: this.state.linkMenuOpen, onCreateLink: this.props.onCreateLink, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onShowToast: this.props.onShowToast, onClose: this.handleCloseLinkMenu, tooltip: tooltip }),
                         React.createElement(EmojiMenu_1.default, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.emojiMenuOpen, search: this.state.blockMenuSearch, onClose: () => this.setState({ emojiMenuOpen: false }) }),
-                        React.createElement(BlockMenu_1.default, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.blockMenuOpen, search: this.state.blockMenuSearch, onClose: this.handleCloseBlockMenu, uploadImage: this.props.uploadImage, onLinkToolbarOpen: this.handleOpenLinkMenu, onImageUploadStart: this.props.onImageUploadStart, onImageUploadStop: this.props.onImageUploadStop, onShowToast: this.props.onShowToast, embeds: this.props.embeds })))))));
+                        React.createElement(BlockMenu_1.default, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.blockMenuOpen, search: this.state.blockMenuSearch, onClose: this.handleCloseBlockMenu, uploadImage: this.props.uploadImage, onLinkToolbarOpen: this.handleOpenLinkMenu, onImageUploadStart: this.props.onImageUploadStart, onImageUploadStop: this.props.onImageUploadStop, onShowToast: this.props.onShowToast, embeds: [...this.props.defaultEmbeds, ...this.props.embeds] })))))));
     }
 }
 RichMarkdownEditor.defaultProps = {
@@ -579,6 +582,7 @@ RichMarkdownEditor.defaultProps = {
     onClickLink: (href) => {
         window.open(href, "_blank");
     },
+    defaultEmbeds: embeds_1.default,
     embeds: [],
     extensions: [],
     tooltip: Tooltip_1.default,
