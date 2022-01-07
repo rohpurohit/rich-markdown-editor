@@ -45,7 +45,7 @@ class ToolbarMenu extends React.Component {
             const isActive = item.active ? item.active(state) : false;
             return (React.createElement(ToolbarButton_1.default, { key: index, active: isActive, onClick: () => {
                     if (item.customOnClick) {
-                        return item.customOnClick(state);
+                        return item.customOnClick();
                     }
                     if (!item.name)
                         return;
