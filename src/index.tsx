@@ -90,6 +90,9 @@ import { PluginSimple } from "markdown-it";
 import { isHTML } from "./domHelpers";
 import GoToPreviousInputTrigger from "./plugins/GoToPreviousInputTrigger";
 
+// Other
+import defaultEmbeds from "./embeds";
+
 export { schema, parser, serializer, renderToHtml } from "./server";
 
 export { default as Extension } from "./lib/Extension";
@@ -161,6 +164,7 @@ export type Props = {
   onClickHashtag?: (tag: string, event: MouseEvent) => void;
   onGoToPreviousInput?: () => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+  defaultEmbeds: EmbedDescriptor[];
   embeds: EmbedDescriptor[];
   onShowToast?: (message: string, code: ToastType) => void;
   tooltip: typeof React.Component | React.FC<any>;
@@ -196,6 +200,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     onClickLink: (href) => {
       window.open(href, "_blank");
     },
+    defaultEmbeds,
     embeds: [],
     extensions: [],
     tooltip: Tooltip,
@@ -345,7 +350,9 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new CheckboxList(),
           new CheckboxItem(),
           new BulletList(),
-          new Embed({ embeds: this.props.embeds }),
+          new Embed({
+            embeds: [...this.props.defaultEmbeds, ...this.props.embeds],
+          }),
           new ListItem(),
           new Notice({
             dictionary,
@@ -867,7 +874,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
                   onImageUploadStart={this.props.onImageUploadStart}
                   onImageUploadStop={this.props.onImageUploadStop}
                   onShowToast={this.props.onShowToast}
-                  embeds={this.props.embeds}
+                  embeds={[...this.props.defaultEmbeds, ...this.props.embeds]}
                 />
               </React.Fragment>
             )}
