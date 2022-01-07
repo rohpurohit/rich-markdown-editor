@@ -1,13 +1,25 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getEmbedsGroup = exports.groupedBlockMenu = void 0;
 const outline_icons_1 = require("outline-icons");
 const icons_1 = require("../icons");
+const removeMarks_1 = __importDefault(require("../commands/removeMarks"));
 const SSR = typeof window === "undefined";
 const isMac = !SSR && window.navigator.platform === "MacIntel";
 const mod = isMac ? "⌘" : "ctrl";
-const groupedBlockMenu = (state, dictionary) => {
+const groupedBlockMenu = (view, dictionary) => {
+    const { state } = view;
     const { schema } = state;
+    const allMarks = [
+        schema.marks.highlight_default,
+        schema.marks.highlight_orange,
+        schema.marks.highlight_yellow,
+        schema.marks.highlight_green,
+        schema.marks.highlight_blue,
+    ];
     return [
         {
             groupData: {
@@ -143,8 +155,12 @@ const groupedBlockMenu = (state, dictionary) => {
                     name: "highlight_default",
                     title: "Red",
                     icon: icons_1.CircleIcon,
-                    iconColor: schema.marks.highlight_default.attrs.color.default,
-                    iconSize: 22,
+                    iconSVGProps: {
+                        r: 11,
+                        cx: 11,
+                        cy: 11,
+                        fill: schema.marks.highlight_default.attrs.color.default,
+                    },
                     keywords: "highlight red",
                     mainKeyword: "red",
                     shortcut: "alt shift 1",
@@ -153,8 +169,12 @@ const groupedBlockMenu = (state, dictionary) => {
                     name: "highlight_orange",
                     title: "Orange",
                     icon: icons_1.CircleIcon,
-                    iconColor: schema.marks.highlight_orange.attrs.color.default,
-                    iconSize: 22,
+                    iconSVGProps: {
+                        r: 11,
+                        cx: 11,
+                        cy: 11,
+                        fill: schema.marks.highlight_orange.attrs.color.default,
+                    },
                     keywords: "highlight orange",
                     mainKeyword: "orange",
                     shortcut: "alt shift 2",
@@ -163,8 +183,12 @@ const groupedBlockMenu = (state, dictionary) => {
                     name: "highlight_yellow",
                     title: "Yellow",
                     icon: icons_1.CircleIcon,
-                    iconColor: schema.marks.highlight_yellow.attrs.color.default,
-                    iconSize: 22,
+                    iconSVGProps: {
+                        r: 11,
+                        cx: 11,
+                        cy: 11,
+                        fill: schema.marks.highlight_yellow.attrs.color.default,
+                    },
                     keywords: "highlight yellow",
                     mainKeyword: "yellow",
                     shortcut: "alt shift 3",
@@ -173,8 +197,12 @@ const groupedBlockMenu = (state, dictionary) => {
                     name: "highlight_green",
                     title: "Green",
                     icon: icons_1.CircleIcon,
-                    iconColor: schema.marks.highlight_green.attrs.color.default,
-                    iconSize: 22,
+                    iconSVGProps: {
+                        r: 11,
+                        cx: 11,
+                        cy: 11,
+                        fill: schema.marks.highlight_green.attrs.color.default,
+                    },
                     keywords: "highlight green",
                     mainKeyword: "green",
                     shortcut: "alt shift 4",
@@ -183,11 +211,32 @@ const groupedBlockMenu = (state, dictionary) => {
                     name: "highlight_blue",
                     title: "Blue",
                     icon: icons_1.CircleIcon,
-                    iconColor: schema.marks.highlight_blue.attrs.color.default,
-                    iconSize: 22,
+                    iconSVGProps: {
+                        r: 11,
+                        cx: 11,
+                        cy: 11,
+                        fill: schema.marks.highlight_blue.attrs.color.default,
+                    },
                     keywords: "highlight blue",
                     mainKeyword: "blue",
                     shortcut: "alt shift 5",
+                },
+                {
+                    name: "highlight_remove",
+                    title: "No highlight",
+                    icon: icons_1.CircleIcon,
+                    iconSVGProps: {
+                        r: 10,
+                        cx: 11,
+                        cy: 11,
+                        strokeWidth: 1,
+                        fill: "#fff",
+                        stroke: "#777",
+                    },
+                    keywords: "highlight remove unhighlight",
+                    mainKeyword: "unhighlight",
+                    shortcut: "",
+                    customOnClick: () => removeMarks_1.default(view, allMarks),
                 },
             ],
         },

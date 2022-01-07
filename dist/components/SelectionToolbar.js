@@ -71,7 +71,7 @@ function isVisible(props) {
     const slice = selection.content();
     const fragment = slice.content;
     const nodes = fragment.content;
-    return some_1.default(nodes, n => n.content.size);
+    return some_1.default(nodes, (n) => n.content.size);
 }
 class SelectionToolbar extends React.Component {
     constructor() {
@@ -175,13 +175,13 @@ class SelectionToolbar extends React.Component {
             items = divider_1.default(state, dictionary);
         }
         else {
-            items = formatting_1.default(state, isTemplate, dictionary);
+            items = formatting_1.default(view, isTemplate, dictionary);
             isTextSelection = true;
         }
-        items = items.filter(item => {
+        items = items.filter((item) => {
             if (item.name === "separator")
                 return true;
-            if (item.name && !this.props.commands[item.name])
+            if (item.name && !item.customOnClick && !this.props.commands[item.name])
                 return false;
             return true;
         });

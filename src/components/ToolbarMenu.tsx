@@ -42,7 +42,7 @@ class ToolbarMenu extends React.Component<Props> {
               active={isActive}
               onClick={() => {
                 if (item.customOnClick) {
-                  return item.customOnClick(state);
+                  return item.customOnClick();
                 }
 
                 if (!item.name) return;

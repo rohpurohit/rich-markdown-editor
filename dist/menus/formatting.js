@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -6,13 +25,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const outline_icons_1 = require("outline-icons");
 const prosemirror_tables_1 = require("prosemirror-tables");
 const isInList_1 = __importDefault(require("../queries/isInList"));
-const isMarkActive_1 = __importDefault(require("../queries/isMarkActive"));
+const isMarkActive_1 = __importStar(require("../queries/isMarkActive"));
 const isNodeActive_1 = __importDefault(require("../queries/isNodeActive"));
-function formattingMenuItems(state, isTemplate, dictionary) {
+const removeMarks_1 = __importDefault(require("../commands/removeMarks"));
+const icons_1 = require("../icons");
+function formattingMenuItems(view, isTemplate, dictionary) {
+    const { state } = view;
     const { schema } = state;
     const isTable = prosemirror_tables_1.isInTable(state);
     const isList = isInList_1.default(state);
     const allowBlocks = !isTable && !isList;
+    const allMarks = [
+        schema.marks.highlight_default,
+        schema.marks.highlight_orange,
+        schema.marks.highlight_yellow,
+        schema.marks.highlight_green,
+        schema.marks.highlight_blue,
+    ];
     return [
         {
             name: "placeholder",
@@ -36,6 +65,10 @@ function formattingMenuItems(state, isTemplate, dictionary) {
             tooltip: dictionary.strikethrough,
             icon: outline_icons_1.StrikethroughIcon,
             active: isMarkActive_1.default(schema.marks.strikethrough),
+        },
+        {
+            name: "separator",
+            visible: allowBlocks,
         },
         {
             name: "highlight_default",
@@ -76,6 +109,19 @@ function formattingMenuItems(state, isTemplate, dictionary) {
             iconColor: schema.marks.highlight_blue.attrs.color.default,
             active: isMarkActive_1.default(schema.marks.highlight_blue),
             visible: !isTemplate,
+        },
+        {
+            name: "highlight_remove",
+            tooltip: "Remove All Highlights",
+            icon: icons_1.RemoveIcon,
+            iconColor: "#fff",
+            active: isMarkActive_1.isAnyMarkActive(allMarks),
+            visible: !isTemplate,
+            customOnClick: () => removeMarks_1.default(view, allMarks),
+        },
+        {
+            name: "separator",
+            visible: allowBlocks,
         },
         {
             name: "code_inline",

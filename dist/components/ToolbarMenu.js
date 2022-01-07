@@ -43,7 +43,14 @@ class ToolbarMenu extends React.Component {
             }
             const Icon = item.icon;
             const isActive = item.active ? item.active(state) : false;
-            return (React.createElement(ToolbarButton_1.default, { key: index, active: isActive, onClick: () => item.name && this.props.commands[item.name](item.attrs) },
+            return (React.createElement(ToolbarButton_1.default, { key: index, active: isActive, onClick: () => {
+                    if (item.customOnClick) {
+                        return item.customOnClick(state);
+                    }
+                    if (!item.name)
+                        return;
+                    this.props.commands[item.name](item.attrs);
+                } },
                 React.createElement(Tooltip, { tooltip: item.tooltip, placement: "top" },
                     React.createElement(Icon, { color: item.iconColor || this.props.theme.toolbarItem }))));
         })));

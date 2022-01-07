@@ -25,8 +25,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(require("react"));
 const smooth_scroll_into_view_if_needed_1 = __importDefault(require("smooth-scroll-into-view-if-needed"));
 const styled_components_1 = __importStar(require("styled-components"));
-const theme_1 = __importDefault(require("../styles/theme"));
-function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, iconColor, iconSize, innerRef, isSearch, mainSearchKeyword, containerId = "block-menu-container", }) {
+function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, iconSVGProps, innerRef, isSearch, mainSearchKeyword, containerId = "block-menu-container", }) {
     const Icon = icon;
     const ref = React.useCallback((node) => {
         innerRef === null || innerRef === void 0 ? void 0 : innerRef(node);
@@ -43,11 +42,7 @@ function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, ico
     return (React.createElement(MenuItem, { selected: selected, onClick: disabled ? undefined : onClick, ref: ref },
         React.createElement(Group, null,
             Icon && (React.createElement(React.Fragment, null,
-                React.createElement(Icon, { size: iconSize || 16, color: iconColor
-                        ? iconColor
-                        : selected
-                            ? theme_1.default.blockToolbarIconSelected
-                            : theme_1.default.blockToolbarIcon }),
+                React.createElement(Icon, Object.assign({ size: 16 }, iconSVGProps)),
                 "\u00A0\u00A0")),
             React.createElement(Title, null, title)),
         React.createElement(Group, null,

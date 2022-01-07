@@ -25,7 +25,8 @@ export default class DefaultHighlight extends Mark {
     inputRules({ type }: {
         type: any;
     }): import("prosemirror-inputrules").InputRule<any>[];
-    keys({ type }: {
+    keys({ type, ...rest }: {
+        [x: string]: any;
         type: any;
     }): {
         "Alt-Shift-1": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;

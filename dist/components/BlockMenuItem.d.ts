@@ -6,8 +6,7 @@ export declare type Props = {
     onClick: () => void;
     theme: typeof theme;
     icon?: typeof React.Component | React.FC<any>;
-    iconColor?: string;
-    iconSize?: number;
+    iconSVGProps?: any;
     innerRef?: (ref: HTMLDivElement) => void;
     title: React.ReactNode;
     shortcut?: string;
@@ -15,7 +14,7 @@ export declare type Props = {
     isSearch?: boolean;
     mainSearchKeyword?: string;
 };
-declare const _default: React.ForwardRefExoticComponent<Pick<Props, "icon" | "disabled" | "title" | "onClick" | "selected" | "shortcut" | "iconColor" | "iconSize" | "innerRef" | "isSearch" | "mainSearchKeyword" | "containerId"> & {
+declare const _default: React.ForwardRefExoticComponent<Pick<Props, "disabled" | "title" | "icon" | "onClick" | "selected" | "shortcut" | "iconSVGProps" | "innerRef" | "isSearch" | "mainSearchKeyword" | "containerId"> & {
     theme?: any;
 }>;
 export default _default;

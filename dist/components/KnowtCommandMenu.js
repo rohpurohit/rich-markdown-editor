@@ -142,6 +142,11 @@ class KnowtCommandMenu extends React.Component {
         };
         this.insertItem = (item) => {
             var _a, _b;
+            if (item.customOnClick) {
+                this.props.onClose();
+                item.customOnClick();
+                return;
+            }
             switch (item.name) {
                 case "image":
                     return this.triggerImagePick();
@@ -424,10 +429,11 @@ class KnowtCommandMenu extends React.Component {
         }
         return this.props.allGroups
             .map((group) => {
-            const filteredItems = group.items.filter(({ name, title, keywords, mainKeyword }) => {
+            const filteredItems = group.items.filter(({ name, title, keywords, mainKeyword, customOnClick }) => {
                 if (!this.props.filterable)
                     return true;
                 if (name &&
+                    !customOnClick &&
                     !this.props.commands[name] &&
                     !this.props.commands[`create${capitalize_1.default(name)}`]) {
                     return false;
