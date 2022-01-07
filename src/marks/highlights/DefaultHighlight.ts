@@ -2,6 +2,7 @@ import markInputRule from "../../lib/markInputRule";
 import Mark from "../Mark";
 import markRule from "../../rules/mark";
 import applyHighlight from "../../commands/applyHighlight";
+import { toggleMark } from "prosemirror-commands";
 
 export default class DefaultHighlight extends Mark {
   get name() {

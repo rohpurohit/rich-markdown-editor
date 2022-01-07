@@ -201,7 +201,7 @@ export default class Heading extends Node {
 
     return {
       ...options,
-      Backspace: backspaceToParagraph(type),
+      //   Backspace: backspaceToParagraph(type),
       Enter: splitHeading(type),
     };
   }

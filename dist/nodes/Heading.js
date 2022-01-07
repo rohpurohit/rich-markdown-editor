@@ -26,7 +26,6 @@ const prosemirror_state_1 = require("prosemirror-state");
 const copy_to_clipboard_1 = __importDefault(require("copy-to-clipboard"));
 const prosemirror_view_1 = require("prosemirror-view");
 const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const backspaceToParagraph_1 = __importDefault(require("../commands/backspaceToParagraph"));
 const toggleBlockType_1 = __importDefault(require("../commands/toggleBlockType"));
 const splitHeading_1 = __importDefault(require("../commands/splitHeading"));
 const headingToSlug_1 = __importStar(require("../lib/headingToSlug"));
@@ -172,7 +171,7 @@ class Heading extends Node_1.default {
         const options = this.options.levels.reduce((items, level) => (Object.assign(Object.assign({}, items), {
             [`Shift-Ctrl-${level}`]: toggleBlockType_1.default(type, schema.nodes.paragraph, { level }),
         })), {});
-        return Object.assign(Object.assign({}, options), { Backspace: backspaceToParagraph_1.default(type), Enter: splitHeading_1.default(type) });
+        return Object.assign(Object.assign({}, options), { Enter: splitHeading_1.default(type) });
     }
     get plugins() {
         const getAnchors = (doc) => {
