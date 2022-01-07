@@ -55,7 +55,7 @@ function isVisible(props) {
   const fragment = slice.content;
   const nodes = fragment.content;
 
-  return some(nodes, n => n.content.size);
+  return some(nodes, (n) => n.content.size);
 }
 
 export default class SelectionToolbar extends React.Component<Props> {
@@ -193,16 +193,19 @@ export default class SelectionToolbar extends React.Component<Props> {
     } else if (isDividerSelection) {
       items = getDividerMenuItems(state, dictionary);
     } else {
-      items = getFormattingMenuItems(state, isTemplate, dictionary);
+      items = getFormattingMenuItems(view, isTemplate, dictionary);
       isTextSelection = true;
     }
 
     // Some extensions may be disabled, remove corresponding items
-    items = items.filter(item => {
+    items = items.filter((item) => {
       if (item.name === "separator") return true;
-      if (item.name && !this.props.commands[item.name]) return false;
+      if (item.name && !item.customOnClick && !this.props.commands[item.name])
+        return false;
       return true;
     });
+
+    // console.log(this.props.commands, items);
 
     items = filterExcessSeparators(items);
     if (!items.length) {

@@ -534,14 +534,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   createState(value?: string) {
-    const html_test =
-      `
+    const html_test = `
       <p><mark>red paragraph</mark></p>
       <p style="background-color: blue;">blue paragraph</p>
       <mark class="blue">blue paragraph</mark><br />
       <mark class="green">green paragraph</mark> <br />
       <span style="background-color: yellow;">yellow paragraph</span>
-      ` && null;
+      `;
 
     const md_test =
       `==red==

@@ -9,8 +9,7 @@ export type Props = {
   onClick: () => void;
   theme: typeof theme;
   icon?: typeof React.Component | React.FC<any>;
-  iconColor?: string;
-  iconSize?: number;
+  iconSVGProps?: any;
   innerRef?: (ref: HTMLDivElement) => void;
   title: React.ReactNode;
   shortcut?: string;
@@ -26,8 +25,7 @@ function BlockMenuItem({
   title,
   shortcut,
   icon,
-  iconColor,
-  iconSize,
+  iconSVGProps,
   innerRef,
   isSearch,
   mainSearchKeyword,
@@ -63,16 +61,7 @@ function BlockMenuItem({
       <Group>
         {Icon && (
           <>
-            <Icon
-              size={iconSize || 16}
-              color={
-                iconColor
-                  ? iconColor
-                  : selected
-                  ? theme.blockToolbarIconSelected
-                  : theme.blockToolbarIcon
-              }
-            />
+            <Icon size={16} {...iconSVGProps} />
             &nbsp;&nbsp;
           </>
         )}

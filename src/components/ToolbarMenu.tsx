@@ -40,9 +40,14 @@ class ToolbarMenu extends React.Component<Props> {
             <ToolbarButton
               key={index}
               active={isActive}
-              onClick={() =>
-                item.name && this.props.commands[item.name](item.attrs)
-              }
+              onClick={() => {
+                if (item.customOnClick) {
+                  return item.customOnClick(state);
+                }
+
+                if (!item.name) return;
+                this.props.commands[item.name](item.attrs);
+              }}
             >
               <Tooltip tooltip={item.tooltip} placement="top">
                 <Icon color={item.iconColor || this.props.theme.toolbarItem} />

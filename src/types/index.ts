@@ -9,7 +9,14 @@ export enum ToastType {
 export type MenuItem = {
   icon?: typeof React.Component | React.FC<any>;
   iconColor?: string;
-  iconSize?: number;
+  iconSVGProps?: {
+    r?: number;
+    cx?: number;
+    cy?: number;
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
+  };
   name?: string;
   title?: string;
   shortcut?: string;
@@ -20,6 +27,7 @@ export type MenuItem = {
   attrs?: Record<string, any>;
   visible?: boolean;
   active?: (state: EditorState) => boolean;
+  customOnClick?: () => void;
 };
 
 export type EmbedDescriptor = MenuItem & {

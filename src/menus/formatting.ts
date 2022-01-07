@@ -13,24 +13,33 @@ import {
   HighlightIcon,
 } from "outline-icons";
 import { isInTable } from "prosemirror-tables";
-import { EditorState } from "prosemirror-state";
 import isInList from "../queries/isInList";
-import isMarkActive from "../queries/isMarkActive";
+import isMarkActive, { isAnyMarkActive } from "../queries/isMarkActive";
 import isNodeActive from "../queries/isNodeActive";
 import { MenuItem } from "../types";
 import baseDictionary from "../dictionary";
+import removeMarks from "../commands/removeMarks";
+import { RemoveIcon } from "../icons";
+import { EditorView } from "prosemirror-view";
 
 export default function formattingMenuItems(
-  state: EditorState,
+  view: EditorView,
   isTemplate: boolean,
   dictionary: typeof baseDictionary
-): (MenuItem & {
-  iconColor?: string;
-})[] {
+): MenuItem[] {
+  const { state } = view;
   const { schema } = state;
   const isTable = isInTable(state);
   const isList = isInList(state);
   const allowBlocks = !isTable && !isList;
+
+  const allMarks = [
+    schema.marks.highlight_default,
+    schema.marks.highlight_orange,
+    schema.marks.highlight_yellow,
+    schema.marks.highlight_green,
+    schema.marks.highlight_blue,
+  ];
 
   return [
     {
@@ -55,6 +64,10 @@ export default function formattingMenuItems(
       tooltip: dictionary.strikethrough,
       icon: StrikethroughIcon,
       active: isMarkActive(schema.marks.strikethrough),
+    },
+    {
+      name: "separator",
+      visible: allowBlocks,
     },
     {
       name: "highlight_default",
@@ -95,6 +108,19 @@ export default function formattingMenuItems(
       iconColor: schema.marks.highlight_blue.attrs.color.default,
       active: isMarkActive(schema.marks.highlight_blue),
       visible: !isTemplate,
+    },
+    {
+      name: "highlight_remove",
+      tooltip: "Remove All Highlights",
+      icon: RemoveIcon,
+      iconColor: "#fff",
+      active: isAnyMarkActive(allMarks),
+      visible: !isTemplate,
+      customOnClick: () => removeMarks(view, allMarks),
+    },
+    {
+      name: "separator",
+      visible: allowBlocks,
     },
     {
       name: "code_inline",

@@ -22,7 +22,7 @@ type BlockMenuProps = Omit<
 class BlockMenu extends React.Component<BlockMenuProps> {
   // grouped items without embeds
   get groupedItems(): GroupMenuItem[] {
-    return getGroupedMenuItems(this.props.view.state, this.props.dictionary);
+    return getGroupedMenuItems(this.props.view, this.props.dictionary);
   }
 
   get embedsGroup(): GroupMenuItem {
@@ -67,8 +67,7 @@ class BlockMenu extends React.Component<BlockMenuProps> {
               selected={options.selected}
               isSearch={options.isSearch}
               icon={item.icon}
-              iconColor={item.iconColor}
-              iconSize={item.iconSize}
+              iconSVGProps={item.iconSVGProps}
               title={item.title}
               shortcut={item.shortcut}
               mainSearchKeyword={item.mainKeyword}

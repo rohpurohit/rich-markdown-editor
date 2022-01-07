@@ -34,7 +34,7 @@ export default class DefaultHighlight extends Mark {
     return [markInputRule(/(?:==)([^=]+)(?:==)$/, type)];
   }
 
-  keys({ type }) {
+  keys({ type, ...rest }) {
     return {
       "Alt-Shift-1": toggleMark(type),
     };

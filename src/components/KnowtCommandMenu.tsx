@@ -249,6 +249,12 @@ class KnowtCommandMenu extends React.Component<Props, State> {
 
   // call an inserter function based on item.name (image, embed, link, or else)
   insertItem = (item: MenuItem | EmbedDescriptor): void => {
+    if (item.customOnClick) {
+      this.props.onClose();
+      item.customOnClick();
+      return;
+    }
+
     switch (item.name) {
       case "image":
         return this.triggerImagePick();
@@ -593,12 +599,13 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     return this.props.allGroups
       .map((group) => {
         const filteredItems = group.items.filter(
-          ({ name, title, keywords, mainKeyword }) => {
+          ({ name, title, keywords, mainKeyword, customOnClick }) => {
             if (!this.props.filterable) return true;
 
             // Some extensions may be disabled, remove corresponding menu items
             if (
               name &&
+              !customOnClick &&
               !this.props.commands[name] &&
               !this.props.commands[`create${capitalize(name)}`]
             ) {

@@ -15,18 +15,29 @@ import {
 } from "outline-icons";
 import { EmbedDescriptor, GroupMenuItem } from "../types";
 import baseDictionary from "../dictionary";
-import { CircleIcon } from "../icons";
-import { EditorState } from "prosemirror-state";
+import { CircleIcon, RemoveIcon } from "../icons";
+import { isAnyMarkActive } from "../queries/isMarkActive";
+import removeMarks from "../commands/removeMarks";
+import { EditorView } from "prosemirror-view";
 
 const SSR = typeof window === "undefined";
 const isMac = !SSR && window.navigator.platform === "MacIntel";
 const mod = isMac ? "⌘" : "ctrl";
 
 export const groupedBlockMenu = (
-  state: EditorState,
+  view: EditorView,
   dictionary: typeof baseDictionary
 ): GroupMenuItem[] => {
+  const { state } = view;
   const { schema } = state;
+
+  const allMarks = [
+    schema.marks.highlight_default,
+    schema.marks.highlight_orange,
+    schema.marks.highlight_yellow,
+    schema.marks.highlight_green,
+    schema.marks.highlight_blue,
+  ];
 
   return [
     {
@@ -163,8 +174,12 @@ export const groupedBlockMenu = (
           name: "highlight_default",
           title: "Red",
           icon: CircleIcon,
-          iconColor: schema.marks.highlight_default.attrs.color.default,
-          iconSize: 22,
+          iconSVGProps: {
+            r: 11,
+            cx: 11,
+            cy: 11,
+            fill: schema.marks.highlight_default.attrs.color.default,
+          },
           keywords: "highlight red",
           mainKeyword: "red",
           shortcut: "alt shift 1",
@@ -173,8 +188,12 @@ export const groupedBlockMenu = (
           name: "highlight_orange",
           title: "Orange",
           icon: CircleIcon,
-          iconColor: schema.marks.highlight_orange.attrs.color.default,
-          iconSize: 22,
+          iconSVGProps: {
+            r: 11,
+            cx: 11,
+            cy: 11,
+            fill: schema.marks.highlight_orange.attrs.color.default,
+          },
           keywords: "highlight orange",
           mainKeyword: "orange",
           shortcut: "alt shift 2",
@@ -183,8 +202,12 @@ export const groupedBlockMenu = (
           name: "highlight_yellow",
           title: "Yellow",
           icon: CircleIcon,
-          iconColor: schema.marks.highlight_yellow.attrs.color.default,
-          iconSize: 22,
+          iconSVGProps: {
+            r: 11,
+            cx: 11,
+            cy: 11,
+            fill: schema.marks.highlight_yellow.attrs.color.default,
+          },
           keywords: "highlight yellow",
           mainKeyword: "yellow",
           shortcut: "alt shift 3",
@@ -193,8 +216,12 @@ export const groupedBlockMenu = (
           name: "highlight_green",
           title: "Green",
           icon: CircleIcon,
-          iconColor: schema.marks.highlight_green.attrs.color.default,
-          iconSize: 22,
+          iconSVGProps: {
+            r: 11,
+            cx: 11,
+            cy: 11,
+            fill: schema.marks.highlight_green.attrs.color.default,
+          },
           keywords: "highlight green",
           mainKeyword: "green",
           shortcut: "alt shift 4",
@@ -203,18 +230,33 @@ export const groupedBlockMenu = (
           name: "highlight_blue",
           title: "Blue",
           icon: CircleIcon,
-          iconColor: schema.marks.highlight_blue.attrs.color.default,
-          iconSize: 22,
+          iconSVGProps: {
+            r: 11,
+            cx: 11,
+            cy: 11,
+            fill: schema.marks.highlight_blue.attrs.color.default,
+          },
           keywords: "highlight blue",
           mainKeyword: "blue",
           shortcut: "alt shift 5",
         },
-        // {
-        //   name: "highlight",
-        //   title: "No highlight",
-        //   icon: undefined,
-        //   keywords: "no highlight",
-        // },
+        {
+          name: "highlight_remove",
+          title: "No highlight",
+          icon: CircleIcon,
+          iconSVGProps: {
+            r: 10,
+            cx: 11,
+            cy: 11,
+            strokeWidth: 1,
+            fill: "#fff",
+            stroke: "#777",
+          },
+          keywords: "highlight remove unhighlight",
+          mainKeyword: "unhighlight",
+          shortcut: "", //TODO: add shortcut
+          customOnClick: () => removeMarks(view, allMarks),
+        },
       ],
     },
   ];
