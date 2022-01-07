@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import Node from "./Node";
 export default class Paragraph extends Node {
     get name(): string;
@@ -7,7 +8,7 @@ export default class Paragraph extends Node {
         parseDOM: {
             tag: string;
         }[];
-        toDOM: () => (string | number)[];
+        toDOM: () => import("react").ReactText[];
     };
     keys({ type }: {
         type: any;
