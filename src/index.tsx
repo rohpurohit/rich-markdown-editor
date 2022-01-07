@@ -93,7 +93,7 @@ import GoToPreviousInputTrigger from "./plugins/GoToPreviousInputTrigger";
 // Other
 import defaultEmbeds from "./embeds";
 
-export { schema, parser, serializer, renderToHtml } from "./server";
+// export { schema, parser, serializer, renderToHtml } from "./server";
 
 export { default as Extension } from "./lib/Extension";
 

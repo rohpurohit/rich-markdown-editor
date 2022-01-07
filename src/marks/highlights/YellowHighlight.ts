@@ -1,7 +1,7 @@
-import { toggleMark } from "prosemirror-commands";
 import markInputRule from "../../lib/markInputRule";
 import Mark from "../Mark";
 import markRule from "../../rules/mark";
+import applyHighlight from "../../commands/applyHighlight";
 
 export default class YellowHighlight extends Mark {
   get name() {
@@ -37,12 +37,12 @@ export default class YellowHighlight extends Mark {
 
   keys({ type }) {
     return {
-      "Alt-Shift-3": toggleMark(type),
+      "Alt-Shift-3": applyHighlight(type),
     };
   }
 
   commands({ type }) {
-    return () => toggleMark(type);
+    return () => applyHighlight(type);
   }
 
   get rulePlugins() {

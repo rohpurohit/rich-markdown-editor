@@ -25,15 +25,14 @@ export default class DefaultHighlight extends Mark {
     inputRules({ type }: {
         type: any;
     }): import("prosemirror-inputrules").InputRule<any>[];
-    keys({ type, ...rest }: {
-        [x: string]: any;
+    keys({ type }: {
         type: any;
     }): {
-        "Alt-Shift-1": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
+        "Alt-Shift-1": (state: import("prosemirror-state").EditorState<any>, dispatch: any) => boolean;
     };
     commands({ type }: {
         type: any;
-    }): () => (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
+    }): () => (state: import("prosemirror-state").EditorState<any>, dispatch: any) => boolean;
     get rulePlugins(): ((md: any) => void)[];
     get toMarkdown(): {
         open: string;

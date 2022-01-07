@@ -31,7 +31,6 @@ const TableHeadCell_1 = __importDefault(require("./nodes/TableHeadCell"));
 const TableRow_1 = __importDefault(require("./nodes/TableRow"));
 const Bold_1 = __importDefault(require("./marks/Bold"));
 const Code_1 = __importDefault(require("./marks/Code"));
-const Highlight_1 = __importDefault(require("./marks/Highlight"));
 const Italic_1 = __importDefault(require("./marks/Italic"));
 const Link_1 = __importDefault(require("./marks/Link"));
 const Strikethrough_1 = __importDefault(require("./marks/Strikethrough"));
@@ -61,7 +60,6 @@ const extensions = new ExtensionManager_1.default([
     new TableRow_1.default(),
     new Bold_1.default(),
     new Code_1.default(),
-    new Highlight_1.default(),
     new Italic_1.default(),
     new Link_1.default(),
     new Strikethrough_1.default(),
