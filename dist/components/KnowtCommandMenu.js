@@ -427,9 +427,14 @@ class KnowtCommandMenu extends React.Component {
         if (!this.props.search) {
             return this.props.visibleGroups;
         }
-        return this.props.allGroups
-            .map((group) => {
-            const filteredItems = group.items.filter(({ name, title, keywords, searchKeyword, customOnClick }) => {
+        const exactMatchGroup = {
+            groupData: { name: "Exact match" },
+            items: [],
+        };
+        const filteredGroups = this.props.allGroups.map((group) => {
+            const filteredItems = group.items.filter((item) => {
+                var _a;
+                const { name, title, keywords, searchKeyword, customOnClick } = item;
                 if (!this.props.filterable)
                     return true;
                 if (name &&
@@ -440,6 +445,11 @@ class KnowtCommandMenu extends React.Component {
                 }
                 if (!this.props.uploadImage && name === "image")
                     return false;
+                if (searchKeyword &&
+                    (searchKeyword === null || searchKeyword === void 0 ? void 0 : searchKeyword.toLowerCase()) === ((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.toLowerCase())) {
+                    exactMatchGroup.items = [item];
+                    return false;
+                }
                 return [
                     group.groupData.name,
                     title,
@@ -448,8 +458,8 @@ class KnowtCommandMenu extends React.Component {
                 ].some((str) => { var _a; return str === null || str === void 0 ? void 0 : str.toLowerCase().includes((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.toLowerCase()); });
             });
             return Object.assign(Object.assign({}, group), { items: filteredItems });
-        })
-            .filter(({ items }) => items.length);
+        });
+        return [exactMatchGroup, ...filteredGroups].filter(({ items }) => items.length);
     }
     renderGroups() {
         return this.filtered.map((item, index) => {

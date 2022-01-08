@@ -10,6 +10,7 @@ const removeMarks_1 = __importDefault(require("../commands/removeMarks"));
 const SSR = typeof window === "undefined";
 const isMac = !SSR && window.navigator.platform === "MacIntel";
 const mod = isMac ? "⌘" : "ctrl";
+const HIGHLIGHT_RADIUS = 12;
 const groupedBlockMenu = (view, dictionary) => {
     const { state } = view;
     const { schema } = state;
@@ -156,9 +157,9 @@ const groupedBlockMenu = (view, dictionary) => {
                     title: "Red",
                     icon: icons_1.CircleIcon,
                     iconSVGProps: {
-                        r: 11,
-                        cx: 11,
-                        cy: 11,
+                        r: HIGHLIGHT_RADIUS,
+                        cx: HIGHLIGHT_RADIUS,
+                        cy: HIGHLIGHT_RADIUS,
                         fill: schema.marks.highlight_default.attrs.color.default,
                     },
                     keywords: "highlight red",
@@ -170,9 +171,9 @@ const groupedBlockMenu = (view, dictionary) => {
                     title: "Orange",
                     icon: icons_1.CircleIcon,
                     iconSVGProps: {
-                        r: 11,
-                        cx: 11,
-                        cy: 11,
+                        r: HIGHLIGHT_RADIUS,
+                        cx: HIGHLIGHT_RADIUS,
+                        cy: HIGHLIGHT_RADIUS,
                         fill: schema.marks.highlight_orange.attrs.color.default,
                     },
                     keywords: "highlight orange",
@@ -184,9 +185,9 @@ const groupedBlockMenu = (view, dictionary) => {
                     title: "Yellow",
                     icon: icons_1.CircleIcon,
                     iconSVGProps: {
-                        r: 11,
-                        cx: 11,
-                        cy: 11,
+                        r: HIGHLIGHT_RADIUS,
+                        cx: HIGHLIGHT_RADIUS,
+                        cy: HIGHLIGHT_RADIUS,
                         fill: schema.marks.highlight_yellow.attrs.color.default,
                     },
                     keywords: "highlight yellow",
@@ -198,9 +199,9 @@ const groupedBlockMenu = (view, dictionary) => {
                     title: "Green",
                     icon: icons_1.CircleIcon,
                     iconSVGProps: {
-                        r: 11,
-                        cx: 11,
-                        cy: 11,
+                        r: HIGHLIGHT_RADIUS,
+                        cx: HIGHLIGHT_RADIUS,
+                        cy: HIGHLIGHT_RADIUS,
                         fill: schema.marks.highlight_green.attrs.color.default,
                     },
                     keywords: "highlight green",
@@ -212,9 +213,9 @@ const groupedBlockMenu = (view, dictionary) => {
                     title: "Blue",
                     icon: icons_1.CircleIcon,
                     iconSVGProps: {
-                        r: 11,
-                        cx: 11,
-                        cy: 11,
+                        r: HIGHLIGHT_RADIUS,
+                        cx: HIGHLIGHT_RADIUS,
+                        cy: HIGHLIGHT_RADIUS,
                         fill: schema.marks.highlight_blue.attrs.color.default,
                     },
                     keywords: "highlight blue",
@@ -226,9 +227,9 @@ const groupedBlockMenu = (view, dictionary) => {
                     title: "No highlight",
                     icon: icons_1.CircleIcon,
                     iconSVGProps: {
-                        r: 10,
-                        cx: 11,
-                        cy: 11,
+                        r: HIGHLIGHT_RADIUS - 1,
+                        cx: HIGHLIGHT_RADIUS,
+                        cy: HIGHLIGHT_RADIUS,
                         strokeWidth: 1,
                         fill: "#fff",
                         stroke: "#777",

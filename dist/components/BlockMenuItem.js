@@ -42,7 +42,7 @@ function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, ico
     return (React.createElement(MenuItem, { selected: selected, onClick: disabled ? undefined : onClick, ref: ref },
         React.createElement(Group, null,
             Icon && (React.createElement(React.Fragment, null,
-                React.createElement(Icon, Object.assign({ size: 16 }, iconSVGProps)),
+                React.createElement(Icon, Object.assign({ size: 20 }, iconSVGProps)),
                 "\u00A0\u00A0")),
             React.createElement(Title, null, title)),
         React.createElement(Group, null, mainSearchKeyword && (React.createElement(SearchKeyword, null, mainSearchKeyword)))));
