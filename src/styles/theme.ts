@@ -11,6 +11,7 @@ const colors = {
   grey: "#E8EBED",
   greyMid: "#C5CCD3",
   greyDark: "#DAE1E9",
+  knowtOffWhite: "#F7F7F7",
   knowtGreen: "#50D2C2",
   knowtGreyLight: "#F1F0F1",
   knowtGrey: "#E9E9E9",
@@ -65,7 +66,7 @@ export const base = {
   blockToolbarText: colors.black,
   blockToolbarTextSelected: colors.black,
   blockToolbarSelectedBackground: colors.knowtGrey,
-  blockToolbarHoverBackground: colors.knowtGreyLight,
+  blockToolbarHoverBackground: colors.knowtOffWhite,
   blockToolbarDivider: colors.knowtGrey,
 
   noticeInfoBackground: "#F5BE31",
