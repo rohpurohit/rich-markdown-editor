@@ -28,7 +28,7 @@ export default class BulletList extends Node {
     };
   }
 
-  inputRules({ type }) {
+  inputRules({ type, schema }) {
     return [
       wrappingInputRule(/^\s*([-+*])\s$/, type),
 
@@ -37,6 +37,8 @@ export default class BulletList extends Node {
       new InputRule(
         /^[\s\t\f]*[a-z,A-Z,0-9]?$/,
         (state, [matchStr], start, end) => {
+          // maybe there is an easier solution
+
           const tr = !matchStr.trim()
             ? state.tr.delete(start, end)
             : state.tr.insertText(matchStr, start, end);
