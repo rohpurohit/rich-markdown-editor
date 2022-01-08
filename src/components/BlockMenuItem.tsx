@@ -69,8 +69,6 @@ function BlockMenuItem({
         {mainSearchKeyword && (
           <SearchKeyword>{mainSearchKeyword}</SearchKeyword>
         )}
-        {/* //TODO: for now, let's not show shortcuts at all, main search keywords are more important */}
-        {/* {!isSearch && shortcut && <Shortcut>{shortcut}</Shortcut>} */}
       </Group>
     </MenuItem>
   );
@@ -82,11 +80,11 @@ const MenuItem = styled.button<{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 17px;
   line-height: 1;
   width: 100%;
-  height: 36px;
+  height: 40px;
   cursor: pointer;
   border: none;
   opacity: ${(props) => (props.disabled ? ".5" : "1")};
@@ -119,13 +117,13 @@ const Group = styled.div`
 `;
 
 const Title = styled.span`
-  margin-right: 50px;
+  margin-right: 60px;
 `;
 
 const SearchKeyword = styled.span`
-  font-size: 10px;
-  font-weight: 700;
-  padding: 4px 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 6px;
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -133,11 +131,6 @@ const SearchKeyword = styled.span`
   box-sizing: border-box;
   color: ${(props) => props.theme.knowtGreen};
   background-color: #ecf9f7;
-`;
-
-const Shortcut = styled.span`
-  color: ${(props) => props.theme.textSecondary};
-  font-size: 9px;
 `;
 
 export default withTheme(BlockMenuItem);

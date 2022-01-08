@@ -830,7 +830,7 @@ export const Wrapper = styled.div<{
   box-sizing: border-box;
   pointer-events: none;
   white-space: nowrap;
-  min-width: 185px;
+  min-width: 210px;
   overflow: hidden;
   overflow-y: auto;
   * {
