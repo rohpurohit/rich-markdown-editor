@@ -19,7 +19,6 @@ export declare type Props = {
     embeds?: EmbedDescriptor[];
     renderMenuItem: (item: MenuItem, index: number, callback: (ref: HTMLDivElement) => void, options: {
         selected: boolean;
-        isSearch: boolean;
         onClick: () => void;
     }) => React.ReactNode;
     renderGroupMenuItem: (item: GroupMenuItem, index: number, callback: (ref: HTMLDivElement) => void, options: {

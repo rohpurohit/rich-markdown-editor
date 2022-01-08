@@ -2,6 +2,7 @@ import React from "react";
 declare const _default: {
     title: string;
     keywords: string;
+    searchKeyword: string;
     icon: () => JSX.Element;
     matcher: (url: any) => any;
     component: ({ attrs, isSelected, }: {

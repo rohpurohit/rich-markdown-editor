@@ -89,6 +89,7 @@ export declare const theme: {
     greyMid: string;
     greyDark: string;
     knowtOffWhite: string;
+    knowtOffWhite2: string;
     knowtGreen: string;
     knowtGreyLight: string;
     knowtGrey: string;
@@ -167,6 +168,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
         defaultEmbeds: {
             title: string;
             keywords: string;
+            searchKeyword: string;
             icon: () => JSX.Element;
             matcher: (url: any) => any;
             component: ({ attrs, isSelected, }: {
@@ -334,6 +336,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
         greyMid: string;
         greyDark: string;
         knowtOffWhite: string;
+        knowtOffWhite2: string;
         knowtGreen: string;
         knowtGreyLight: string;
         knowtGrey: string;

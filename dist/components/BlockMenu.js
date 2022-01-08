@@ -36,7 +36,7 @@ class BlockMenu extends react_1.default.Component {
     }
     render() {
         return (react_1.default.createElement(KnowtCommandMenu_1.default, Object.assign({}, this.props, { filterable: true, onClearSearch: this.clearSearch, renderMenuItem: (item, _index, innerRef, options) => {
-                return (react_1.default.createElement(BlockMenuItem_1.default, { key: item.title, innerRef: innerRef, onClick: options.onClick, selected: options.selected, isSearch: options.isSearch, icon: item.icon, iconSVGProps: item.iconSVGProps, title: item.title, shortcut: item.shortcut, mainSearchKeyword: item.mainKeyword }));
+                return (react_1.default.createElement(BlockMenuItem_1.default, { key: item.title, innerRef: innerRef, onClick: options.onClick, selected: options.selected, icon: item.icon, iconSVGProps: item.iconSVGProps, title: item.title, shortcut: item.shortcut, mainSearchKeyword: item.searchKeyword }));
             }, renderGroupMenuItem: (item, _index, innerRef, options) => {
                 return (react_1.default.createElement(BlockGroupMenuItem_1.default, { innerRef: innerRef, key: item.groupData.name, title: item.groupData.name, selected: options.selected, onClick: options.onClick }));
             }, visibleGroups: this.visibleGroups, allGroups: this.allGroups })));

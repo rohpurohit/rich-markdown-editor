@@ -19,7 +19,7 @@ export declare type MenuItem = {
     title?: string;
     shortcut?: string;
     keywords?: string;
-    mainKeyword?: string;
+    searchKeyword?: string;
     tooltip?: string;
     defaultHidden?: boolean;
     attrs?: Record<string, any>;

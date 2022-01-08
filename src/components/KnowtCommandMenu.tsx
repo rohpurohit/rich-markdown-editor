@@ -593,44 +593,58 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       return this.props.visibleGroups;
     }
 
+    const exactMatchGroup: GroupMenuItem = {
+      groupData: { name: "Exact match" },
+      items: [],
+    };
+
     // now that we're searching, filter based on this.props.allGroups,
     // taking into account items with `defaultHidden: true`
-    return this.props.allGroups
-      .map((group) => {
-        const filteredItems = group.items.filter(
-          ({ name, title, keywords, searchKeyword, customOnClick }) => {
-            if (!this.props.filterable) return true;
+    const filteredGroups = this.props.allGroups.map((group) => {
+      const filteredItems = group.items.filter((item) => {
+        const { name, title, keywords, searchKeyword, customOnClick } = item;
+        if (!this.props.filterable) return true;
 
-            // Some extensions may be disabled, remove corresponding menu items
-            if (
-              name &&
-              !customOnClick &&
-              !this.props.commands[name] &&
-              !this.props.commands[`create${capitalize(name)}`]
-            ) {
-              return false;
-            }
+        // Some extensions may be disabled, remove corresponding menu items
+        if (
+          name &&
+          !customOnClick &&
+          !this.props.commands[name] &&
+          !this.props.commands[`create${capitalize(name)}`]
+        ) {
+          return false;
+        }
 
-            // If no image upload callback has been passed, filter the image block out
-            if (!this.props.uploadImage && name === "image") return false;
+        // If no image upload callback has been passed, filter the image block out
+        if (!this.props.uploadImage && name === "image") return false;
 
-            return [
-              group.groupData.name,
-              title,
-              keywords,
-              searchKeyword,
-            ].some((str) =>
-              str?.toLowerCase().includes(this.props.search?.toLowerCase())
-            );
-          }
+        if (
+          searchKeyword &&
+          searchKeyword?.toLowerCase() === this.props.search?.toLowerCase()
+        ) {
+          exactMatchGroup.items = [item];
+          return false;
+        }
+
+        return [
+          group.groupData.name,
+          title,
+          keywords,
+          searchKeyword,
+        ].some((str) =>
+          str?.toLowerCase().includes(this.props.search?.toLowerCase())
         );
+      });
 
-        return {
-          ...group,
-          items: filteredItems,
-        };
-      })
-      .filter(({ items }) => items.length);
+      return {
+        ...group,
+        items: filteredItems,
+      };
+    });
+
+    return [exactMatchGroup, ...filteredGroups].filter(
+      ({ items }) => items.length
+    );
   }
 
   renderGroups(): React.ReactNode {
@@ -763,7 +777,7 @@ const MenuTitle = styled.div`
   color: ${(props) => props.theme.placeholder};
   padding: 12px 0 20px 18px;
   font-family: Arial;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
 `;
 

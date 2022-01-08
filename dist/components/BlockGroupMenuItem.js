@@ -50,11 +50,11 @@ const MenuItem = styled_components_1.default.button `
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 17px;
   line-height: 1;
   width: 100%;
-  height: 36px;
+  height: 40px;
   cursor: pointer;
   border: none;
   opacity: ${(props) => (props.disabled ? ".5" : "1")};

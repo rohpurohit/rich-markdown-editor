@@ -25,7 +25,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(require("react"));
 const smooth_scroll_into_view_if_needed_1 = __importDefault(require("smooth-scroll-into-view-if-needed"));
 const styled_components_1 = __importStar(require("styled-components"));
-function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, iconSVGProps, innerRef, isSearch, mainSearchKeyword, containerId = "block-menu-container", }) {
+function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, iconSVGProps, innerRef, mainSearchKeyword, containerId = "block-menu-container", }) {
     const Icon = icon;
     const ref = React.useCallback((node) => {
         innerRef === null || innerRef === void 0 ? void 0 : innerRef(node);
@@ -45,19 +45,17 @@ function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, ico
                 React.createElement(Icon, Object.assign({ size: 16 }, iconSVGProps)),
                 "\u00A0\u00A0")),
             React.createElement(Title, null, title)),
-        React.createElement(Group, null,
-            isSearch && mainSearchKeyword && (React.createElement(SearchKeyword, null, mainSearchKeyword)),
-            !isSearch && shortcut && React.createElement(Shortcut, null, shortcut))));
+        React.createElement(Group, null, mainSearchKeyword && (React.createElement(SearchKeyword, null, mainSearchKeyword)))));
 }
 const MenuItem = styled_components_1.default.button `
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 17px;
   line-height: 1;
   width: 100%;
-  height: 36px;
+  height: 40px;
   cursor: pointer;
   border: none;
   opacity: ${(props) => (props.disabled ? ".5" : "1")};
@@ -85,12 +83,12 @@ const Group = styled_components_1.default.div `
   align-items: center;
 `;
 const Title = styled_components_1.default.span `
-  margin-right: 50px;
+  margin-right: 60px;
 `;
 const SearchKeyword = styled_components_1.default.span `
-  font-size: 10px;
-  font-weight: 700;
-  padding: 4px 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 6px;
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -98,10 +96,6 @@ const SearchKeyword = styled_components_1.default.span `
   box-sizing: border-box;
   color: ${(props) => props.theme.knowtGreen};
   background-color: #ecf9f7;
-`;
-const Shortcut = styled_components_1.default.span `
-  color: ${(props) => props.theme.textSecondary};
-  font-size: 9px;
 `;
 exports.default = styled_components_1.withTheme(BlockMenuItem);
 //# sourceMappingURL=BlockMenuItem.js.map

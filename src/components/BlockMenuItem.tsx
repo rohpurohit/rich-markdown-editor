@@ -59,7 +59,7 @@ function BlockMenuItem({
       <Group>
         {Icon && (
           <>
-            <Icon size={16} {...iconSVGProps} />
+            <Icon size={20} {...iconSVGProps} />
             &nbsp;&nbsp;
           </>
         )}

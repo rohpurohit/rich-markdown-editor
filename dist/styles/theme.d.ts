@@ -55,6 +55,7 @@ export declare const base: {
     greyMid: string;
     greyDark: string;
     knowtOffWhite: string;
+    knowtOffWhite2: string;
     knowtGreen: string;
     knowtGreyLight: string;
     knowtGrey: string;
@@ -144,6 +145,7 @@ export declare const light: {
     greyMid: string;
     greyDark: string;
     knowtOffWhite: string;
+    knowtOffWhite2: string;
     knowtGreen: string;
     knowtGreyLight: string;
     knowtGrey: string;
@@ -233,6 +235,7 @@ export declare const dark: {
     greyMid: string;
     greyDark: string;
     knowtOffWhite: string;
+    knowtOffWhite2: string;
     knowtGreen: string;
     knowtGreyLight: string;
     knowtGrey: string;

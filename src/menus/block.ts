@@ -15,14 +15,15 @@ import {
 } from "outline-icons";
 import { EmbedDescriptor, GroupMenuItem } from "../types";
 import baseDictionary from "../dictionary";
-import { CircleIcon, RemoveIcon } from "../icons";
-import { isAnyMarkActive } from "../queries/isMarkActive";
+import { CircleIcon } from "../icons";
 import removeMarks from "../commands/removeMarks";
 import { EditorView } from "prosemirror-view";
 
 const SSR = typeof window === "undefined";
 const isMac = !SSR && window.navigator.platform === "MacIntel";
 const mod = isMac ? "⌘" : "ctrl";
+
+const HIGHLIGHT_RADIUS = 12;
 
 export const groupedBlockMenu = (
   view: EditorView,
@@ -175,9 +176,9 @@ export const groupedBlockMenu = (
           title: "Red",
           icon: CircleIcon,
           iconSVGProps: {
-            r: 11,
-            cx: 11,
-            cy: 11,
+            r: HIGHLIGHT_RADIUS,
+            cx: HIGHLIGHT_RADIUS,
+            cy: HIGHLIGHT_RADIUS,
             fill: schema.marks.highlight_default.attrs.color.default,
           },
           keywords: "highlight red",
@@ -189,9 +190,9 @@ export const groupedBlockMenu = (
           title: "Orange",
           icon: CircleIcon,
           iconSVGProps: {
-            r: 11,
-            cx: 11,
-            cy: 11,
+            r: HIGHLIGHT_RADIUS,
+            cx: HIGHLIGHT_RADIUS,
+            cy: HIGHLIGHT_RADIUS,
             fill: schema.marks.highlight_orange.attrs.color.default,
           },
           keywords: "highlight orange",
@@ -203,9 +204,9 @@ export const groupedBlockMenu = (
           title: "Yellow",
           icon: CircleIcon,
           iconSVGProps: {
-            r: 11,
-            cx: 11,
-            cy: 11,
+            r: HIGHLIGHT_RADIUS,
+            cx: HIGHLIGHT_RADIUS,
+            cy: HIGHLIGHT_RADIUS,
             fill: schema.marks.highlight_yellow.attrs.color.default,
           },
           keywords: "highlight yellow",
@@ -217,9 +218,9 @@ export const groupedBlockMenu = (
           title: "Green",
           icon: CircleIcon,
           iconSVGProps: {
-            r: 11,
-            cx: 11,
-            cy: 11,
+            r: HIGHLIGHT_RADIUS,
+            cx: HIGHLIGHT_RADIUS,
+            cy: HIGHLIGHT_RADIUS,
             fill: schema.marks.highlight_green.attrs.color.default,
           },
           keywords: "highlight green",
@@ -231,9 +232,9 @@ export const groupedBlockMenu = (
           title: "Blue",
           icon: CircleIcon,
           iconSVGProps: {
-            r: 11,
-            cx: 11,
-            cy: 11,
+            r: HIGHLIGHT_RADIUS,
+            cx: HIGHLIGHT_RADIUS,
+            cy: HIGHLIGHT_RADIUS,
             fill: schema.marks.highlight_blue.attrs.color.default,
           },
           keywords: "highlight blue",
@@ -245,9 +246,9 @@ export const groupedBlockMenu = (
           title: "No highlight",
           icon: CircleIcon,
           iconSVGProps: {
-            r: 10,
-            cx: 11,
-            cy: 11,
+            r: HIGHLIGHT_RADIUS - 1, // 1 is stroke width
+            cx: HIGHLIGHT_RADIUS,
+            cy: HIGHLIGHT_RADIUS,
             strokeWidth: 1,
             fill: "#fff",
             stroke: "#777",

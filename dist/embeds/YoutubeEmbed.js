@@ -11,6 +11,7 @@ const YoutubeEmbed = ({ attrs, isSelected, }) => {
 exports.default = {
     title: "YouTube",
     keywords: "youtube video tube google",
+    searchKeyword: "youtube",
     icon: () => (react_1.default.createElement("img", { src: "https://upload.wikimedia.org/wikipedia/commons/7/75/YouTube_social_white_squircle_%282017%29.svg", width: 24, height: 24 })),
     matcher: (url) => {
         return url.match(/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([a-zA-Z0-9_-]{11})$/i);

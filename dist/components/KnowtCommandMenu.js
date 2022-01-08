@@ -429,7 +429,7 @@ class KnowtCommandMenu extends React.Component {
         }
         return this.props.allGroups
             .map((group) => {
-            const filteredItems = group.items.filter(({ name, title, keywords, mainKeyword, customOnClick }) => {
+            const filteredItems = group.items.filter(({ name, title, keywords, searchKeyword, customOnClick }) => {
                 if (!this.props.filterable)
                     return true;
                 if (name &&
@@ -444,7 +444,7 @@ class KnowtCommandMenu extends React.Component {
                     group.groupData.name,
                     title,
                     keywords,
-                    mainKeyword,
+                    searchKeyword,
                 ].some((str) => { var _a; return str === null || str === void 0 ? void 0 : str.toLowerCase().includes((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.toLowerCase()); });
             });
             return Object.assign(Object.assign({}, group), { items: filteredItems });
@@ -472,7 +472,6 @@ class KnowtCommandMenu extends React.Component {
                         this.primaryItemsRef[itemIndex] = node;
                     }, {
                         selected: itemIndex === this.state.searchItemsSelectedIndex,
-                        isSearch: true,
                         onClick: () => this.insertItem(item),
                     });
                 })));
@@ -501,7 +500,6 @@ class KnowtCommandMenu extends React.Component {
                     _a.map((item, index) => {
                         return this.props.renderMenuItem(item, index, () => { }, {
                             selected: this.state.nestedSelectedIndex === index,
-                            isSearch: false,
                             onClick: () => this.insertItem(item),
                         });
                     }),
@@ -513,7 +511,7 @@ const MenuTitle = styled_components_1.default.div `
   color: ${(props) => props.theme.placeholder};
   padding: 12px 0 20px 18px;
   font-family: Arial;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
 `;
 const LinkInputWrapper = styled_components_1.default.div `
@@ -568,7 +566,7 @@ exports.Wrapper = styled_components_1.default.div `
   box-sizing: border-box;
   pointer-events: none;
   white-space: nowrap;
-  min-width: 185px;
+  min-width: 210px;
   overflow: hidden;
   overflow-y: auto;
   * {
