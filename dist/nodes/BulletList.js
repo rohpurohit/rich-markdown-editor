@@ -27,7 +27,7 @@ class BulletList extends Node_1.default {
             "Shift-Ctrl-8": toggleList_1.default(type, schema.nodes.list_item),
         };
     }
-    inputRules({ type }) {
+    inputRules({ type, schema }) {
         return [
             prosemirror_inputrules_1.wrappingInputRule(/^\s*([-+*])\s$/, type),
             new prosemirror_inputrules_1.InputRule(/^[\s\t\f]*[a-z,A-Z,0-9]?$/, (state, [matchStr], start, end) => {

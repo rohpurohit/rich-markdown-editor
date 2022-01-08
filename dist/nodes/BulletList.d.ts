@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { InputRule } from "prosemirror-inputrules";
 import Node from "./Node";
 export default class BulletList extends Node {
@@ -9,7 +8,7 @@ export default class BulletList extends Node {
         parseDOM: {
             tag: string;
         }[];
-        toDOM: () => import("react").ReactText[];
+        toDOM: () => (string | number)[];
     };
     commands({ type, schema }: {
         type: any;
@@ -21,8 +20,9 @@ export default class BulletList extends Node {
     }): {
         "Shift-Ctrl-8": (state: import("prosemirror-state").EditorState<any>, dispatch: (tr: import("prosemirror-state").Transaction<any>) => void) => boolean;
     };
-    inputRules({ type }: {
+    inputRules({ type, schema }: {
         type: any;
+        schema: any;
     }): InputRule<any>[];
     toMarkdown(state: any, node: any): void;
     parseMarkdown(): {

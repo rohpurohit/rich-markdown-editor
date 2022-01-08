@@ -193,7 +193,7 @@ export default class ListItem extends Node {
   }
 
   // copied from prosemirror-schema-list,
-  // to try to fix lifting item when pressing Enter on empty list item
+  // to try to fix lifting item when pressing Enter on empty nested list item
   customSplitListItem(itemType) {
     return function(state, dispatch) {
       const { $from, $to, node } = state.selection;

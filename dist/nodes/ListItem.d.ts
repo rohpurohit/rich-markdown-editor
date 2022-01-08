@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { Transaction, EditorState, Plugin } from "prosemirror-state";
 import { DecorationSet } from "prosemirror-view";
 import Node from "./Node";
@@ -11,13 +10,14 @@ export default class ListItem extends Node {
         parseDOM: {
             tag: string;
         }[];
-        toDOM: () => import("react").ReactText[];
+        toDOM: () => (string | number)[];
     };
     get plugins(): Plugin<DecorationSet<any>, any>[];
+    customSplitListItem(itemType: any): (state: any, dispatch: any) => boolean;
     keys({ type }: {
         type: any;
     }): {
-        Enter: (state: EditorState<any>, dispatch?: ((tr: Transaction<any>) => void) | undefined) => boolean;
+        Enter: (state: any, dispatch: any) => boolean;
         Tab: (state: EditorState<any>, dispatch?: ((tr: Transaction<any>) => void) | undefined) => boolean;
         "Shift-Tab": (state: EditorState<any>, dispatch?: ((tr: Transaction<any>) => void) | undefined) => boolean;
         "Mod-]": (state: EditorState<any>, dispatch?: ((tr: Transaction<any>) => void) | undefined) => boolean;

@@ -9,7 +9,7 @@ const checkboxes_1 = __importDefault(require("../rules/checkboxes"));
 class CheckboxItem extends Node_1.default {
     constructor() {
         super(...arguments);
-        this.handleChange = event => {
+        this.handleChange = (event) => {
             const { view } = this.editor;
             const { tr } = view.state;
             const { top, left } = event.target.getBoundingClientRect();
@@ -43,7 +43,7 @@ class CheckboxItem extends Node_1.default {
                     }),
                 },
             ],
-            toDOM: node => {
+            toDOM: (node) => {
                 const input = document.createElement("input");
                 input.type = "checkbox";
                 input.tabIndex = -1;
@@ -88,7 +88,7 @@ class CheckboxItem extends Node_1.default {
     parseMarkdown() {
         return {
             block: "checkbox_item",
-            getAttrs: tok => ({
+            getAttrs: (tok) => ({
                 checked: tok.attrGet("checked") ? true : undefined,
             }),
         };
