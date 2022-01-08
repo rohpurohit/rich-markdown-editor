@@ -51,7 +51,6 @@ export type Props = {
     callback: (ref: HTMLDivElement) => void,
     options: {
       selected: boolean;
-      isSearch: boolean;
       onClick: () => void;
     }
   ) => React.ReactNode;
@@ -599,7 +598,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     return this.props.allGroups
       .map((group) => {
         const filteredItems = group.items.filter(
-          ({ name, title, keywords, mainKeyword, customOnClick }) => {
+          ({ name, title, keywords, searchKeyword, customOnClick }) => {
             if (!this.props.filterable) return true;
 
             // Some extensions may be disabled, remove corresponding menu items
@@ -619,7 +618,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
               group.groupData.name,
               title,
               keywords,
-              mainKeyword,
+              searchKeyword,
             ].some((str) =>
               str?.toLowerCase().includes(this.props.search?.toLowerCase())
             );
@@ -668,7 +667,6 @@ class KnowtCommandMenu extends React.Component<Props, State> {
               },
               {
                 selected: itemIndex === this.state.searchItemsSelectedIndex,
-                isSearch: true,
                 onClick: () => this.insertItem(item),
               }
             );
@@ -746,7 +744,6 @@ class KnowtCommandMenu extends React.Component<Props, State> {
             {selectedGroup?.items?.map((item, index) => {
               return this.props.renderMenuItem(item, index, () => {}, {
                 selected: this.state.nestedSelectedIndex === index,
-                isSearch: false,
                 onClick: () => this.insertItem(item),
               });
             })}

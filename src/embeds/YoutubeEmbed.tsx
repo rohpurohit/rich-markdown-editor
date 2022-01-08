@@ -20,6 +20,7 @@ const YoutubeEmbed = ({
 export default {
   title: "YouTube",
   keywords: "youtube video tube google",
+  searchKeyword: "youtube",
   // defaultHidden: true,
   // eslint-disable-next-line react/display-name
   icon: () => (

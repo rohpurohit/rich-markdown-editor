@@ -65,12 +65,11 @@ class BlockMenu extends React.Component<BlockMenuProps> {
               innerRef={innerRef}
               onClick={options.onClick}
               selected={options.selected}
-              isSearch={options.isSearch}
               icon={item.icon}
               iconSVGProps={item.iconSVGProps}
               title={item.title}
               shortcut={item.shortcut}
-              mainSearchKeyword={item.mainKeyword}
+              mainSearchKeyword={item.searchKeyword}
             />
           );
         }}

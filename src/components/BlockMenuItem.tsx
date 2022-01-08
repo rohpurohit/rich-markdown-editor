@@ -14,7 +14,6 @@ export type Props = {
   title: React.ReactNode;
   shortcut?: string;
   containerId?: string;
-  isSearch?: boolean;
   mainSearchKeyword?: string;
 };
 
@@ -27,7 +26,6 @@ function BlockMenuItem({
   icon,
   iconSVGProps,
   innerRef,
-  isSearch,
   mainSearchKeyword,
   containerId = "block-menu-container",
 }: Props) {
@@ -68,10 +66,11 @@ function BlockMenuItem({
         <Title>{title}</Title>
       </Group>
       <Group>
-        {isSearch && mainSearchKeyword && (
+        {mainSearchKeyword && (
           <SearchKeyword>{mainSearchKeyword}</SearchKeyword>
         )}
-        {!isSearch && shortcut && <Shortcut>{shortcut}</Shortcut>}
+        {/* //TODO: for now, let's not show shortcuts at all, main search keywords are more important */}
+        {/* {!isSearch && shortcut && <Shortcut>{shortcut}</Shortcut>} */}
       </Group>
     </MenuItem>
   );
