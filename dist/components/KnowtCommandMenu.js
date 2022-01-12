@@ -427,11 +427,9 @@ class KnowtCommandMenu extends React.Component {
         if (!this.props.search) {
             return this.props.visibleGroups;
         }
-        const exactMatchGroup = {
-            groupData: { name: "Exact match" },
-            items: [],
-        };
-        const filteredGroups = this.props.allGroups.map((group) => {
+        let exactMatchGroupName, exactMatchItemName;
+        let filteredGroups = this.props.allGroups
+            .map((group) => {
             const filteredItems = group.items.filter((item) => {
                 var _a;
                 const { name, title, keywords, searchKeyword, customOnClick } = item;
@@ -447,8 +445,9 @@ class KnowtCommandMenu extends React.Component {
                     return false;
                 if (searchKeyword &&
                     (searchKeyword === null || searchKeyword === void 0 ? void 0 : searchKeyword.toLowerCase()) === ((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.toLowerCase())) {
-                    exactMatchGroup.items = [item];
-                    return false;
+                    exactMatchGroupName = group.groupData.name;
+                    exactMatchItemName = item.title;
+                    return true;
                 }
                 return [
                     group.groupData.name,
@@ -458,8 +457,21 @@ class KnowtCommandMenu extends React.Component {
                 ].some((str) => { var _a; return str === null || str === void 0 ? void 0 : str.toLowerCase().includes((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.toLowerCase()); });
             });
             return Object.assign(Object.assign({}, group), { items: filteredItems });
-        });
-        return [exactMatchGroup, ...filteredGroups].filter(({ items }) => items.length);
+        })
+            .filter(({ items }) => items.length);
+        if (!exactMatchGroupName)
+            return filteredGroups;
+        filteredGroups = this.moveArrayItemToTop(filteredGroups, filteredGroups.findIndex((group) => group.groupData.name === exactMatchGroupName));
+        filteredGroups[0].items = this.moveArrayItemToTop(filteredGroups[0].items, filteredGroups[0].items.findIndex((item) => item.title === exactMatchItemName));
+        return filteredGroups;
+    }
+    moveArrayItemToTop(array, index) {
+        if (index === -1)
+            return array;
+        const newArray = [...array];
+        newArray.splice(index, 1);
+        newArray.unshift(array[index]);
+        return newArray;
     }
     renderGroups() {
         return this.filtered.map((item, index) => {

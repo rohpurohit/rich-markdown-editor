@@ -76,6 +76,7 @@ declare class KnowtCommandMenu extends React.Component<Props, State> {
     getSearchMenuHeight(): number;
     getGroupHeight(group: GroupMenuItem): number;
     get filtered(): GroupMenuItem[];
+    moveArrayItemToTop<T>(array: T[], index: number): T[];
     renderGroups(): React.ReactNode;
     renderSearchResults(): React.ReactNode;
     render(): JSX.Element;
