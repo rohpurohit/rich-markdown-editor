@@ -29,8 +29,7 @@ export const StyledEditor = styled("div")<{
   }
 
   li {
-    position: relative;    
-    padding: 3px 2px;
+    position: relative;
   }
 
   li::marker {
@@ -387,6 +386,7 @@ export const StyledEditor = styled("div")<{
 
   p {
     margin: 0;
+    line-height: 2rem;
 
     span:first-child + br:last-child {
       display: none;
