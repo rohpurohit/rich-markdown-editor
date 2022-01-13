@@ -544,11 +544,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       ` && null;
 
     const md_test =
-      `==red==
-            @@orange@@
-            $$yellow$$
-            %%green%%
-        ^^blue^^` && null;
+      `
+        ==red==
+        @@orange@@
+        $$yellow$$
+        %%green%%
+        ^^blue^^
+      ` && null;
 
     const doc = this.createDocument(
       md_test || html_test || value || this.props.defaultValue
@@ -562,9 +564,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         ...this.keymaps,
         dropCursor({ color: this.theme().cursor }),
         gapCursor(),
-        inputRules({
-          rules: this.inputRules,
-        }),
+        inputRules({ rules: this.inputRules }),
         keymap(baseKeymap),
       ],
     });
@@ -606,8 +606,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         );
 
         this.updateState(state);
-
-        // console.log(state.doc.toJSON().content);
 
         // If any of the transactions being dispatched resulted in the doc
         // changing then call our own change handler to let the outside world

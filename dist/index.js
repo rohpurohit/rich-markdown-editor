@@ -477,11 +477,13 @@ class RichMarkdownEditor extends React.PureComponent {
       <p><mark class="green">green paragraph</mark></p>
       <p><span style="background-color: yellow;">yellow paragraph</span></p>
       ` && null;
-        const md_test = `==red==
-            @@orange@@
-            $$yellow$$
-            %%green%%
-        ^^blue^^` && null;
+        const md_test = `
+        ==red==
+        @@orange@@
+        $$yellow$$
+        %%green%%
+        ^^blue^^
+      ` && null;
         const doc = this.createDocument(md_test || html_test || value || this.props.defaultValue);
         return prosemirror_state_1.EditorState.create({
             schema: this.schema,
@@ -491,9 +493,7 @@ class RichMarkdownEditor extends React.PureComponent {
                 ...this.keymaps,
                 prosemirror_dropcursor_1.dropCursor({ color: this.theme().cursor }),
                 prosemirror_gapcursor_1.gapCursor(),
-                prosemirror_inputrules_1.inputRules({
-                    rules: this.inputRules,
-                }),
+                prosemirror_inputrules_1.inputRules({ rules: this.inputRules }),
                 prosemirror_keymap_1.keymap(prosemirror_commands_1.baseKeymap),
             ],
         });

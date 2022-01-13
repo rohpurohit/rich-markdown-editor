@@ -101,7 +101,6 @@ export default class Heading extends Node {
   }
 
   toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
-    console.log("heading", node.attrs);
     state.write(state.repeat("#", node.attrs.level) + " ");
     state.renderInline(node);
     state.closeBlock(node);
@@ -201,7 +200,7 @@ export default class Heading extends Node {
 
     return {
       ...options,
-      //   Backspace: backspaceToParagraph(type),
+      Backspace: backspaceToParagraph(type),
       Enter: splitHeading(type),
     };
   }

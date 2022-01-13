@@ -1,8 +1,4 @@
-import {
-  splitListItem,
-  sinkListItem,
-  liftListItem,
-} from "prosemirror-schema-list";
+import { sinkListItem, liftListItem } from "prosemirror-schema-list";
 import Node from "./Node";
 import checkboxRule from "../rules/checkboxes";
 import { customSplitListItem } from "../commands/customSplitListItem";
