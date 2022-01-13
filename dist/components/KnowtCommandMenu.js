@@ -47,6 +47,7 @@ class KnowtCommandMenu extends React.Component {
     constructor(props) {
         super(props);
         this.menuRef = React.createRef();
+        this.nestedMenuRef = React.createRef();
         this.listRef = React.createRef();
         this.inputRef = React.createRef();
         this.menuTitleRef = React.createRef();
@@ -60,6 +61,16 @@ class KnowtCommandMenu extends React.Component {
             nestedSelectedIndex: null,
             searchItemsSelectedIndex: 0,
             nestedMenuOpen: false,
+        };
+        this.handleClick = (event) => {
+            var _a, _b;
+            if (!this.props.isActive) {
+                return;
+            }
+            if (!((_a = this.menuRef.current) === null || _a === void 0 ? void 0 : _a.contains(event.target)) &&
+                !((_b = this.nestedMenuRef.current) === null || _b === void 0 ? void 0 : _b.contains(event.target))) {
+                this.props.onClose();
+            }
         };
         this.handleKeyDown = (e) => {
             var _a;
@@ -243,12 +254,15 @@ class KnowtCommandMenu extends React.Component {
             this.props.onClose();
         };
         this.clearSearch = () => {
-            this.props.onClearSearch();
+            var _a;
+            const clearLength = ((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.length) || 0;
+            this.props.onClearSearch(clearLength);
         };
     }
     componentDidMount() {
         if (!SSR) {
             window.addEventListener("keydown", this.handleKeyDown);
+            window.addEventListener("click", this.handleClick);
         }
     }
     shouldComponentUpdate(nextProps, nextState) {
@@ -275,6 +289,7 @@ class KnowtCommandMenu extends React.Component {
     componentWillUnmount() {
         if (!SSR) {
             window.removeEventListener("keydown", this.handleKeyDown);
+            window.removeEventListener("click", this.handleClick);
         }
     }
     closeNestedMenu() {
@@ -516,7 +531,7 @@ class KnowtCommandMenu extends React.Component {
                         React.createElement(Empty, null, dictionary.noResults))))),
                 uploadImage && (React.createElement(VisuallyHidden_1.default, null,
                     React.createElement("input", { type: "file", ref: this.inputRef, onChange: this.handleImagePicked, accept: "image/*" })))),
-            React.createElement(exports.Wrapper, Object.assign({ id: "block-menu-container-2", active: this.state.nestedMenuOpen && !this.props.search }, this.state.menu2Position),
+            React.createElement(exports.Wrapper, Object.assign({ ref: this.nestedMenuRef, id: "block-menu-container-2", active: this.state.nestedMenuOpen && !this.props.search }, this.state.menu2Position),
                 React.createElement(List, null,
                     React.createElement(MenuTitle, { ref: this.menuTitleRef }, selectedGroup === null || selectedGroup === void 0 ? void 0 : selectedGroup.groupData.name), (_a = selectedGroup === null || selectedGroup === void 0 ? void 0 : selectedGroup.items) === null || _a === void 0 ? void 0 :
                     _a.map((item, index) => {

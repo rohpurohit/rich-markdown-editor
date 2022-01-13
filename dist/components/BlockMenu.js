@@ -12,11 +12,12 @@ const block_1 = require("../menus/block");
 class BlockMenu extends react_1.default.Component {
     constructor() {
         super(...arguments);
-        this.clearSearch = () => {
+        this.clearSearch = (clearLength = 0) => {
             const { state, dispatch } = this.props.view;
             const parent = prosemirror_utils_1.findParentNode((node) => !!node)(state.selection);
             if (parent) {
-                dispatch(state.tr.insertText("", parent.pos, state.selection.to));
+                const deleteFrom = Math.max(parent.pos, state.selection.to - clearLength);
+                dispatch(state.tr.insertText("", deleteFrom, state.selection.to));
             }
         };
     }

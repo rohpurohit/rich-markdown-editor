@@ -15,7 +15,7 @@ export declare type Props = {
     onShowToast?: (message: string, id: string) => void;
     onLinkToolbarOpen?: () => void;
     onClose: () => void;
-    onClearSearch: () => void;
+    onClearSearch: (clearLength: number) => void;
     embeds?: EmbedDescriptor[];
     renderMenuItem: (item: MenuItem, index: number, callback: (ref: HTMLDivElement) => void, options: {
         selected: boolean;
@@ -42,6 +42,7 @@ declare type State = {
 };
 declare class KnowtCommandMenu extends React.Component<Props, State> {
     menuRef: React.RefObject<HTMLDivElement>;
+    nestedMenuRef: React.RefObject<HTMLDivElement>;
     listRef: React.RefObject<HTMLOListElement>;
     inputRef: React.RefObject<HTMLInputElement>;
     menuTitleRef: React.RefObject<HTMLDivElement>;
@@ -52,6 +53,7 @@ declare class KnowtCommandMenu extends React.Component<Props, State> {
     shouldComponentUpdate(nextProps: Props, nextState: State): boolean;
     componentDidUpdate(prevProps: Props): void;
     componentWillUnmount(): void;
+    handleClick: (event: MouseEvent) => void;
     handleKeyDown: (e: KeyboardEvent) => void;
     insertItem: (item: MenuItem | EmbedDescriptor) => void;
     close: () => void;

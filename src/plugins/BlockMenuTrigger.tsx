@@ -9,8 +9,11 @@ import { Decoration, DecorationSet } from "prosemirror-view";
 import Extension from "../lib/Extension";
 
 const MAX_MATCH = 500;
-const OPEN_REGEX = /^\/(\w+)?$/;
-const CLOSE_REGEX = /(^(?!\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
+// const OPEN_REGEX = /\/(\w+)?$/;
+// const CLOSE_REGEX = /(^(?!\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
+
+const OPEN_REGEX = /.*\/(\w+)?$/;
+const CLOSE_REGEX = /\/\/|(\/\s\s)/;
 
 // based on the input rules code in Prosemirror, here:
 // https://github.com/ProseMirror/prosemirror-inputrules/blob/master/src/inputrules.js
@@ -51,19 +54,17 @@ export default class BlockMenuTrigger extends Extension {
     return [
       new Plugin({
         props: {
-          //   handleDOMEvents: {
-          //     contextmenu: (view, event: MouseEvent) => {
-          //       if (!view.hasFocus()) {
-          //         return false;
-          //       }
+          handleDOMEvents: {
+            contextmenu: (view, event: MouseEvent) => {
+              if (!view.hasFocus()) {
+                return false;
+              }
 
-          //       event.preventDefault();
-          //       view.focus();
-          //       this.options.onClose();
-          //       this.options.onOpen();
-          //       return true;
-          //     },
-          //   },
+              event.preventDefault();
+              this.options.onOpen();
+              return true;
+            },
+          },
           handleKeyDown: (view, event) => {
             // Prosemirror input rules are not triggered on backspace, however
             // we need them to be evaluted for the filter trigger to work

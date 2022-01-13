@@ -7,7 +7,7 @@ declare class BlockMenu extends React.Component<BlockMenuProps> {
     get embedsGroup(): GroupMenuItem;
     get allGroups(): GroupMenuItem[];
     get visibleGroups(): GroupMenuItem[];
-    clearSearch: () => void;
+    clearSearch: (clearLength?: number) => void;
     render(): JSX.Element;
 }
 export default BlockMenu;

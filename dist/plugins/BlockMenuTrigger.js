@@ -33,8 +33,8 @@ const outline_icons_1 = require("outline-icons");
 const prosemirror_view_1 = require("prosemirror-view");
 const Extension_1 = __importDefault(require("../lib/Extension"));
 const MAX_MATCH = 500;
-const OPEN_REGEX = /^\/(\w+)?$/;
-const CLOSE_REGEX = /(^(?!\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
+const OPEN_REGEX = /.*\/(\w+)?$/;
+const CLOSE_REGEX = /\/\/|(\/\s\s)/;
 function run(view, from, to, regex, handler) {
     if (view.composing) {
         return false;
@@ -64,6 +64,16 @@ class BlockMenuTrigger extends Extension_1.default {
         return [
             new prosemirror_state_1.Plugin({
                 props: {
+                    handleDOMEvents: {
+                        contextmenu: (view, event) => {
+                            if (!view.hasFocus()) {
+                                return false;
+                            }
+                            event.preventDefault();
+                            this.options.onOpen();
+                            return true;
+                        },
+                    },
                     handleKeyDown: (view, event) => {
                         if (event.key === "Backspace") {
                             setTimeout(() => {

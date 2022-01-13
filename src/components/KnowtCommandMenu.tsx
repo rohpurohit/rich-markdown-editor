@@ -43,7 +43,7 @@ export type Props = {
   onShowToast?: (message: string, id: string) => void;
   onLinkToolbarOpen?: () => void;
   onClose: () => void;
-  onClearSearch: () => void;
+  onClearSearch: (clearLength: number) => void;
   embeds?: EmbedDescriptor[];
   renderMenuItem: (
     item: MenuItem,
@@ -82,6 +82,7 @@ type State = {
 
 class KnowtCommandMenu extends React.Component<Props, State> {
   menuRef = React.createRef<HTMLDivElement>();
+  nestedMenuRef = React.createRef<HTMLDivElement>();
   listRef = React.createRef<HTMLOListElement>();
   inputRef = React.createRef<HTMLInputElement>();
   menuTitleRef = React.createRef<HTMLDivElement>();
@@ -107,6 +108,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   componentDidMount(): void {
     if (!SSR) {
       window.addEventListener("keydown", this.handleKeyDown);
+      window.addEventListener("click", this.handleClick);
     }
   }
 
@@ -148,8 +150,22 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   componentWillUnmount(): void {
     if (!SSR) {
       window.removeEventListener("keydown", this.handleKeyDown);
+      window.removeEventListener("click", this.handleClick);
     }
   }
+
+  handleClick = (event: MouseEvent): void => {
+    if (!this.props.isActive) {
+      return;
+    }
+
+    if (
+      !this.menuRef.current?.contains(event.target as Node) &&
+      !this.nestedMenuRef.current?.contains(event.target as Node)
+    ) {
+      this.props.onClose();
+    }
+  };
 
   // on Enter, calls insertItem with the current Item
   // on up/down arrows, changes selectedIndex / close if not items
@@ -397,7 +413,8 @@ class KnowtCommandMenu extends React.Component<Props, State> {
 
   // this.props.clearSearch()
   clearSearch = (): void => {
-    this.props.onClearSearch();
+    const clearLength = this.props.search?.length || 0;
+    this.props.onClearSearch(clearLength);
   };
 
   // run a command by item.name, and close
@@ -776,6 +793,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
           )}
         </Wrapper>
         <Wrapper
+          ref={this.nestedMenuRef}
           id={"block-menu-container-2"}
           active={this.state.nestedMenuOpen && !this.props.search}
           {...this.state.menu2Position}
