@@ -607,6 +607,8 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
         this.updateState(state);
 
+        // console.log(state.doc.toJSON().content);
+
         // If any of the transactions being dispatched resulted in the doc
         // changing then call our own change handler to let the outside world
         // know

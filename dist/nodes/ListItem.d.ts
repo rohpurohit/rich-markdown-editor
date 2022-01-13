@@ -13,7 +13,6 @@ export default class ListItem extends Node {
         toDOM: () => (string | number)[];
     };
     get plugins(): Plugin<DecorationSet<any>, any>[];
-    customSplitListItem(itemType: any): (state: any, dispatch: any) => boolean;
     keys({ type }: {
         type: any;
     }): {

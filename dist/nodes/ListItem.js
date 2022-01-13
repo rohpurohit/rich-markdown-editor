@@ -11,7 +11,7 @@ const Node_1 = __importDefault(require("./Node"));
 const isList_1 = __importDefault(require("../queries/isList"));
 const isInList_1 = __importDefault(require("../queries/isInList"));
 const getParentListItem_1 = __importDefault(require("../queries/getParentListItem"));
-const prosemirror_transform_1 = require("prosemirror-transform");
+const customSplitListItem_1 = require("../commands/customSplitListItem");
 class ListItem extends Node_1.default {
     get name() {
         return "list_item";
@@ -131,36 +131,9 @@ class ListItem extends Node_1.default {
             }),
         ];
     }
-    customSplitListItem(itemType) {
-        return function (state, dispatch) {
-            const { $from, $to, node } = state.selection;
-            if ((node && node.isBlock) || $from.depth < 2 || !$from.sameParent($to)) {
-                return false;
-            }
-            const grandParent = $from.node(-1);
-            if (grandParent.type !== itemType) {
-                return false;
-            }
-            if ($from.parent.content.size === 0 &&
-                $from.node(-1).childCount === $from.indexAfter(-1)) {
-                return prosemirror_schema_list_1.liftListItem(itemType)(state, dispatch);
-            }
-            const nextType = $to.pos === $from.end()
-                ? grandParent.contentMatchAt(0).defaultType
-                : null;
-            const tr = state.tr.delete($from.pos, $to.pos);
-            const types = nextType && [null, { type: nextType }];
-            if (!prosemirror_transform_1.canSplit(tr.doc, $from.pos, 2, types)) {
-                return false;
-            }
-            if (dispatch)
-                dispatch(tr.split($from.pos, 2, types).scrollIntoView());
-            return true;
-        };
-    }
     keys({ type }) {
         return {
-            Enter: this.customSplitListItem(type),
+            Enter: customSplitListItem_1.customSplitListItem(type),
             Tab: prosemirror_schema_list_1.sinkListItem(type),
             "Shift-Tab": prosemirror_schema_list_1.liftListItem(type),
             "Mod-]": prosemirror_schema_list_1.sinkListItem(type),

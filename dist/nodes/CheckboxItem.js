@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prosemirror_schema_list_1 = require("prosemirror-schema-list");
 const Node_1 = __importDefault(require("./Node"));
 const checkboxes_1 = __importDefault(require("../rules/checkboxes"));
+const customSplitListItem_1 = require("../commands/customSplitListItem");
 class CheckboxItem extends Node_1.default {
     constructor() {
         super(...arguments);
@@ -74,7 +75,7 @@ class CheckboxItem extends Node_1.default {
     }
     keys({ type }) {
         return {
-            Enter: prosemirror_schema_list_1.splitListItem(type),
+            Enter: customSplitListItem_1.customSplitListItem(type),
             Tab: prosemirror_schema_list_1.sinkListItem(type),
             "Shift-Tab": prosemirror_schema_list_1.liftListItem(type),
             "Mod-]": prosemirror_schema_list_1.sinkListItem(type),

@@ -5,6 +5,7 @@ import {
 } from "prosemirror-schema-list";
 import Node from "./Node";
 import checkboxRule from "../rules/checkboxes";
+import { customSplitListItem } from "../commands/customSplitListItem";
 
 export default class CheckboxItem extends Node {
   get name() {
@@ -78,7 +79,7 @@ export default class CheckboxItem extends Node {
 
   keys({ type }) {
     return {
-      Enter: splitListItem(type),
+      Enter: customSplitListItem(type),
       Tab: sinkListItem(type),
       "Shift-Tab": liftListItem(type),
       "Mod-]": sinkListItem(type),

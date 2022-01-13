@@ -1,8 +1,4 @@
-import {
-  //   splitListItem,
-  sinkListItem,
-  liftListItem,
-} from "prosemirror-schema-list";
+import { sinkListItem, liftListItem } from "prosemirror-schema-list";
 import {
   Transaction,
   EditorState,
@@ -16,7 +12,7 @@ import Node from "./Node";
 import isList from "../queries/isList";
 import isInList from "../queries/isInList";
 import getParentListItem from "../queries/getParentListItem";
-import { canSplit } from "prosemirror-transform";
+import { customSplitListItem } from "../commands/customSplitListItem";
 
 export default class ListItem extends Node {
   get name() {
@@ -192,45 +188,9 @@ export default class ListItem extends Node {
     ];
   }
 
-  // copied from prosemirror-schema-list,
-  // to try to fix lifting item when pressing Enter on empty nested list item
-  customSplitListItem(itemType) {
-    return function(state, dispatch) {
-      const { $from, $to, node } = state.selection;
-      if ((node && node.isBlock) || $from.depth < 2 || !$from.sameParent($to)) {
-        return false;
-      }
-
-      const grandParent = $from.node(-1);
-      if (grandParent.type !== itemType) {
-        return false;
-      }
-
-      if (
-        $from.parent.content.size === 0 &&
-        $from.node(-1).childCount === $from.indexAfter(-1)
-      ) {
-        // In an empty block. lift the list item
-        return liftListItem(itemType)(state, dispatch);
-      }
-
-      const nextType =
-        $to.pos === $from.end()
-          ? grandParent.contentMatchAt(0).defaultType
-          : null;
-      const tr = state.tr.delete($from.pos, $to.pos);
-      const types = nextType && [null, { type: nextType }];
-      if (!canSplit(tr.doc, $from.pos, 2, types)) {
-        return false;
-      }
-      if (dispatch) dispatch(tr.split($from.pos, 2, types).scrollIntoView());
-      return true;
-    };
-  }
-
   keys({ type }) {
     return {
-      Enter: this.customSplitListItem(type),
+      Enter: customSplitListItem(type),
       Tab: sinkListItem(type),
       "Shift-Tab": liftListItem(type),
       "Mod-]": sinkListItem(type),

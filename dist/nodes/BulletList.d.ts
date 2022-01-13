@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { InputRule } from "prosemirror-inputrules";
 import Node from "./Node";
 export default class BulletList extends Node {
@@ -8,7 +9,7 @@ export default class BulletList extends Node {
         parseDOM: {
             tag: string;
         }[];
-        toDOM: () => (string | number)[];
+        toDOM: () => import("react").ReactText[];
     };
     commands({ type, schema }: {
         type: any;
