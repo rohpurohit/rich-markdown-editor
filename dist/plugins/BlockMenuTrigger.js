@@ -34,7 +34,7 @@ const prosemirror_view_1 = require("prosemirror-view");
 const Extension_1 = __importDefault(require("../lib/Extension"));
 const MAX_MATCH = 500;
 const OPEN_REGEX = /.*\/(\w+)?$/;
-const CLOSE_REGEX = /\/\/|(\/\s\s)/;
+const CLOSE_REGEX = /(^(?!\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
 function run(view, from, to, regex, handler) {
     if (view.composing) {
         return false;

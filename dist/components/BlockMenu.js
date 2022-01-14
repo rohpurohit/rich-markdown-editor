@@ -15,6 +15,7 @@ class BlockMenu extends react_1.default.Component {
         this.clearSearch = (clearLength = 0) => {
             const { state, dispatch } = this.props.view;
             const parent = prosemirror_utils_1.findParentNode((node) => !!node)(state.selection);
+            console.log(clearLength);
             if (parent) {
                 const deleteFrom = Math.max(parent.pos, state.selection.to - clearLength);
                 dispatch(state.tr.insertText("", deleteFrom, state.selection.to));

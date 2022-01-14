@@ -254,8 +254,7 @@ class KnowtCommandMenu extends React.Component {
             this.props.onClose();
         };
         this.clearSearch = () => {
-            var _a;
-            const clearLength = ((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.length) || 0;
+            const clearLength = this.props.search ? this.props.search.length + 1 : 0;
             this.props.onClearSearch(clearLength);
         };
     }
