@@ -80,7 +80,7 @@ class BlockMenuTrigger extends Extension_1.default {
                                 const { pos } = view.state.selection.$from;
                                 return run(view, pos, pos, OPEN_REGEX, (state, match) => {
                                     if (match) {
-                                        this.options.onOpen(match[1]);
+                                        this.options.onOpen(match[1] || "");
                                     }
                                     else {
                                         this.options.onClose();

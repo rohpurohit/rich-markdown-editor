@@ -52,10 +52,10 @@ export default class Embed extends Node {
   }
 
   component({ isEditable, isSelected, theme, node }) {
-    const { embeds } = this.editor.props;
+    const { embeds } = this.extension.options;
 
     // matches are cached in module state to avoid re running loops and regex
-    // here. Unfortuantely this function is not compatible with React.memo or
+    // here. Unfortunately this function is not compatible with React.memo or
     // we would use that instead.
     const hit = cache[node.attrs.href];
     let Component = hit ? hit.Component : undefined;

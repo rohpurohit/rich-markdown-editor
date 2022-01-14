@@ -243,11 +243,18 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       }
     }
 
-    if (["ArrowLeft", "ArrowRight"].includes(e.key)) {
+    if (e.key === "ArrowRight") {
       e.preventDefault();
       e.stopPropagation();
 
-      this.setState({ nestedSelectedIndex: e.key === "ArrowRight" ? 0 : null });
+      this.onGroupSelect(this.state.selectedIndex);
+    }
+
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.setState({ nestedSelectedIndex: null });
     }
 
     if (e.key === "Escape") {
@@ -404,8 +411,6 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   };
 
   clearSearch = (): void => {
-    console.log(this.props.search);
-
     if (this.props.search === undefined) {
       // search text is not defined (opened through right click for instance)
       return this.props.onClearSearch(0);
