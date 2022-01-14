@@ -163,7 +163,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       !this.menuRef.current?.contains(event.target as Node) &&
       !this.nestedMenuRef.current?.contains(event.target as Node)
     ) {
-      this.props.onClose();
+      this.close();
     }
   };
 
@@ -200,7 +200,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
           this.insertItem(item as MenuItem);
         }
       } else {
-        this.props.onClose();
+        this.close();
       }
     }
 
@@ -250,13 +250,6 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       this.setState({ nestedSelectedIndex: e.key === "ArrowRight" ? 0 : null });
     }
 
-    if (e.key === "ArrowRight") {
-      e.preventDefault();
-      e.stopPropagation();
-
-      this.setState({ nestedSelectedIndex: 0 });
-    }
-
     if (e.key === "Escape") {
       this.close();
     }
@@ -264,8 +257,10 @@ class KnowtCommandMenu extends React.Component<Props, State> {
 
   // call an inserter function based on item.name (image, embed, link, or else)
   insertItem = (item: MenuItem | EmbedDescriptor): void => {
+    this.clearSearch();
+
     if (item.customOnClick) {
-      this.props.onClose();
+      this.close();
       item.customOnClick();
       return;
     }
@@ -276,8 +271,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       case "embed":
         return this.triggerLinkInput(item as EmbedDescriptor);
       case "link": {
-        this.clearSearch();
-        this.props.onClose();
+        this.close();
         this.props.onLinkToolbarOpen?.();
         return;
       }
@@ -333,7 +327,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     }
 
     if (event.key === "Escape") {
-      this.props.onClose();
+      this.close();
       this.props.view.focus();
     }
   };
@@ -388,8 +382,6 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     const { state } = view;
     const parent = findParentNode((node) => !!node)(state.selection);
 
-    this.clearSearch();
-
     if (!uploadImage) {
       throw new Error("uploadImage prop is required to replace images");
     }
@@ -408,18 +400,22 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       this.inputRef.current.value = "";
     }
 
-    this.props.onClose();
+    this.close();
   };
 
   clearSearch = (): void => {
-    const clearLength = this.props.search ? this.props.search.length + 1 : 0;
-    this.props.onClearSearch(clearLength);
+    if (this.props.search === undefined) {
+      // search text is not defined (opened through right click for instance)
+      return this.props.onClearSearch(0);
+    }
+
+    // console.log(this.props.search);
+    // search text is there if opened through the `/` trigger. Defaulted to `""`
+    this.props.onClearSearch(this.props.search.length + 1);
   };
 
   // run a command by item.name, and close
   insertBlock(item): void {
-    this.clearSearch();
-
     const command = this.props.commands[item.name];
 
     if (command) {
@@ -428,7 +424,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       this.props.commands[`create${capitalize(item.name)}`](item.attrs);
     }
 
-    this.props.onClose();
+    this.close();
   }
 
   // returns getBoundingRect top/left of the current selection range

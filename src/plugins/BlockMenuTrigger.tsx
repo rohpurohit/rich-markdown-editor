@@ -9,8 +9,8 @@ import { Decoration, DecorationSet } from "prosemirror-view";
 import Extension from "../lib/Extension";
 
 const MAX_MATCH = 500;
-const OPEN_REGEX = /.*\/(\w+)?$/;
-const CLOSE_REGEX = /(^(?!\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
+const OPEN_REGEX = /^\/(\w+)?$|.*\s\/(\w+)?$/;
+const CLOSE_REGEX = /\/(.*\s)$/;
 
 // based on the input rules code in Prosemirror, here:
 // https://github.com/ProseMirror/prosemirror-inputrules/blob/master/src/inputrules.js
@@ -170,7 +170,8 @@ export default class BlockMenuTrigger extends Extension {
           state.selection.$from.parent.type.name === "paragraph" &&
           !isInTable(state)
         ) {
-          this.options.onOpen(match[1]);
+          console.log("OPEN_REGEX");
+          this.options.onOpen(match[1] || match[2] || "");
         }
         return null;
       }),
@@ -180,6 +181,7 @@ export default class BlockMenuTrigger extends Extension {
       // /word<space>
       new InputRule(CLOSE_REGEX, (state, match) => {
         if (match) {
+          console.log("CLOSE_REGEX");
           this.options.onClose();
         }
         return null;

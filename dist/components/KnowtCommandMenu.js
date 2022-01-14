@@ -69,7 +69,7 @@ class KnowtCommandMenu extends React.Component {
             }
             if (!((_a = this.menuRef.current) === null || _a === void 0 ? void 0 : _a.contains(event.target)) &&
                 !((_b = this.nestedMenuRef.current) === null || _b === void 0 ? void 0 : _b.contains(event.target))) {
-                this.props.onClose();
+                this.close();
             }
         };
         this.handleKeyDown = (e) => {
@@ -100,7 +100,7 @@ class KnowtCommandMenu extends React.Component {
                     }
                 }
                 else {
-                    this.props.onClose();
+                    this.close();
                 }
             }
             const isUpKey = e.key === "ArrowUp" ||
@@ -142,19 +142,15 @@ class KnowtCommandMenu extends React.Component {
                 e.stopPropagation();
                 this.setState({ nestedSelectedIndex: e.key === "ArrowRight" ? 0 : null });
             }
-            if (e.key === "ArrowRight") {
-                e.preventDefault();
-                e.stopPropagation();
-                this.setState({ nestedSelectedIndex: 0 });
-            }
             if (e.key === "Escape") {
                 this.close();
             }
         };
         this.insertItem = (item) => {
             var _a, _b;
+            this.clearSearch();
             if (item.customOnClick) {
-                this.props.onClose();
+                this.close();
                 item.customOnClick();
                 return;
             }
@@ -164,8 +160,7 @@ class KnowtCommandMenu extends React.Component {
                 case "embed":
                     return this.triggerLinkInput(item);
                 case "link": {
-                    this.clearSearch();
-                    this.props.onClose();
+                    this.close();
                     (_b = (_a = this.props).onLinkToolbarOpen) === null || _b === void 0 ? void 0 : _b.call(_a);
                     return;
                 }
@@ -200,7 +195,7 @@ class KnowtCommandMenu extends React.Component {
                 });
             }
             if (event.key === "Escape") {
-                this.props.onClose();
+                this.close();
                 this.props.view.focus();
             }
         };
@@ -235,7 +230,6 @@ class KnowtCommandMenu extends React.Component {
             const { view, uploadImage, onImageUploadStart, onImageUploadStop, onShowToast, } = this.props;
             const { state } = view;
             const parent = prosemirror_utils_1.findParentNode((node) => !!node)(state.selection);
-            this.clearSearch();
             if (!uploadImage) {
                 throw new Error("uploadImage prop is required to replace images");
             }
@@ -251,11 +245,13 @@ class KnowtCommandMenu extends React.Component {
             if (this.inputRef.current) {
                 this.inputRef.current.value = "";
             }
-            this.props.onClose();
+            this.close();
         };
         this.clearSearch = () => {
-            const clearLength = this.props.search ? this.props.search.length + 1 : 0;
-            this.props.onClearSearch(clearLength);
+            if (this.props.search === undefined) {
+                return this.props.onClearSearch(0);
+            }
+            this.props.onClearSearch(this.props.search.length + 1);
         };
     }
     componentDidMount() {
@@ -300,7 +296,6 @@ class KnowtCommandMenu extends React.Component {
         });
     }
     insertBlock(item) {
-        this.clearSearch();
         const command = this.props.commands[item.name];
         if (command) {
             command(item.attrs);
@@ -308,7 +303,7 @@ class KnowtCommandMenu extends React.Component {
         else {
             this.props.commands[`create${capitalize_1.default(item.name)}`](item.attrs);
         }
-        this.props.onClose();
+        this.close();
     }
     getCaretPosition() {
         const selection = window.document.getSelection();

@@ -33,8 +33,8 @@ const outline_icons_1 = require("outline-icons");
 const prosemirror_view_1 = require("prosemirror-view");
 const Extension_1 = __importDefault(require("../lib/Extension"));
 const MAX_MATCH = 500;
-const OPEN_REGEX = /.*\/(\w+)?$/;
-const CLOSE_REGEX = /(^(?!\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
+const OPEN_REGEX = /^\/(\w+)?$|.*\s\/(\w+)?$/;
+const CLOSE_REGEX = /\/(.*\s)$/;
 function run(view, from, to, regex, handler) {
     if (view.composing) {
         return false;
@@ -142,12 +142,14 @@ class BlockMenuTrigger extends Extension_1.default {
                 if (match &&
                     state.selection.$from.parent.type.name === "paragraph" &&
                     !prosemirror_tables_1.isInTable(state)) {
-                    this.options.onOpen(match[1]);
+                    console.log("OPEN_REGEX");
+                    this.options.onOpen(match[1] || match[2] || "");
                 }
                 return null;
             }),
             new prosemirror_inputrules_1.InputRule(CLOSE_REGEX, (state, match) => {
                 if (match) {
+                    console.log("CLOSE_REGEX");
                     this.options.onClose();
                 }
                 return null;

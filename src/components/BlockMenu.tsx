@@ -47,8 +47,6 @@ class BlockMenu extends React.Component<BlockMenuProps> {
     const { state, dispatch } = this.props.view;
     const parent = findParentNode((node) => !!node)(state.selection);
 
-    console.log(clearLength);
-
     if (parent) {
       const deleteFrom = Math.max(parent.pos, state.selection.to - clearLength);
       dispatch(state.tr.insertText("", deleteFrom, state.selection.to));

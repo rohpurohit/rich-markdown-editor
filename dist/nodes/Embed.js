@@ -58,7 +58,7 @@ class Embed extends Node_1.default {
                     },
                 },
             ],
-            toDOM: node => [
+            toDOM: (node) => [
                 "iframe",
                 { class: "embed", src: node.attrs.href, contentEditable: false },
                 0,
@@ -89,7 +89,7 @@ class Embed extends Node_1.default {
         return (React.createElement(Component, { attrs: Object.assign(Object.assign({}, node.attrs), { matches }), isEditable: isEditable, isSelected: isSelected, theme: theme }));
     }
     commands({ type }) {
-        return attrs => (state, dispatch) => {
+        return (attrs) => (state, dispatch) => {
             dispatch(state.tr.replaceSelectionWith(type.create(attrs)).scrollIntoView());
             return true;
         };
@@ -102,7 +102,7 @@ class Embed extends Node_1.default {
     parseMarkdown() {
         return {
             node: "embed",
-            getAttrs: token => ({
+            getAttrs: (token) => ({
                 href: token.attrGet("href"),
             }),
         };
