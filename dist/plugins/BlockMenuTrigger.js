@@ -142,14 +142,12 @@ class BlockMenuTrigger extends Extension_1.default {
                 if (match &&
                     state.selection.$from.parent.type.name === "paragraph" &&
                     !prosemirror_tables_1.isInTable(state)) {
-                    console.log("OPEN_REGEX");
                     this.options.onOpen(match[1] || match[2] || "");
                 }
                 return null;
             }),
             new prosemirror_inputrules_1.InputRule(CLOSE_REGEX, (state, match) => {
                 if (match) {
-                    console.log("CLOSE_REGEX");
                     this.options.onClose();
                 }
                 return null;

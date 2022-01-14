@@ -162,26 +162,18 @@ export default class BlockMenuTrigger extends Extension {
 
   inputRules() {
     return [
-      // main regex should match only:
-      // /word
       new InputRule(OPEN_REGEX, (state, match) => {
         if (
           match &&
           state.selection.$from.parent.type.name === "paragraph" &&
           !isInTable(state)
         ) {
-          console.log("OPEN_REGEX");
           this.options.onOpen(match[1] || match[2] || "");
         }
         return null;
       }),
-      // invert regex should match some of these scenarios:
-      // /<space>word
-      // /<space>
-      // /word<space>
       new InputRule(CLOSE_REGEX, (state, match) => {
         if (match) {
-          console.log("CLOSE_REGEX");
           this.options.onClose();
         }
         return null;

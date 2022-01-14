@@ -46,7 +46,7 @@ function setBlockType(nodeType, attrs = {}) {
         });
         if (!applicable)
             return false;
-        dispatch(setBlockType2.call(state.tr, from, to, nodeType).scrollIntoView());
+        dispatch(setBlockType2.call(state.tr, from, to, nodeType, attrs).scrollIntoView());
         return true;
     };
 }

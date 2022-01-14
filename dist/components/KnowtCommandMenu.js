@@ -248,6 +248,7 @@ class KnowtCommandMenu extends React.Component {
             this.close();
         };
         this.clearSearch = () => {
+            console.log(this.props.search);
             if (this.props.search === undefined) {
                 return this.props.onClearSearch(0);
             }

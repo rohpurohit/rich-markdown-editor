@@ -404,12 +404,13 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   };
 
   clearSearch = (): void => {
+    console.log(this.props.search);
+
     if (this.props.search === undefined) {
       // search text is not defined (opened through right click for instance)
       return this.props.onClearSearch(0);
     }
 
-    // console.log(this.props.search);
     // search text is there if opened through the `/` trigger. Defaulted to `""`
     this.props.onClearSearch(this.props.search.length + 1);
   };
