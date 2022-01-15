@@ -445,6 +445,11 @@ exports.StyledEditor = styled_components_1.default("div") `
     color: ${(props) => props.theme.textSecondary};
     text-decoration: line-through;
   }
+ 
+  ul > li > p,
+  ol > li, p {
+      margin-bottom: 5px !important;
+  }
 
   ul li::before,
   ol li::before {
