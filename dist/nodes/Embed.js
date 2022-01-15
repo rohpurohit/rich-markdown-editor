@@ -69,7 +69,10 @@ class Embed extends Node_1.default {
         return [embeds_1.default(this.options.embeds)];
     }
     component({ isEditable, isSelected, theme, node }) {
-        const { embeds } = this.extension.options;
+        const embeds = [
+            ...this.editor.props.defaultEmbeds,
+            this.editor.props.embeds,
+        ];
         const hit = cache[node.attrs.href];
         let Component = hit ? hit.Component : undefined;
         let matches = hit ? hit.matches : undefined;

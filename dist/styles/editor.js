@@ -30,12 +30,11 @@ exports.StyledEditor = styled_components_1.default("div") `
   }
 
   li {
-    position: relative;    
-    padding: 3px 2px;
+    position: relative;
   }
 
-  li::marker {
-    font-size: 17px;
+  ul li::marker {
+    font-size: 21px;
   }
 
   .image {
@@ -387,6 +386,7 @@ exports.StyledEditor = styled_components_1.default("div") `
 
   p {
     margin: 0;
+    line-height: 2rem;
 
     span:first-child + br:last-child {
       display: none;
@@ -456,7 +456,7 @@ exports.StyledEditor = styled_components_1.default("div") `
     width: 24px;
     height: 24px;
     position: absolute;
-    ${(props) => (props.rtl ? "right" : "left")}: -40px;
+    ${(props) => (props.rtl ? "right" : "left")}: -46px;
     opacity: 0;
     transition: opacity 200ms ease-in-out;
   }

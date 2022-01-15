@@ -32,8 +32,8 @@ export const StyledEditor = styled("div")<{
     position: relative;
   }
 
-  li::marker {
-    font-size: 17px;
+  ul li::marker {
+    font-size: 21px;
   }
 
   .image {
@@ -456,7 +456,7 @@ export const StyledEditor = styled("div")<{
     width: 24px;
     height: 24px;
     position: absolute;
-    ${(props) => (props.rtl ? "right" : "left")}: -40px;
+    ${(props) => (props.rtl ? "right" : "left")}: -46px;
     opacity: 0;
     transition: opacity 200ms ease-in-out;
   }
