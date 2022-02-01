@@ -24,6 +24,7 @@ const defaultMenuPosition: MenuPosition = {
   left: -1000,
   top: 0,
   bottom: undefined,
+  updatedAt: Date.now(),
 };
 
 const defaultMenuMaxHeight = 250;
@@ -154,8 +155,20 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     }
   }
 
+  // close the menu on click outside
   handleClick = (event: MouseEvent): void => {
     if (!this.props.isActive) {
+      return;
+    }
+
+    const now = Date.now();
+    const menuOpenedAt = this.state.menu1Position.updatedAt;
+    const menuOpenedFor = now - menuOpenedAt;
+
+    if (menuOpenedFor < 200) {
+      // we can't consider that the menu is open, if it only opened 200ms ago.
+      // in this case, probably the click on the "+" button to open the menu is
+      // received here after the menu opened, so we want to ignore such click.
       return;
     }
 
@@ -494,6 +507,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         left,
         top: _top + window.scrollY + offset,
         bottom: undefined,
+        updatedAt: Date.now(),
       },
     });
   }
@@ -566,6 +580,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         top: bottom + window.scrollY,
         bottom: undefined,
         isAbove: true,
+        updatedAt: Date.now(),
       };
     } else {
       return {
@@ -573,6 +588,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         top: undefined,
         bottom: window.innerHeight - top - window.scrollY,
         isAbove: false,
+        updatedAt: Date.now(),
       };
     }
   }

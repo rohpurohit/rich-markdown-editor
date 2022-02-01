@@ -40,6 +40,7 @@ export type MenuPosition = {
   top?: number;
   bottom?: number;
   isAbove?: boolean;
+  updatedAt: number;
 };
 
 export type GroupMenuItem = {
