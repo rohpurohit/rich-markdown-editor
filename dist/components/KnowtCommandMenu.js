@@ -39,6 +39,7 @@ const defaultMenuPosition = {
     left: -1000,
     top: 0,
     bottom: undefined,
+    updatedAt: Date.now(),
 };
 const defaultMenuMaxHeight = 250;
 const SAFE_MARGIN_Y = 50;
@@ -65,6 +66,12 @@ class KnowtCommandMenu extends React.Component {
         this.handleClick = (event) => {
             var _a, _b;
             if (!this.props.isActive) {
+                return;
+            }
+            const now = Date.now();
+            const menuOpenedAt = this.state.menu1Position.updatedAt;
+            const menuOpenedFor = now - menuOpenedAt;
+            if (menuOpenedFor < 200) {
                 return;
             }
             if (!((_a = this.menuRef.current) === null || _a === void 0 ? void 0 : _a.contains(event.target)) &&
@@ -352,6 +359,7 @@ class KnowtCommandMenu extends React.Component {
                 left,
                 top: _top + window.scrollY + offset,
                 bottom: undefined,
+                updatedAt: Date.now(),
             },
         });
     }
@@ -407,6 +415,7 @@ class KnowtCommandMenu extends React.Component {
                 top: bottom + window.scrollY,
                 bottom: undefined,
                 isAbove: true,
+                updatedAt: Date.now(),
             };
         }
         else {
@@ -415,6 +424,7 @@ class KnowtCommandMenu extends React.Component {
                 top: undefined,
                 bottom: window.innerHeight - top - window.scrollY,
                 isAbove: false,
+                updatedAt: Date.now(),
             };
         }
     }

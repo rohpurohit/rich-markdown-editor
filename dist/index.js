@@ -234,7 +234,7 @@ class RichMarkdownEditor extends React.PureComponent {
         }
     }
     componentDidUpdate(prevProps) {
-        if (this.props.value && prevProps.value !== this.props.value) {
+        if ((typeof this.props.value === "string") && (prevProps.value !== this.props.value)) {
             const newState = this.createState(this.props.value);
             this.view.updateState(newState);
         }

@@ -36,6 +36,7 @@ export declare type MenuPosition = {
     top?: number;
     bottom?: number;
     isAbove?: boolean;
+    updatedAt: number;
 };
 export declare type GroupMenuItem = {
     groupData: GroupData;
