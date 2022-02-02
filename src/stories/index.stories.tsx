@@ -29,9 +29,9 @@ const Template: Story<Props> = (args) => <Editor {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  defaultValue: `# Welcome
-
-Just an easy to use **Markdown** editor with \`slash commands\``,
+  //   defaultValue: `# Welcome
+  // Just an easy to use **Markdown** editor with \`slash commands\``,
+  //   defaultValue: "",
 };
 
 export const Emoji = Template.bind({});

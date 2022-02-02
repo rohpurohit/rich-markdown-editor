@@ -101,7 +101,6 @@ export const theme = lightTheme;
 
 export type Props = {
   id?: string;
-  value?: string;
   defaultValue: string;
   placeholder: string;
   extensions?: Extension[];
@@ -253,12 +252,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    // Allow changes to the 'value' prop to update the editor from outside
-    if ((typeof this.props.value === "string") && (prevProps.value !== this.props.value)) {
-      const newState = this.createState(this.props.value);
-      this.view.updateState(newState);
-    }
-
     // pass readOnly changes through to underlying editor instance
     if (prevProps.readOnly !== this.props.readOnly) {
       this.view.update({
@@ -534,27 +527,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   createState(value?: string) {
-    const html_test =
-      `
-      <p><mark>red paragraph</mark></p>
-      <p style="background-color: blue;">blue paragraph</p>
-      <p><mark class="blue">blue paragraph</mark></p>
-      <p><mark class="green">green paragraph</mark></p>
-      <p><span style="background-color: yellow;">yellow paragraph</span></p>
-      ` && null;
-
-    const md_test =
-      `
-        ==red==
-        @@orange@@
-        $$yellow$$
-        %%green%%
-        ^^blue^^
-      ` && null;
-
-    const doc = this.createDocument(
-      md_test || html_test || value || this.props.defaultValue
-    );
+    const doc = this.createDocument(value || this.props.defaultValue);
 
     return EditorState.create({
       schema: this.schema,
@@ -595,7 +568,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
     const self = this; // eslint-disable-line
     const view = new EditorView(this.element, {
-      state: this.createState(this.props.value),
+      state: this.createState(this.props.defaultValue),
       editable: () => !this.props.readOnly,
       nodeViews: this.nodeViews,
       handleDOMEvents: this.props.handleDOMEvents,
@@ -659,16 +632,15 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     }
   };
 
-  value = (): string => {
+  getValue = (): string => {
     return this.serializer.serialize(this.view.state.doc);
   };
 
   handleChange = () => {
-    // console.log(this.value());
     if (!this.props.onChange) return;
 
     this.props.onChange(() => {
-      return this.value();
+      return this.getValue();
     });
   };
 
@@ -739,6 +711,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   };
 
   // 'public' methods
+
+  // force update the editor content.
+  forceUpdateContent = (newValue: string): void => {
+    const newState = this.createState(newValue);
+    this.view.updateState(newState);
+  };
+
   focusAtStart = () => {
     const selection = Selection.atStart(this.view.state.doc);
     const transaction = this.view.state.tr.setSelection(selection);

@@ -64,9 +64,20 @@ export default function Example(props) {
       ? dark.background
       : light.background;
 
+  const [value, setValue] = React.useState("__HELLO__");
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setValue("");
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div style={{ padding: "1em 2em" }}>
       <Editor
+        value={value}
         onCreateLink={(title) => {
           // Delay to simulate time taken for remote API request to complete
           return new Promise((resolve, reject) => {

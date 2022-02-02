@@ -105,7 +105,6 @@ export declare const theme: {
 };
 export declare type Props = {
     id?: string;
-    value?: string;
     defaultValue: string;
     placeholder: string;
     extensions?: Extension[];
@@ -237,7 +236,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     createView(): EditorView<any>;
     scrollToAnchor(hash: string): void;
     calculateDir: () => void;
-    value: () => string;
+    getValue: () => string;
     handleChange: () => void;
     handleGoToPreviousInput: () => void;
     handleSave: () => void;
@@ -253,6 +252,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     handleSelectRow: (index: number, state: EditorState) => void;
     handleSelectColumn: (index: number, state: EditorState) => void;
     handleSelectTable: (state: EditorState) => void;
+    forceUpdateContent: (newValue: string) => void;
     focusAtStart: () => void;
     focusAtEnd: () => void;
     getHeadings: () => {

@@ -75,8 +75,15 @@ function Example(props) {
         body.style.backgroundColor = props.dark
             ? theme_1.dark.background
             : theme_1.light.background;
+    const [value, setValue] = React.useState("__HELLO__");
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            setValue("");
+        }, 2000);
+        return () => clearInterval(interval);
+    }, []);
     return (React.createElement("div", { style: { padding: "1em 2em" } },
-        React.createElement(__1.default, Object.assign({ onCreateLink: (title) => {
+        React.createElement(__1.default, Object.assign({ value: value, onCreateLink: (title) => {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
                         if (title !== "error") {

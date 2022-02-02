@@ -118,14 +118,14 @@ class RichMarkdownEditor extends React.PureComponent {
                 this.setState({ isRTL });
             }
         };
-        this.value = () => {
+        this.getValue = () => {
             return this.serializer.serialize(this.view.state.doc);
         };
         this.handleChange = () => {
             if (!this.props.onChange)
                 return;
             this.props.onChange(() => {
-                return this.value();
+                return this.getValue();
             });
         };
         this.handleGoToPreviousInput = () => {
@@ -181,6 +181,10 @@ class RichMarkdownEditor extends React.PureComponent {
         this.handleSelectTable = (state) => {
             this.view.dispatch(prosemirror_utils_1.selectTable(state.tr));
         };
+        this.forceUpdateContent = (newValue) => {
+            const newState = this.createState(newValue);
+            this.view.updateState(newState);
+        };
         this.focusAtStart = () => {
             const selection = prosemirror_state_1.Selection.atStart(this.view.state.doc);
             const transaction = this.view.state.tr.setSelection(selection);
@@ -234,10 +238,6 @@ class RichMarkdownEditor extends React.PureComponent {
         }
     }
     componentDidUpdate(prevProps) {
-        if ((typeof this.props.value === "string") && (prevProps.value !== this.props.value)) {
-            const newState = this.createState(this.props.value);
-            this.view.updateState(newState);
-        }
         if (prevProps.readOnly !== this.props.readOnly) {
             this.view.update(Object.assign(Object.assign({}, this.view.props), { editable: () => !this.props.readOnly }));
         }
@@ -470,21 +470,7 @@ class RichMarkdownEditor extends React.PureComponent {
         });
     }
     createState(value) {
-        const html_test = `
-      <p><mark>red paragraph</mark></p>
-      <p style="background-color: blue;">blue paragraph</p>
-      <p><mark class="blue">blue paragraph</mark></p>
-      <p><mark class="green">green paragraph</mark></p>
-      <p><span style="background-color: yellow;">yellow paragraph</span></p>
-      ` && null;
-        const md_test = `
-        ==red==
-        @@orange@@
-        $$yellow$$
-        %%green%%
-        ^^blue^^
-      ` && null;
-        const doc = this.createDocument(md_test || html_test || value || this.props.defaultValue);
+        const doc = this.createDocument(value || this.props.defaultValue);
         return prosemirror_state_1.EditorState.create({
             schema: this.schema,
             doc,
@@ -519,7 +505,7 @@ class RichMarkdownEditor extends React.PureComponent {
         };
         const self = this;
         const view = new prosemirror_view_1.EditorView(this.element, {
-            state: this.createState(this.props.value),
+            state: this.createState(this.props.defaultValue),
             editable: () => !this.props.readOnly,
             nodeViews: this.nodeViews,
             handleDOMEvents: this.props.handleDOMEvents,

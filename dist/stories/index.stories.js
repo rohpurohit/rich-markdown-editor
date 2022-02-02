@@ -29,11 +29,7 @@ exports.default = {
 };
 const Template = (args) => react_1.default.createElement(index_1.default, Object.assign({}, args));
 exports.Default = Template.bind({});
-exports.Default.args = {
-    defaultValue: `# Welcome
-
-Just an easy to use **Markdown** editor with \`slash commands\``,
-};
+exports.Default.args = {};
 exports.Emoji = Template.bind({});
 exports.Emoji.args = {
     defaultValue: `# Emoji
