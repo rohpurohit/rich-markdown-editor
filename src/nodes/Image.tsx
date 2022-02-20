@@ -8,6 +8,8 @@ import getDataTransferFiles from "../lib/getDataTransferFiles";
 import uploadPlaceholderPlugin from "../lib/uploadPlaceholder";
 import insertFiles from "../commands/insertFiles";
 import Node from "./Node";
+import useResizeObserver from "../hooks/useResizeObserver";
+import imsizeRule from "../rules/imsize";
 
 /**
  * Matches following attributes in Markdown-typed image: [, alt, src, class]
@@ -17,10 +19,11 @@ import Node from "./Node";
  * ![](image.jpg "class") -> [, "", "image.jpg", "small"]
  * ![Lorem](image.jpg "class") -> [, "Lorem", "image.jpg", "small"]
  */
+// TODO: alter the regex to detect image size as well: `![Lorem](image.jpg =100x100)`
 const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 
-const uploadPlugin = options =>
-  new Plugin({
+const uploadPlugin = (options) => {
+  return new Plugin({
     props: {
       handleDOMEvents: {
         paste(view, event: ClipboardEvent): boolean {
@@ -36,8 +39,8 @@ const uploadPlugin = options =>
           // check if we actually pasted any files
           const files = Array.prototype.slice
             .call(event.clipboardData.items)
-            .map(dt => dt.getAsFile())
-            .filter(file => file);
+            .map((dt) => dt.getAsFile())
+            .filter((file) => file);
 
           if (files.length === 0) return false;
 
@@ -59,9 +62,10 @@ const uploadPlugin = options =>
           }
 
           // filter to only include image files
-          const files = getDataTransferFiles(event).filter(file =>
+          const files = getDataTransferFiles(event).filter((file) =>
             /image/i.test(file.type)
           );
+
           if (files.length === 0) {
             return false;
           }
@@ -82,9 +86,10 @@ const uploadPlugin = options =>
       },
     },
   });
+};
 
 const IMAGE_CLASSES = ["right-50", "left-50"];
-const getLayoutAndTitle = tokenTitle => {
+const getLayoutAndTitle = (tokenTitle) => {
   if (!tokenTitle) return {};
   if (IMAGE_CLASSES.includes(tokenTitle)) {
     return {
@@ -97,7 +102,7 @@ const getLayoutAndTitle = tokenTitle => {
   }
 };
 
-const downloadImageNode = async node => {
+const downloadImageNode = async (node) => {
   const image = await fetch(node.attrs.src);
   const imageBlob = await image.blob();
   const imageURL = URL.createObjectURL(imageBlob);
@@ -132,6 +137,12 @@ export default class Image extends Node {
           default: null,
         },
         title: {
+          default: null,
+        },
+        width: {
+          default: null,
+        },
+        height: {
           default: null,
         },
       },
@@ -170,7 +181,7 @@ export default class Image extends Node {
           },
         },
       ],
-      toDOM: node => {
+      toDOM: (node) => {
         const className = node.attrs.layoutClass
           ? `image image-${node.attrs.layoutClass}`
           : "image";
@@ -179,14 +190,20 @@ export default class Image extends Node {
           {
             class: className,
           },
-          ["img", { ...node.attrs, contentEditable: false }],
+          [
+            "img",
+            {
+              ...node.attrs,
+              contentEditable: false,
+            },
+          ],
           ["p", { class: "caption" }, 0],
         ];
       },
     };
   }
 
-  handleKeyDown = ({ node, getPos }) => event => {
+  handleKeyDown = ({ node, getPos }) => (event) => {
     // Pressing Enter in the caption field should move the cursor/selection
     // below the image
     if (event.key === "Enter") {
@@ -201,7 +218,7 @@ export default class Image extends Node {
       return;
     }
 
-    // Pressing Backspace in an an empty caption field should remove the entire
+    // Pressing Backspace in an empty caption field should remove the entire
     // image, leaving an empty paragraph
     if (event.key === "Backspace" && event.target.innerText === "") {
       const { view } = this.editor;
@@ -213,9 +230,9 @@ export default class Image extends Node {
     }
   };
 
-  handleBlur = ({ node, getPos }) => event => {
+  handleBlur = ({ node, getPos }) => (event) => {
     const alt = event.target.innerText;
-    const { src, title, layoutClass } = node.attrs;
+    const { src, title, width, height, layoutClass } = node.attrs;
 
     if (alt === node.attrs.alt) return;
 
@@ -229,11 +246,13 @@ export default class Image extends Node {
       alt,
       title,
       layoutClass,
+      width,
+      height,
     });
     view.dispatch(transaction);
   };
 
-  handleSelect = ({ getPos }) => event => {
+  handleSelect = ({ getPos }) => (event) => {
     event.preventDefault();
 
     const { view } = this.editor;
@@ -242,16 +261,46 @@ export default class Image extends Node {
     view.dispatch(transaction);
   };
 
-  handleDownload = ({ node }) => event => {
+  handleDownload = ({ node }) => (event) => {
     event.preventDefault();
     event.stopPropagation();
     downloadImageNode(node);
   };
 
-  component = props => {
+  resizeImage = ({ node, getPos, width, height }) => {
+    const { view } = this.editor;
+    const { tr } = view.state;
+
+    const pos = getPos();
+    const transaction = tr.setNodeMarkup(pos, undefined, {
+      ...node.attrs,
+      width: Math.round(width),
+      height: Math.round(height),
+    });
+    view.dispatch(transaction);
+  };
+
+  component = (props) => {
     const { theme, isSelected } = props;
-    const { alt, src, title, layoutClass } = props.node.attrs;
+    const { alt, src, title, layoutClass, width, height } = props.node.attrs;
     const className = layoutClass ? `image image-${layoutClass}` : "image";
+
+    const wrapperRef = React.useRef(null);
+    const sizeRef = React.useRef({ width, height });
+    const imageResized = React.useRef(false);
+
+    React.useEffect(() => {
+      if (imageResized.current) {
+        imageResized.current = false;
+        this.resizeImage({ ...props, ...sizeRef.current });
+      }
+    }, [isSelected]);
+
+    useResizeObserver(wrapperRef, (entry) => {
+      imageResized.current = true;
+      sizeRef.current.width = entry.width;
+      sizeRef.current.height = entry.height;
+    });
 
     return (
       <div contentEditable={false} className={className}>
@@ -265,19 +314,29 @@ export default class Image extends Node {
               onClick={this.handleDownload(props)}
             />
           </Button>
-          <ImageZoom
-            image={{
-              src,
-              alt,
-              title,
+          <div
+            ref={wrapperRef}
+            style={{
+              resize: "both",
+              overflow: "auto",
+              width: `${width}px`,
+              height: `${height}px`,
             }}
-            defaultStyles={{
-              overlay: {
-                backgroundColor: theme.background,
-              },
-            }}
-            shouldRespectMaxDimension
-          />
+          >
+            <ImageZoom
+              image={{
+                src,
+                alt,
+                title,
+              }}
+              defaultStyles={{
+                overlay: {
+                  backgroundColor: theme.background,
+                },
+              }}
+              shouldRespectMaxDimension
+            />
+          </div>
         </ImageWrapper>
         <Caption
           onKeyDown={this.handleKeyDown(props)}
@@ -306,6 +365,9 @@ export default class Image extends Node {
     } else if (node.attrs.title) {
       markdown += ' "' + state.esc(node.attrs.title) + '"';
     }
+    if (node.attrs.width && node.attrs.height) {
+      markdown += " =" + node.attrs.width + "x" + node.attrs.height;
+    }
     markdown += ")";
     state.write(markdown);
   }
@@ -313,11 +375,13 @@ export default class Image extends Node {
   parseMarkdown() {
     return {
       node: "image",
-      getAttrs: token => {
+      getAttrs: (token) => {
         return {
           src: token.attrGet("src"),
           alt: (token.children[0] && token.children[0].content) || null,
           ...getLayoutAndTitle(token.attrGet("title")),
+          width: token.attrGet("width") || null,
+          height: token.attrGet("height") || null,
         };
       },
     };
@@ -325,7 +389,7 @@ export default class Image extends Node {
 
   commands({ type }) {
     return {
-      downloadImage: () => async state => {
+      downloadImage: () => async (state) => {
         const { node } = state.selection;
 
         if (node.type.name !== "image") {
@@ -360,7 +424,7 @@ export default class Image extends Node {
         dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
         return true;
       },
-      replaceImage: () => state => {
+      replaceImage: () => (state) => {
         const { view } = this.editor;
         const {
           uploadImage,
@@ -391,12 +455,15 @@ export default class Image extends Node {
         inputElement.click();
       },
       alignCenter: () => (state, dispatch) => {
-        const attrs = { ...state.selection.node.attrs, layoutClass: null };
+        const attrs = {
+          ...state.selection.node.attrs,
+          layoutClass: null,
+        };
         const { selection } = state;
         dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
         return true;
       },
-      createImage: attrs => (state, dispatch) => {
+      createImage: (attrs) => (state, dispatch) => {
         const { selection } = state;
         const position = selection.$cursor
           ? selection.$cursor.pos
@@ -432,6 +499,10 @@ export default class Image extends Node {
     ];
   }
 
+  get rulePlugins() {
+    return [imsizeRule];
+  }
+
   get plugins() {
     return [uploadPlaceholderPlugin, uploadPlugin(this.options)];
   }
@@ -445,8 +516,8 @@ const Button = styled.button`
   margin: 0;
   padding: 0;
   border-radius: 4px;
-  background: ${props => props.theme.background};
-  color: ${props => props.theme.textSecondary};
+  background: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.textSecondary};
   width: 24px;
   height: 24px;
   display: inline-block;
@@ -459,7 +530,7 @@ const Button = styled.button`
   }
 
   &:hover {
-    color: ${props => props.theme.text};
+    color: ${(props) => props.theme.text};
     opacity: 1;
   }
 `;
@@ -470,7 +541,7 @@ const Caption = styled.p`
   font-size: 13px;
   font-style: italic;
   font-weight: normal;
-  color: ${props => props.theme.textSecondary};
+  color: ${(props) => props.theme.textSecondary};
   padding: 2px 0;
   line-height: 16px;
   text-align: center;
@@ -486,7 +557,7 @@ const Caption = styled.p`
   }
 
   &:empty:before {
-    color: ${props => props.theme.placeholder};
+    color: ${(props) => props.theme.placeholder};
     content: attr(data-caption);
     pointer-events: none;
   }

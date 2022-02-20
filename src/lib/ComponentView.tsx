@@ -49,13 +49,17 @@ export default class ComponentView {
     const { dark } = this.editor.props;
     const theme = this.editor.props.theme || (dark ? darkTheme : lightTheme);
 
-    const children = this.component({
-      theme,
-      node: this.node,
-      isSelected: this.isSelected,
-      isEditable: this.view.editable,
-      getPos: this.getPos,
-    });
+    const children = (
+      <this.component
+        {...{
+          theme,
+          node: this.node,
+          isSelected: this.isSelected,
+          isEditable: this.view.editable,
+          getPos: this.getPos,
+        }}
+      />
+    );
 
     ReactDOM.render(
       <ThemeProvider theme={theme}>{children}</ThemeProvider>,

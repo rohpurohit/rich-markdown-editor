@@ -712,8 +712,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   // 'public' methods
 
-  // force update the editor content.
-  forceUpdateContent = (newValue: string): void => {
+  forceUpdateContent = (newValue: string) => {
     const newState = this.createState(newValue);
     this.view.updateState(newState);
   };

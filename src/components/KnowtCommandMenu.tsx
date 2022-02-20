@@ -267,7 +267,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       e.preventDefault();
       e.stopPropagation();
 
-      this.setState({ nestedSelectedIndex: null });
+      this.closeNestedMenu()
     }
 
     if (e.key === "Escape") {
@@ -310,13 +310,10 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     this.setState({
       nestedMenuOpen: false,
       menu2Position: defaultMenuPosition,
-      selectedIndex: 0,
       nestedSelectedIndex: null,
     });
   }
 
-  // onEnter: check for valid link type (ex: youtube link), and insert the imbed component if so.
-  // onEsc: close the menu
   handleLinkInputKeydown = (
     event: React.KeyboardEvent<HTMLInputElement>
   ): void => {

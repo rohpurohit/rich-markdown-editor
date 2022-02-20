@@ -27,11 +27,11 @@ export default {
 
 const Template: Story<Props> = (args) => <Editor {...args} />;
 
+const IMG_WITH_SIZE = `![](https://images.unsplash.com/photo-1645352809168-be1d1ef6d31c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80 =200x200)`;
+
 export const Default = Template.bind({});
 Default.args = {
-  //   defaultValue: `# Welcome
-  // Just an easy to use **Markdown** editor with \`slash commands\``,
-  //   defaultValue: "",
+  defaultValue: IMG_WITH_SIZE,
 };
 
 export const Emoji = Template.bind({});
@@ -184,11 +184,7 @@ ReadOnlyWriteCheckboxes.args = {
 
 export const Persisted = Template.bind({});
 Persisted.args = {
-  defaultValue:
-    localStorage.getItem("saved") ||
-    `# Persisted
-  
-The contents of this editor are persisted to local storage on change (edit and reload)`,
+  defaultValue: localStorage.getItem("saved") || IMG_WITH_SIZE,
   onChange: debounce((value) => {
     const text = value();
     localStorage.setItem("saved", text);

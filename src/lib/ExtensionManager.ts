@@ -81,8 +81,6 @@ export default class ExtensionManager {
         };
       }, {});
 
-    // console.log("toekns", tokens);
-
     return new MarkdownParser(schema, makeRules({ rules, plugins }), tokens);
   }
 
