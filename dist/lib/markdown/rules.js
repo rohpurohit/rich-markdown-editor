@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const markdown_it_1 = __importDefault(require("markdown-it"));
 function rules({ rules = {}, plugins = [], }) {
     const markdownIt = markdown_it_1.default("default", Object.assign({ breaks: false, html: false, linkify: false }, rules));
-    plugins.forEach(plugin => markdownIt.use(plugin));
+    plugins.forEach((plugin) => markdownIt.use(plugin));
     return markdownIt;
 }
 exports.default = rules;

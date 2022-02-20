@@ -13,7 +13,7 @@ export declare type Props = {
     containerId?: string;
     mainSearchKeyword?: string;
 };
-declare const _default: React.ForwardRefExoticComponent<Pick<Props, "disabled" | "title" | "icon" | "onClick" | "selected" | "shortcut" | "iconSVGProps" | "innerRef" | "mainSearchKeyword" | "containerId"> & {
+declare const _default: React.ForwardRefExoticComponent<Pick<Props, "disabled" | "title" | "icon" | "onClick" | "selected" | "iconSVGProps" | "innerRef" | "mainSearchKeyword" | "containerId" | "shortcut"> & {
     theme?: any;
 }>;
 export default _default;

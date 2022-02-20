@@ -26,7 +26,7 @@ function imageMenuItems(state, dictionary) {
             tooltip: dictionary.alignCenter,
             icon: outline_icons_1.AlignImageCenterIcon,
             visible: true,
-            active: state => isNodeActive_1.default(schema.nodes.image)(state) &&
+            active: (state) => isNodeActive_1.default(schema.nodes.image)(state) &&
                 !isLeftAligned(state) &&
                 !isRightAligned(state),
         },

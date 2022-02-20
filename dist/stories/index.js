@@ -69,21 +69,25 @@ class YoutubeEmbed extends React.Component {
         return (React.createElement("iframe", { className: this.props.isSelected ? "ProseMirror-selectednode" : "", src: `https://www.youtube.com/embed/${videoId}?modestbranding=1` }));
     }
 }
+const text = `
+<h1 style="text-align: justify;">
+    What is a Cell
+</h1>
+<p style="text-align: justify;">
+    In biology, the smallest unit that can live on its own and that makes up all living organisms and the tissues of the body.
+    A cell has three main parts: the cell membrane, the nucleus, and the cytoplasm.
+    The cell membrane surrounds the cell and controls the substances that go into and out of the cell.
+    The nucleus is a structure inside the cell that contains the nucleolus and most of the cell&rsquo;s DNA.
+</p>
+`;
 function Example(props) {
     const { body } = document;
     if (body)
         body.style.backgroundColor = props.dark
             ? theme_1.dark.background
             : theme_1.light.background;
-    const [value, setValue] = React.useState("__HELLO__");
-    React.useEffect(() => {
-        const interval = setInterval(() => {
-            setValue("");
-        }, 2000);
-        return () => clearInterval(interval);
-    }, []);
     return (React.createElement("div", { style: { padding: "1em 2em" } },
-        React.createElement(__1.default, Object.assign({ value: value, onCreateLink: (title) => {
+        React.createElement(__1.default, Object.assign({ defaultValue: text, onCreateLink: (title) => {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
                         if (title !== "error") {

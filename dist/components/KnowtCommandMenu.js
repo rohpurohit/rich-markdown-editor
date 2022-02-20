@@ -152,7 +152,7 @@ class KnowtCommandMenu extends React.Component {
             if (e.key === "ArrowLeft") {
                 e.preventDefault();
                 e.stopPropagation();
-                this.setState({ nestedSelectedIndex: null });
+                this.closeNestedMenu();
             }
             if (e.key === "Escape") {
                 this.close();
@@ -303,7 +303,6 @@ class KnowtCommandMenu extends React.Component {
         this.setState({
             nestedMenuOpen: false,
             menu2Position: defaultMenuPosition,
-            selectedIndex: 0,
             nestedSelectedIndex: null,
         });
     }

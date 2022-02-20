@@ -33,18 +33,16 @@ function BlockGroupMenuItem(props) {
             smooth_scroll_into_view_if_needed_1.default(node, {
                 scrollMode: "if-needed",
                 block: "center",
-                boundary: (parent) => {
-                    return parent.id !== containerId;
-                },
+                boundary: (parent) => parent.id !== containerId,
             });
         }
     }, [selected, containerId, innerRef]);
-    const ArrowIcon = (React.createElement("svg", { width: "8", x: "0px", y: "0px", viewBox: "0 0 1000 1000" },
+    const arrowIcon = (React.createElement("svg", { width: "8", x: "0px", y: "0px", viewBox: "0 0 1000 1000" },
         React.createElement("g", { transform: "translate(0.000000,511.000000) scale(0.100000,-0.100000)" },
             React.createElement("path", { d: "M2608.4,4961.2c-156.9-68.9-317.7-264.1-348.3-424.9c-61.2-344.5-134-260.3,2024.8-2419.1L6283,115.3L4284.9-1882.7C2122.3-4053,2195-3961.2,2263.9-4313.3c34.4-187.5,264.1-417.2,451.7-451.6c356-68.9,233.5-168.4,2713.9,2308.1C7446.7-435.8,7718.4-156.4,7737.5-26.3c65.1,356,164.6,237.3-2269.8,2683.2C4177.8,3950.7,3167.3,4930.6,3098.4,4961.2C2945.3,5026.3,2757.7,5026.3,2608.4,4961.2z" }))));
     return (React.createElement(MenuItem, { selected: selected, onClick: disabled ? undefined : onClick, ref: ref },
         title,
-        React.createElement(Circle, null, ArrowIcon)));
+        React.createElement(Circle, null, arrowIcon)));
 }
 const MenuItem = styled_components_1.default.button `
   display: flex;

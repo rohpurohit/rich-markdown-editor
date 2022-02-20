@@ -17,6 +17,12 @@ export default class Image extends Node {
             title: {
                 default: null;
             };
+            width: {
+                default: null;
+            };
+            height: {
+                default: null;
+            };
         };
         content: string;
         marks: string;
@@ -49,21 +55,33 @@ export default class Image extends Node {
     handleDownload: ({ node }: {
         node: any;
     }) => (event: any) => void;
+    resizeImage: ({ node, getPos, width, height }: {
+        node: any;
+        getPos: any;
+        width: any;
+        height: any;
+    }) => void;
     component: (props: any) => JSX.Element;
     toMarkdown(state: any, node: any): void;
     parseMarkdown(): {
         node: string;
         getAttrs: (token: any) => {
+            width: any;
+            height: any;
             layoutClass?: undefined;
             title?: undefined;
             src: any;
             alt: any;
         } | {
+            width: any;
+            height: any;
             layoutClass: any;
             title?: undefined;
             src: any;
             alt: any;
         } | {
+            width: any;
+            height: any;
             title: any;
             layoutClass?: undefined;
             src: any;
@@ -84,6 +102,7 @@ export default class Image extends Node {
     inputRules({ type }: {
         type: any;
     }): InputRule<any>[];
+    get rulePlugins(): any[];
     get plugins(): Plugin<any, any>[];
 }
 //# sourceMappingURL=Image.d.ts.map

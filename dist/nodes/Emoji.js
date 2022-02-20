@@ -36,7 +36,7 @@ class Emoji extends Node_1.default {
                     }),
                 },
             ],
-            toDOM: node => {
+            toDOM: (node) => {
                 if (name_to_emoji_json_1.default[node.attrs["data-name"]]) {
                     const text = document.createTextNode(name_to_emoji_json_1.default[node.attrs["data-name"]]);
                     return [
@@ -57,7 +57,7 @@ class Emoji extends Node_1.default {
         return [emoji_1.default];
     }
     commands({ type }) {
-        return attrs => (state, dispatch) => {
+        return (attrs) => (state, dispatch) => {
             const { selection } = state;
             const position = selection.$cursor
                 ? selection.$cursor.pos
@@ -92,7 +92,7 @@ class Emoji extends Node_1.default {
     parseMarkdown() {
         return {
             node: "emoji",
-            getAttrs: tok => {
+            getAttrs: (tok) => {
                 return { "data-name": tok.markup.trim() };
             },
         };

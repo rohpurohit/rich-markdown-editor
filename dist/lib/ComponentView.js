@@ -44,13 +44,13 @@ class ComponentView {
     renderElement() {
         const { dark } = this.editor.props;
         const theme = this.editor.props.theme || (dark ? theme_1.dark : theme_1.light);
-        const children = this.component({
+        const children = (React.createElement(this.component, Object.assign({}, {
             theme,
             node: this.node,
             isSelected: this.isSelected,
             isEditable: this.view.editable,
             getPos: this.getPos,
-        });
+        })));
         react_dom_1.default.render(React.createElement(styled_components_1.ThemeProvider, { theme: theme }, children), this.dom);
     }
     update(node) {
