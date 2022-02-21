@@ -479,7 +479,7 @@ exports.StyledEditor = styled_components_1.default("div") `
     cursor: pointer;
     pointer-events: ${(props) => props.readOnly && !props.readOnlyWriteCheckboxes ? "none" : "initial"};
     opacity: ${(props) => props.readOnly && !props.readOnlyWriteCheckboxes ? 0.75 : 1};
-    margin: ${(props) => (props.rtl ? "0.5rem 0 0 0.5em" : "0.5rem 0.5em 0 0")};
+    margin: ${(props) => props.rtl ? "0.65rem 0 0 0.5em" : "0.65rem 0.5em 0 0"};
     width: 14px;
     height: 14px;
   }
