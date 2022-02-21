@@ -3,7 +3,6 @@ import { DownloadIcon } from "outline-icons";
 import { Plugin, TextSelection, NodeSelection } from "prosemirror-state";
 import { InputRule } from "prosemirror-inputrules";
 import styled from "styled-components";
-import ImageZoom from "react-medium-image-zoom";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import uploadPlaceholderPlugin from "../lib/uploadPlaceholder";
 import insertFiles from "../commands/insertFiles";
@@ -22,7 +21,7 @@ import imsizeRule from "../rules/imsize";
 // TODO: alter the regex to detect image size as well: `![Lorem](image.jpg =100x100)`
 const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 
-const uploadPlugin = (options) => {
+const uploadPlugin = options => {
   return new Plugin({
     props: {
       handleDOMEvents: {
@@ -39,8 +38,8 @@ const uploadPlugin = (options) => {
           // check if we actually pasted any files
           const files = Array.prototype.slice
             .call(event.clipboardData.items)
-            .map((dt) => dt.getAsFile())
-            .filter((file) => file);
+            .map(dt => dt.getAsFile())
+            .filter(file => file);
 
           if (files.length === 0) return false;
 
@@ -62,7 +61,7 @@ const uploadPlugin = (options) => {
           }
 
           // filter to only include image files
-          const files = getDataTransferFiles(event).filter((file) =>
+          const files = getDataTransferFiles(event).filter(file =>
             /image/i.test(file.type)
           );
 
@@ -73,7 +72,7 @@ const uploadPlugin = (options) => {
           // grab the position in the document for the cursor
           const result = view.posAtCoords({
             left: event.clientX,
-            top: event.clientY,
+            top: event.clientY
           });
 
           if (result) {
@@ -82,27 +81,27 @@ const uploadPlugin = (options) => {
           }
 
           return false;
-        },
-      },
-    },
+        }
+      }
+    }
   });
 };
 
 const IMAGE_CLASSES = ["right-50", "left-50"];
-const getLayoutAndTitle = (tokenTitle) => {
+const getLayoutAndTitle = tokenTitle => {
   if (!tokenTitle) return {};
   if (IMAGE_CLASSES.includes(tokenTitle)) {
     return {
-      layoutClass: tokenTitle,
+      layoutClass: tokenTitle
     };
   } else {
     return {
-      title: tokenTitle,
+      title: tokenTitle
     };
   }
 };
 
-const downloadImageNode = async (node) => {
+const downloadImageNode = async node => {
   const image = await fetch(node.attrs.src);
   const imageBlob = await image.blob();
   const imageURL = URL.createObjectURL(imageBlob);
@@ -130,21 +129,11 @@ export default class Image extends Node {
       inline: true,
       attrs: {
         src: {},
-        alt: {
-          default: null,
-        },
-        layoutClass: {
-          default: null,
-        },
-        title: {
-          default: null,
-        },
-        width: {
-          default: null,
-        },
-        height: {
-          default: null,
-        },
+        alt: { default: null },
+        layoutClass: { default: null },
+        title: { default: null },
+        width: { default: null },
+        height: { default: null }
       },
       content: "text*",
       marks: "",
@@ -166,9 +155,9 @@ export default class Image extends Node {
               src: img?.getAttribute("src"),
               alt: img?.getAttribute("alt"),
               title: img?.getAttribute("title"),
-              layoutClass: layoutClass,
+              layoutClass: layoutClass
             };
-          },
+          }
         },
         {
           tag: "img",
@@ -176,35 +165,27 @@ export default class Image extends Node {
             return {
               src: dom.getAttribute("src"),
               alt: dom.getAttribute("alt"),
-              title: dom.getAttribute("title"),
+              title: dom.getAttribute("title")
             };
-          },
-        },
+          }
+        }
       ],
-      toDOM: (node) => {
+      toDOM: node => {
         const className = node.attrs.layoutClass
           ? `image image-${node.attrs.layoutClass}`
           : "image";
         return [
           "div",
-          {
-            class: className,
-          },
-          [
-            "img",
-            {
-              ...node.attrs,
-              contentEditable: false,
-            },
-          ],
-          ["p", { class: "caption" }, 0],
+          { class: className },
+          ["img", { ...node.attrs, contentEditable: false }],
+          ["p", { class: "caption" }, 0]
         ];
-      },
+      }
     };
   }
 
-  handleKeyDown = ({ node, getPos }) => (event) => {
-    // Pressing Enter in the caption field should move the cursor/selection
+  handleKeyDown = ({ node, getPos }) => event => {
+    // Pressing Enter inside the caption field should move the cursor/selection
     // below the image
     if (event.key === "Enter") {
       event.preventDefault();
@@ -230,7 +211,7 @@ export default class Image extends Node {
     }
   };
 
-  handleBlur = ({ node, getPos }) => (event) => {
+  handleBlur = ({ node, getPos }) => event => {
     const alt = event.target.innerText;
     const { src, title, width, height, layoutClass } = node.attrs;
 
@@ -247,12 +228,12 @@ export default class Image extends Node {
       title,
       layoutClass,
       width,
-      height,
+      height
     });
     view.dispatch(transaction);
   };
 
-  handleSelect = ({ getPos }) => (event) => {
+  handleSelect = ({ getPos }) => event => {
     event.preventDefault();
 
     const { view } = this.editor;
@@ -261,7 +242,7 @@ export default class Image extends Node {
     view.dispatch(transaction);
   };
 
-  handleDownload = ({ node }) => (event) => {
+  handleDownload = ({ node }) => event => {
     event.preventDefault();
     event.stopPropagation();
     downloadImageNode(node);
@@ -275,17 +256,17 @@ export default class Image extends Node {
     const transaction = tr.setNodeMarkup(pos, undefined, {
       ...node.attrs,
       width: Math.round(width),
-      height: Math.round(height),
+      height: Math.round(height)
     });
     view.dispatch(transaction);
   };
 
-  component = (props) => {
-    const { theme, isSelected } = props;
+  component = props => {
+    const { isSelected } = props;
     const { alt, src, title, layoutClass, width, height } = props.node.attrs;
     const className = layoutClass ? `image image-${layoutClass}` : "image";
 
-    const wrapperRef = React.useRef(null);
+    const resizableWrapperRef = React.useRef(null);
     const sizeRef = React.useRef({ width, height });
     const imageResized = React.useRef(false);
 
@@ -296,7 +277,7 @@ export default class Image extends Node {
       }
     }, [isSelected]);
 
-    useResizeObserver(wrapperRef, (entry) => {
+    useResizeObserver(resizableWrapperRef, entry => {
       imageResized.current = true;
       sizeRef.current.width = entry.width;
       sizeRef.current.height = entry.height;
@@ -314,29 +295,9 @@ export default class Image extends Node {
               onClick={this.handleDownload(props)}
             />
           </Button>
-          <div
-            ref={wrapperRef}
-            style={{
-              resize: "both",
-              overflow: "auto",
-              width: `${width}px`,
-              height: `${height}px`,
-            }}
-          >
-            <ImageZoom
-              image={{
-                src,
-                alt,
-                title,
-              }}
-              defaultStyles={{
-                overlay: {
-                  backgroundColor: theme.background,
-                },
-              }}
-              shouldRespectMaxDimension
-            />
-          </div>
+          <ResizableWrapper ref={resizableWrapperRef} {...{ width, height }}>
+            <img src={src} alt={alt} title={title} />
+          </ResizableWrapper>
         </ImageWrapper>
         <Caption
           onKeyDown={this.handleKeyDown(props)}
@@ -375,21 +336,21 @@ export default class Image extends Node {
   parseMarkdown() {
     return {
       node: "image",
-      getAttrs: (token) => {
+      getAttrs: token => {
         return {
           src: token.attrGet("src"),
           alt: (token.children[0] && token.children[0].content) || null,
           ...getLayoutAndTitle(token.attrGet("title")),
           width: token.attrGet("width") || null,
-          height: token.attrGet("height") || null,
+          height: token.attrGet("height") || null
         };
-      },
+      }
     };
   }
 
   commands({ type }) {
     return {
-      downloadImage: () => async (state) => {
+      downloadImage: () => async state => {
         const { node } = state.selection;
 
         if (node.type.name !== "image") {
@@ -408,7 +369,7 @@ export default class Image extends Node {
         const attrs = {
           ...state.selection.node.attrs,
           title: null,
-          layoutClass: "right-50",
+          layoutClass: "right-50"
         };
         const { selection } = state;
         dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
@@ -418,19 +379,19 @@ export default class Image extends Node {
         const attrs = {
           ...state.selection.node.attrs,
           title: null,
-          layoutClass: "left-50",
+          layoutClass: "left-50"
         };
         const { selection } = state;
         dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
         return true;
       },
-      replaceImage: () => (state) => {
+      replaceImage: () => state => {
         const { view } = this.editor;
         const {
           uploadImage,
           onImageUploadStart,
           onImageUploadStop,
-          onShowToast,
+          onShowToast
         } = this.editor.props;
 
         if (!uploadImage) {
@@ -449,7 +410,7 @@ export default class Image extends Node {
             onImageUploadStop,
             onShowToast,
             dictionary: this.options.dictionary,
-            replaceExisting: true,
+            replaceExisting: true
           });
         };
         inputElement.click();
@@ -457,13 +418,13 @@ export default class Image extends Node {
       alignCenter: () => (state, dispatch) => {
         const attrs = {
           ...state.selection.node.attrs,
-          layoutClass: null,
+          layoutClass: null
         };
         const { selection } = state;
         dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
         return true;
       },
-      createImage: (attrs) => (state, dispatch) => {
+      createImage: attrs => (state, dispatch) => {
         const { selection } = state;
         const position = selection.$cursor
           ? selection.$cursor.pos
@@ -472,7 +433,7 @@ export default class Image extends Node {
         const transaction = state.tr.insert(position, node);
         dispatch(transaction);
         return true;
-      },
+      }
     };
   }
 
@@ -489,13 +450,13 @@ export default class Image extends Node {
             type.create({
               src,
               alt,
-              ...getLayoutAndTitle(matchedTitle),
+              ...getLayoutAndTitle(matchedTitle)
             })
           );
         }
 
         return tr;
-      }),
+      })
     ];
   }
 
@@ -508,6 +469,23 @@ export default class Image extends Node {
   }
 }
 
+const ResizableWrapper = styled.div<{
+  width?: number;
+  height?: number;
+}>`
+  resize: both;
+  overflow: hidden;
+  max-height: 75%;
+
+  ${({ width, height }) =>
+    width &&
+    height &&
+    `
+    width: ${width}px;
+    height: ${height}px;
+  `}
+`;
+
 const Button = styled.button`
   position: absolute;
   top: 8px;
@@ -516,8 +494,8 @@ const Button = styled.button`
   margin: 0;
   padding: 0;
   border-radius: 4px;
-  background: ${(props) => props.theme.background};
-  color: ${(props) => props.theme.textSecondary};
+  background: ${props => props.theme.background};
+  color: ${props => props.theme.textSecondary};
   width: 24px;
   height: 24px;
   display: inline-block;
@@ -530,7 +508,7 @@ const Button = styled.button`
   }
 
   &:hover {
-    color: ${(props) => props.theme.text};
+    color: ${props => props.theme.text};
     opacity: 1;
   }
 `;
@@ -541,7 +519,7 @@ const Caption = styled.p`
   font-size: 13px;
   font-style: italic;
   font-weight: normal;
-  color: ${(props) => props.theme.textSecondary};
+  color: ${props => props.theme.textSecondary};
   padding: 2px 0;
   line-height: 16px;
   text-align: center;
@@ -557,7 +535,7 @@ const Caption = styled.p`
   }
 
   &:empty:before {
-    color: ${(props) => props.theme.placeholder};
+    color: ${props => props.theme.placeholder};
     content: attr(data-caption);
     pointer-events: none;
   }

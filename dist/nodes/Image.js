@@ -27,7 +27,6 @@ const outline_icons_1 = require("outline-icons");
 const prosemirror_state_1 = require("prosemirror-state");
 const prosemirror_inputrules_1 = require("prosemirror-inputrules");
 const styled_components_1 = __importDefault(require("styled-components"));
-const react_medium_image_zoom_1 = __importDefault(require("react-medium-image-zoom"));
 const getDataTransferFiles_1 = __importDefault(require("../lib/getDataTransferFiles"));
 const uploadPlaceholder_1 = __importDefault(require("../lib/uploadPlaceholder"));
 const insertFiles_1 = __importDefault(require("../commands/insertFiles"));
@@ -35,7 +34,7 @@ const Node_1 = __importDefault(require("./Node"));
 const useResizeObserver_1 = __importDefault(require("../hooks/useResizeObserver"));
 const imsize_1 = __importDefault(require("../rules/imsize"));
 const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
-const uploadPlugin = (options) => {
+const uploadPlugin = options => {
     return new prosemirror_state_1.Plugin({
         props: {
             handleDOMEvents: {
@@ -48,8 +47,8 @@ const uploadPlugin = (options) => {
                         return false;
                     const files = Array.prototype.slice
                         .call(event.clipboardData.items)
-                        .map((dt) => dt.getAsFile())
-                        .filter((file) => file);
+                        .map(dt => dt.getAsFile())
+                        .filter(file => file);
                     if (files.length === 0)
                         return false;
                     const { tr } = view.state;
@@ -65,36 +64,36 @@ const uploadPlugin = (options) => {
                         !options.uploadImage) {
                         return false;
                     }
-                    const files = getDataTransferFiles_1.default(event).filter((file) => /image/i.test(file.type));
+                    const files = getDataTransferFiles_1.default(event).filter(file => /image/i.test(file.type));
                     if (files.length === 0) {
                         return false;
                     }
                     const result = view.posAtCoords({
                         left: event.clientX,
-                        top: event.clientY,
+                        top: event.clientY
                     });
                     if (result) {
                         insertFiles_1.default(view, event, result.pos, files, options);
                         return true;
                     }
                     return false;
-                },
-            },
-        },
+                }
+            }
+        }
     });
 };
 const IMAGE_CLASSES = ["right-50", "left-50"];
-const getLayoutAndTitle = (tokenTitle) => {
+const getLayoutAndTitle = tokenTitle => {
     if (!tokenTitle)
         return {};
     if (IMAGE_CLASSES.includes(tokenTitle)) {
         return {
-            layoutClass: tokenTitle,
+            layoutClass: tokenTitle
         };
     }
     else {
         return {
-            title: tokenTitle,
+            title: tokenTitle
         };
     }
 };
@@ -114,7 +113,7 @@ const downloadImageNode = async (node) => {
 class Image extends Node_1.default {
     constructor() {
         super(...arguments);
-        this.handleKeyDown = ({ node, getPos }) => (event) => {
+        this.handleKeyDown = ({ node, getPos }) => event => {
             if (event.key === "Enter") {
                 event.preventDefault();
                 const { view } = this.editor;
@@ -132,7 +131,7 @@ class Image extends Node_1.default {
                 return;
             }
         };
-        this.handleBlur = ({ node, getPos }) => (event) => {
+        this.handleBlur = ({ node, getPos }) => event => {
             const alt = event.target.innerText;
             const { src, title, width, height, layoutClass } = node.attrs;
             if (alt === node.attrs.alt)
@@ -146,18 +145,18 @@ class Image extends Node_1.default {
                 title,
                 layoutClass,
                 width,
-                height,
+                height
             });
             view.dispatch(transaction);
         };
-        this.handleSelect = ({ getPos }) => (event) => {
+        this.handleSelect = ({ getPos }) => event => {
             event.preventDefault();
             const { view } = this.editor;
             const $pos = view.state.doc.resolve(getPos());
             const transaction = view.state.tr.setSelection(new prosemirror_state_1.NodeSelection($pos));
             view.dispatch(transaction);
         };
-        this.handleDownload = ({ node }) => (event) => {
+        this.handleDownload = ({ node }) => event => {
             event.preventDefault();
             event.stopPropagation();
             downloadImageNode(node);
@@ -169,11 +168,11 @@ class Image extends Node_1.default {
             const transaction = tr.setNodeMarkup(pos, undefined, Object.assign(Object.assign({}, node.attrs), { width: Math.round(width), height: Math.round(height) }));
             view.dispatch(transaction);
         };
-        this.component = (props) => {
-            const { theme, isSelected } = props;
+        this.component = props => {
+            const { isSelected } = props;
             const { alt, src, title, layoutClass, width, height } = props.node.attrs;
             const className = layoutClass ? `image image-${layoutClass}` : "image";
-            const wrapperRef = React.useRef(null);
+            const resizableWrapperRef = React.useRef(null);
             const sizeRef = React.useRef({ width, height });
             const imageResized = React.useRef(false);
             React.useEffect(() => {
@@ -182,7 +181,7 @@ class Image extends Node_1.default {
                     this.resizeImage(Object.assign(Object.assign({}, props), sizeRef.current));
                 }
             }, [isSelected]);
-            useResizeObserver_1.default(wrapperRef, (entry) => {
+            useResizeObserver_1.default(resizableWrapperRef, entry => {
                 imageResized.current = true;
                 sizeRef.current.width = entry.width;
                 sizeRef.current.height = entry.height;
@@ -191,21 +190,8 @@ class Image extends Node_1.default {
                 React.createElement(ImageWrapper, { className: isSelected ? "ProseMirror-selectednode" : "", onClick: this.handleSelect(props) },
                     React.createElement(Button, null,
                         React.createElement(outline_icons_1.DownloadIcon, { color: "currentColor", onClick: this.handleDownload(props) })),
-                    React.createElement("div", { ref: wrapperRef, style: {
-                            resize: "both",
-                            overflow: "auto",
-                            width: `${width}px`,
-                            height: `${height}px`,
-                        } },
-                        React.createElement(react_medium_image_zoom_1.default, { image: {
-                                src,
-                                alt,
-                                title,
-                            }, defaultStyles: {
-                                overlay: {
-                                    backgroundColor: theme.background,
-                                },
-                            }, shouldRespectMaxDimension: true }))),
+                    React.createElement(ResizableWrapper, Object.assign({ ref: resizableWrapperRef }, { width, height }),
+                        React.createElement("img", { src: src, alt: alt, title: title }))),
                 React.createElement(Caption, { onKeyDown: this.handleKeyDown(props), onBlur: this.handleBlur(props), className: "caption", tabIndex: -1, role: "textbox", contentEditable: true, suppressContentEditableWarning: true, "data-caption": this.options.dictionary.imageCaptionPlaceholder }, alt)));
         };
     }
@@ -217,21 +203,11 @@ class Image extends Node_1.default {
             inline: true,
             attrs: {
                 src: {},
-                alt: {
-                    default: null,
-                },
-                layoutClass: {
-                    default: null,
-                },
-                title: {
-                    default: null,
-                },
-                width: {
-                    default: null,
-                },
-                height: {
-                    default: null,
-                },
+                alt: { default: null },
+                layoutClass: { default: null },
+                title: { default: null },
+                width: { default: null },
+                height: { default: null }
             },
             content: "text*",
             marks: "",
@@ -252,9 +228,9 @@ class Image extends Node_1.default {
                             src: img === null || img === void 0 ? void 0 : img.getAttribute("src"),
                             alt: img === null || img === void 0 ? void 0 : img.getAttribute("alt"),
                             title: img === null || img === void 0 ? void 0 : img.getAttribute("title"),
-                            layoutClass: layoutClass,
+                            layoutClass: layoutClass
                         };
-                    },
+                    }
                 },
                 {
                     tag: "img",
@@ -262,27 +238,22 @@ class Image extends Node_1.default {
                         return {
                             src: dom.getAttribute("src"),
                             alt: dom.getAttribute("alt"),
-                            title: dom.getAttribute("title"),
+                            title: dom.getAttribute("title")
                         };
-                    },
-                },
+                    }
+                }
             ],
-            toDOM: (node) => {
+            toDOM: node => {
                 const className = node.attrs.layoutClass
                     ? `image image-${node.attrs.layoutClass}`
                     : "image";
                 return [
                     "div",
-                    {
-                        class: className,
-                    },
-                    [
-                        "img",
-                        Object.assign(Object.assign({}, node.attrs), { contentEditable: false }),
-                    ],
-                    ["p", { class: "caption" }, 0],
+                    { class: className },
+                    ["img", Object.assign(Object.assign({}, node.attrs), { contentEditable: false })],
+                    ["p", { class: "caption" }, 0]
                 ];
-            },
+            }
         };
     }
     toMarkdown(state, node) {
@@ -305,9 +276,9 @@ class Image extends Node_1.default {
     parseMarkdown() {
         return {
             node: "image",
-            getAttrs: (token) => {
+            getAttrs: token => {
                 return Object.assign(Object.assign({ src: token.attrGet("src"), alt: (token.children[0] && token.children[0].content) || null }, getLayoutAndTitle(token.attrGet("title"))), { width: token.attrGet("width") || null, height: token.attrGet("height") || null });
-            },
+            }
         };
     }
     commands({ type }) {
@@ -336,9 +307,9 @@ class Image extends Node_1.default {
                 dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
                 return true;
             },
-            replaceImage: () => (state) => {
+            replaceImage: () => state => {
                 const { view } = this.editor;
-                const { uploadImage, onImageUploadStart, onImageUploadStop, onShowToast, } = this.editor.props;
+                const { uploadImage, onImageUploadStart, onImageUploadStop, onShowToast } = this.editor.props;
                 if (!uploadImage) {
                     throw new Error("uploadImage prop is required to replace images");
                 }
@@ -353,7 +324,7 @@ class Image extends Node_1.default {
                         onImageUploadStop,
                         onShowToast,
                         dictionary: this.options.dictionary,
-                        replaceExisting: true,
+                        replaceExisting: true
                     });
                 };
                 inputElement.click();
@@ -364,7 +335,7 @@ class Image extends Node_1.default {
                 dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
                 return true;
             },
-            createImage: (attrs) => (state, dispatch) => {
+            createImage: attrs => (state, dispatch) => {
                 const { selection } = state;
                 const position = selection.$cursor
                     ? selection.$cursor.pos
@@ -373,7 +344,7 @@ class Image extends Node_1.default {
                 const transaction = state.tr.insert(position, node);
                 dispatch(transaction);
                 return true;
-            },
+            }
         };
     }
     inputRules({ type }) {
@@ -386,7 +357,7 @@ class Image extends Node_1.default {
                         alt }, getLayoutAndTitle(matchedTitle))));
                 }
                 return tr;
-            }),
+            })
         ];
     }
     get rulePlugins() {
@@ -397,6 +368,18 @@ class Image extends Node_1.default {
     }
 }
 exports.default = Image;
+const ResizableWrapper = styled_components_1.default.div `
+  resize: both;
+  overflow: hidden;
+  max-height: 75%;
+
+  ${({ width, height }) => width &&
+    height &&
+    `
+    width: ${width}px;
+    height: ${height}px;
+  `}
+`;
 const Button = styled_components_1.default.button `
   position: absolute;
   top: 8px;
@@ -405,8 +388,8 @@ const Button = styled_components_1.default.button `
   margin: 0;
   padding: 0;
   border-radius: 4px;
-  background: ${(props) => props.theme.background};
-  color: ${(props) => props.theme.textSecondary};
+  background: ${props => props.theme.background};
+  color: ${props => props.theme.textSecondary};
   width: 24px;
   height: 24px;
   display: inline-block;
@@ -419,7 +402,7 @@ const Button = styled_components_1.default.button `
   }
 
   &:hover {
-    color: ${(props) => props.theme.text};
+    color: ${props => props.theme.text};
     opacity: 1;
   }
 `;
@@ -429,7 +412,7 @@ const Caption = styled_components_1.default.p `
   font-size: 13px;
   font-style: italic;
   font-weight: normal;
-  color: ${(props) => props.theme.textSecondary};
+  color: ${props => props.theme.textSecondary};
   padding: 2px 0;
   line-height: 16px;
   text-align: center;
@@ -445,7 +428,7 @@ const Caption = styled_components_1.default.p `
   }
 
   &:empty:before {
-    color: ${(props) => props.theme.placeholder};
+    color: ${props => props.theme.placeholder};
     content: attr(data-caption);
     pointer-events: none;
   }

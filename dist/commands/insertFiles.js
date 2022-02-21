@@ -27,7 +27,7 @@ const insertFiles = function (view, event, pos, files, options) {
     const images = files.filter(file => /image/i.test(file.type));
     if (images.length === 0)
         return;
-    const { dictionary, uploadImage, onImageUploadStart, onImageUploadStop, onShowToast, } = options;
+    const { dictionary, uploadImage, onImageUploadStart, onImageUploadStop, onShowToast } = options;
     if (!uploadImage) {
         console.warn("uploadImage callback must be defined to handle image uploads.");
         return;
@@ -45,8 +45,8 @@ const insertFiles = function (view, event, pos, files, options) {
                 id,
                 file,
                 pos,
-                replaceExisting: options.replaceExisting,
-            },
+                replaceExisting: options.replaceExisting
+            }
         });
         view.dispatch(tr);
         uploadImage(file)
@@ -73,7 +73,7 @@ const insertFiles = function (view, event, pos, files, options) {
             .catch(error => {
             console.error(error);
             const transaction = view.state.tr.setMeta(uploadPlaceholder_1.default, {
-                remove: { id },
+                remove: { id }
             });
             view.dispatch(transaction);
             if (onShowToast) {
