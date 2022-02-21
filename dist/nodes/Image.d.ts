@@ -11,9 +11,6 @@ export default class Image extends Node {
             alt: {
                 default: null;
             };
-            layoutClass: {
-                default: null;
-            };
             title: {
                 default: null;
             };
@@ -31,7 +28,7 @@ export default class Image extends Node {
         draggable: boolean;
         parseDOM: {
             tag: string;
-            getAttrs: (dom: HTMLImageElement) => {
+            getAttrs: (dom: HTMLDivElement) => {
                 src: string | null;
                 alt: string | null;
                 title: string | null;
@@ -41,11 +38,11 @@ export default class Image extends Node {
             class: string;
         })[];
     };
-    handleKeyDown: ({ node, getPos }: {
+    handleCaptionKeyDown: ({ node, getPos }: {
         node: any;
         getPos: any;
     }) => (event: any) => void;
-    handleBlur: ({ node, getPos }: {
+    handleCaptionBlur: ({ node, getPos }: {
         node: any;
         getPos: any;
     }) => (event: any) => void;
@@ -66,26 +63,11 @@ export default class Image extends Node {
     parseMarkdown(): {
         node: string;
         getAttrs: (token: any) => {
-            width: any;
-            height: any;
-            layoutClass?: undefined;
-            title?: undefined;
             src: any;
             alt: any;
-        } | {
-            width: any;
-            height: any;
-            layoutClass: any;
-            title?: undefined;
-            src: any;
-            alt: any;
-        } | {
-            width: any;
-            height: any;
             title: any;
-            layoutClass?: undefined;
-            src: any;
-            alt: any;
+            width: any;
+            height: any;
         };
     };
     commands({ type }: {
@@ -93,11 +75,8 @@ export default class Image extends Node {
     }): {
         downloadImage: () => (state: any) => Promise<boolean>;
         deleteImage: () => (state: any, dispatch: any) => boolean;
-        alignRight: () => (state: any, dispatch: any) => boolean;
-        alignLeft: () => (state: any, dispatch: any) => boolean;
         replaceImage: () => (state: any) => void;
-        alignCenter: () => (state: any, dispatch: any) => boolean;
-        createImage: (attrs: any) => (state: any, dispatch: any) => boolean;
+        createImage: () => () => void;
     };
     inputRules({ type }: {
         type: any;

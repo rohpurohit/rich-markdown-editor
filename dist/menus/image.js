@@ -15,33 +15,6 @@ function imageMenuItems(state, dictionary) {
     });
     return [
         {
-            name: "alignLeft",
-            tooltip: dictionary.alignLeft,
-            icon: outline_icons_1.AlignImageLeftIcon,
-            visible: true,
-            active: isLeftAligned,
-        },
-        {
-            name: "alignCenter",
-            tooltip: dictionary.alignCenter,
-            icon: outline_icons_1.AlignImageCenterIcon,
-            visible: true,
-            active: (state) => isNodeActive_1.default(schema.nodes.image)(state) &&
-                !isLeftAligned(state) &&
-                !isRightAligned(state),
-        },
-        {
-            name: "alignRight",
-            tooltip: dictionary.alignRight,
-            icon: outline_icons_1.AlignImageRightIcon,
-            visible: true,
-            active: isRightAligned,
-        },
-        {
-            name: "separator",
-            visible: true,
-        },
-        {
             name: "downloadImage",
             tooltip: dictionary.downloadImage,
             icon: outline_icons_1.DownloadIcon,

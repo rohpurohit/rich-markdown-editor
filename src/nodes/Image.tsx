@@ -377,6 +377,10 @@ export default class Image extends Node {
         };
         inputElement.click();
       },
+      createImage: () => () => {
+        // dummy function -- check how we do `/` commands filtering
+        // TODO: to be removed
+      },
     };
   }
 

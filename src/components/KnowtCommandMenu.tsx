@@ -9,7 +9,7 @@ import {
   MenuItem,
   ToastType,
   MenuPosition,
-  GroupMenuItem
+  GroupMenuItem,
 } from "../types";
 import Input from "./Input";
 import VisuallyHidden from "./VisuallyHidden";
@@ -24,7 +24,7 @@ const defaultMenuPosition: MenuPosition = {
   left: -1000,
   top: 0,
   bottom: undefined,
-  updatedAt: Date.now()
+  updatedAt: Date.now(),
 };
 
 const defaultMenuMaxHeight = 250;
@@ -98,7 +98,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     selectedIndex: 0,
     nestedSelectedIndex: null,
     searchItemsSelectedIndex: 0,
-    nestedMenuOpen: false
+    nestedMenuOpen: false,
   };
 
   constructor(props: Props) {
@@ -137,7 +137,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         selectedIndex: 0,
         searchItemsSelectedIndex: 0,
         nestedSelectedIndex: null,
-        nestedMenuOpen: false
+        nestedMenuOpen: false,
       });
     }
 
@@ -310,7 +310,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     this.setState({
       nestedMenuOpen: false,
       menu2Position: defaultMenuPosition,
-      nestedSelectedIndex: null
+      nestedSelectedIndex: null,
     });
   }
 
@@ -338,8 +338,8 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       this.insertBlock({
         name: "embed",
         attrs: {
-          href
-        }
+          href,
+        },
       });
     }
 
@@ -366,8 +366,8 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       this.insertBlock({
         name: "embed",
         attrs: {
-          href
-        }
+          href,
+        },
       });
     }
   };
@@ -394,11 +394,11 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       uploadImage,
       onImageUploadStart,
       onImageUploadStop,
-      onShowToast
+      onShowToast,
     } = this.props;
 
     const { state } = view;
-    const parent = findParentNode(node => !!node)(state.selection);
+    const parent = findParentNode((node) => !!node)(state.selection);
 
     if (!uploadImage) {
       throw new Error("uploadImage prop is required to replace images");
@@ -410,7 +410,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         onImageUploadStart,
         onImageUploadStop,
         onShowToast,
-        dictionary: this.props.dictionary
+        dictionary: this.props.dictionary,
       });
     }
 
@@ -450,7 +450,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     if (!selection || !selection.anchorNode || !selection.focusNode) {
       return {
         top: 0,
-        left: 0
+        left: 0,
       };
     }
 
@@ -473,7 +473,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     const rect = range.getBoundingClientRect();
     return {
       top: rect.top,
-      left: rect.left
+      left: rect.left,
     };
   }
 
@@ -481,7 +481,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     this.setState({
       selectedIndex: groupIndex,
       nestedSelectedIndex: 0,
-      nestedMenuOpen: true
+      nestedMenuOpen: true,
     });
 
     this.updateMenu2Position(groupIndex);
@@ -490,9 +490,8 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   updateMenu2Position(groupIndex: number): void {
     const menuHeight = this.getMenu2Height(groupIndex);
 
-    const { right, top: _top } = this.primaryItemsRef[
-      groupIndex
-    ].getBoundingClientRect();
+    const { right, top: _top } =
+      this.primaryItemsRef[groupIndex].getBoundingClientRect();
 
     const bottomToBottomDistance =
       window.innerHeight - (_top + menuHeight + SAFE_MARGIN_Y);
@@ -505,8 +504,8 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         left,
         top: _top + window.scrollY + offset,
         bottom: undefined,
-        updatedAt: Date.now()
-      }
+        updatedAt: Date.now(),
+      },
     });
   }
 
@@ -518,7 +517,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
       // update the menu position, and reset maxHeight
       this.setState({
         menu1Position: this.getMenu1InitialPosition(),
-        menu1MaxHeight: defaultMenuMaxHeight
+        menu1MaxHeight: defaultMenuMaxHeight,
       });
     }
   }
@@ -554,7 +553,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     const menuHeight = menuRef ? menuRef.offsetHeight : 0;
 
     const paragraph: { node: any } = {
-      node: findDomRefAtPos(selection.from, view.domAtPos.bind(view))
+      node: findDomRefAtPos(selection.from, view.domAtPos.bind(view)),
     };
 
     if (
@@ -578,7 +577,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         top: bottom + window.scrollY,
         bottom: undefined,
         isAbove: true,
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       };
     } else {
       return {
@@ -586,7 +585,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
         top: undefined,
         bottom: window.innerHeight - top - window.scrollY,
         isAbove: false,
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       };
     }
   }
@@ -630,8 +629,8 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     // now that we're searching, filter based on this.props.allGroups,
     // taking into account items with `defaultHidden: true`
     let filteredGroups = this.props.allGroups
-      .map(group => {
-        const filteredItems = group.items.filter(item => {
+      .map((group) => {
+        const filteredItems = group.items.filter((item) => {
           const { name, title, keywords, searchKeyword, customOnClick } = item;
           if (!this.props.filterable) return true;
 
@@ -659,19 +658,15 @@ class KnowtCommandMenu extends React.Component<Props, State> {
             return true;
           }
 
-          return [
-            group.groupData.name,
-            title,
-            keywords,
-            searchKeyword
-          ].some(str =>
-            str?.toLowerCase().includes(this.props.search?.toLowerCase())
+          return [group.groupData.name, title, keywords, searchKeyword].some(
+            (str) =>
+              str?.toLowerCase().includes(this.props.search?.toLowerCase())
           );
         });
 
         return {
           ...group,
-          items: filteredItems
+          items: filteredItems,
         };
       })
       .filter(({ items }) => items.length);
@@ -683,7 +678,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     filteredGroups = this.moveArrayItemToTop(
       filteredGroups,
       filteredGroups.findIndex(
-        group => group.groupData.name === exactMatchGroupName
+        (group) => group.groupData.name === exactMatchGroupName
       )
     );
 
@@ -691,7 +686,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
     filteredGroups[0].items = this.moveArrayItemToTop(
       filteredGroups[0].items,
       filteredGroups[0].items.findIndex(
-        item => item.title === exactMatchItemName
+        (item) => item.title === exactMatchItemName
       )
     );
 
@@ -709,18 +704,16 @@ class KnowtCommandMenu extends React.Component<Props, State> {
   }
 
   renderGroups(): React.ReactNode {
-    // only show the groups of this.props.visibleGroups,
-    // that will exclude items with `defaultHidden: true`
     return this.filtered.map((item, index) => {
       return this.props.renderGroupMenuItem(
         item,
         index,
-        node => {
+        (node) => {
           this.primaryItemsRef[index] = node;
         },
         {
           selected: index === this.state.selectedIndex && this.props.isActive,
-          onClick: () => this.onGroupSelect(index)
+          onClick: () => this.onGroupSelect(index),
         }
       );
     });
@@ -728,7 +721,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
 
   renderSearchResults(): React.ReactNode {
     let currentIndex = 0;
-    return this.filtered.map(group => {
+    return this.filtered.map((group) => {
       return (
         <div key={group.groupData.name}>
           <MenuTitle>{group.groupData.name}</MenuTitle>
@@ -737,12 +730,12 @@ class KnowtCommandMenu extends React.Component<Props, State> {
             return this.props.renderMenuItem(
               item,
               index,
-              node => {
+              (node) => {
                 this.primaryItemsRef[itemIndex] = node;
               },
               {
                 selected: itemIndex === this.state.searchItemsSelectedIndex,
-                onClick: () => this.insertItem(item)
+                onClick: () => this.insertItem(item),
               }
             );
           })}
@@ -820,7 +813,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
             {selectedGroup?.items?.map((item, index) => {
               return this.props.renderMenuItem(item, index, () => {}, {
                 selected: this.state.nestedSelectedIndex === index,
-                onClick: () => this.insertItem(item)
+                onClick: () => this.insertItem(item),
               });
             })}
             {this.filtered.length === 0 && (
@@ -836,7 +829,7 @@ class KnowtCommandMenu extends React.Component<Props, State> {
 }
 
 const MenuTitle = styled.div`
-  color: ${props => props.theme.placeholder};
+  color: ${(props) => props.theme.placeholder};
   padding: 12px 0 20px 18px;
   font-family: Arial;
   font-size: 15px;
@@ -850,7 +843,7 @@ const LinkInputWrapper = styled.div`
 const LinkInput = styled(Input)`
   height: 36px;
   width: 100%;
-  color: ${props => props.theme.blockToolbarText};
+  color: ${(props) => props.theme.blockToolbarText};
 `;
 
 const List = styled.ol`
@@ -871,7 +864,7 @@ const ListItem = styled.li`
 const Empty = styled.div`
   display: flex;
   align-items: center;
-  color: ${props => props.theme.textSecondary};
+  color: ${(props) => props.theme.textSecondary};
   font-weight: 500;
   font-size: 14px;
   height: 36px;
@@ -885,14 +878,14 @@ export const Wrapper = styled.div<{
   left?: number;
   isAbove?: boolean;
 }>`
-  color: ${props => props.theme.text};
-  font-family: ${props => props.theme.fontFamilyMono};
+  color: ${(props) => props.theme.text};
+  font-family: ${(props) => props.theme.fontFamilyMono};
   position: absolute;
-  z-index: ${props => props.theme.zIndex + 100};
-  ${props => props.top !== undefined && `top: ${props.top}px`};
-  ${props => props.bottom !== undefined && `bottom: ${props.bottom}px`};
-  left: ${props => props.left}px;
-  background-color: ${props => props.theme.blockToolbarBackground};
+  z-index: ${(props) => props.theme.zIndex + 100};
+  ${(props) => props.top !== undefined && `top: ${props.top}px`};
+  ${(props) => props.bottom !== undefined && `bottom: ${props.bottom}px`};
+  left: ${(props) => props.left}px;
+  background-color: ${(props) => props.theme.blockToolbarBackground};
   border-radius: 14px;
   box-shadow: rgb(0 0 0 / 8%) 0px 0.4rem 1.6rem 0px;
   opacity: 0;
@@ -928,7 +921,7 @@ export const Wrapper = styled.div<{
     border: 0;
     height: 0;
     margin: 0;
-    border-top: 1px solid ${props => props.theme.blockToolbarDivider};
+    border-top: 1px solid ${(props) => props.theme.blockToolbarDivider};
   }
 
   ${({ active }) =>

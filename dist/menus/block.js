@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEmbedsGroup = exports.groupedBlockMenu = void 0;
+exports.getEmbedsGroup = exports.getGroupedMenuItems = void 0;
 const outline_icons_1 = require("outline-icons");
 const icons_1 = require("../icons");
 const removeMarks_1 = __importDefault(require("../commands/removeMarks"));
@@ -11,7 +11,7 @@ const SSR = typeof window === "undefined";
 const isMac = !SSR && window.navigator.platform === "MacIntel";
 const mod = isMac ? "⌘" : "ctrl";
 const HIGHLIGHT_RADIUS = 12;
-const groupedBlockMenu = (view, dictionary) => {
+const getGroupedMenuItems = (view, dictionary) => {
     const { state } = view;
     const { schema } = state;
     const allMarks = [
@@ -243,7 +243,7 @@ const groupedBlockMenu = (view, dictionary) => {
         },
     ];
 };
-exports.groupedBlockMenu = groupedBlockMenu;
+exports.getGroupedMenuItems = getGroupedMenuItems;
 const getEmbedsGroup = (embeds) => {
     const embedItems = [];
     for (const embed of embeds) {

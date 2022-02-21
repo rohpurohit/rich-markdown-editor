@@ -25,7 +25,7 @@ const mod = isMac ? "⌘" : "ctrl";
 
 const HIGHLIGHT_RADIUS = 12;
 
-export const groupedBlockMenu = (
+export const getGroupedMenuItems = (
   view: EditorView,
   dictionary: typeof baseDictionary
 ): GroupMenuItem[] => {

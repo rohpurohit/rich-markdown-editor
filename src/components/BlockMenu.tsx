@@ -3,10 +3,7 @@ import { findParentNode } from "prosemirror-utils";
 import KnowtCommandMenu, { Props } from "./KnowtCommandMenu";
 import BlockMenuItem from "./BlockMenuItem";
 import BlockGroupMenuItem from "./BlockGroupMenuItem";
-import {
-  getEmbedsGroup,
-  groupedBlockMenu as getGroupedMenuItems,
-} from "../menus/block";
+import { getEmbedsGroup, getGroupedMenuItems } from "../menus/block";
 import { GroupMenuItem } from "../types";
 
 type BlockMenuProps = Omit<
@@ -20,7 +17,6 @@ type BlockMenuProps = Omit<
   Required<Pick<Props, "onLinkToolbarOpen" | "embeds">>;
 
 class BlockMenu extends React.Component<BlockMenuProps> {
-  // grouped items without embeds
   get groupedItems(): GroupMenuItem[] {
     return getGroupedMenuItems(this.props.view, this.props.dictionary);
   }
@@ -59,6 +55,8 @@ class BlockMenu extends React.Component<BlockMenuProps> {
         {...this.props}
         filterable={true}
         onClearSearch={this.clearSearch}
+        allGroups={this.allGroups}
+        visibleGroups={this.visibleGroups}
         renderMenuItem={(item, _index, innerRef, options) => {
           return (
             <BlockMenuItem
@@ -85,8 +83,6 @@ class BlockMenu extends React.Component<BlockMenuProps> {
             />
           );
         }}
-        visibleGroups={this.visibleGroups}
-        allGroups={this.allGroups}
       />
     );
   }

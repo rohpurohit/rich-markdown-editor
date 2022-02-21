@@ -39,7 +39,7 @@ const defaultMenuPosition = {
     left: -1000,
     top: 0,
     bottom: undefined,
-    updatedAt: Date.now()
+    updatedAt: Date.now(),
 };
 const defaultMenuMaxHeight = 250;
 const SAFE_MARGIN_Y = 50;
@@ -61,7 +61,7 @@ class KnowtCommandMenu extends React.Component {
             selectedIndex: 0,
             nestedSelectedIndex: null,
             searchItemsSelectedIndex: 0,
-            nestedMenuOpen: false
+            nestedMenuOpen: false,
         };
         this.handleClick = (event) => {
             var _a, _b;
@@ -202,8 +202,8 @@ class KnowtCommandMenu extends React.Component {
                 this.insertBlock({
                     name: "embed",
                     attrs: {
-                        href
-                    }
+                        href,
+                    },
                 });
             }
             if (event.key === "Escape") {
@@ -224,8 +224,8 @@ class KnowtCommandMenu extends React.Component {
                 this.insertBlock({
                     name: "embed",
                     attrs: {
-                        href
-                    }
+                        href,
+                    },
                 });
             }
         };
@@ -239,9 +239,9 @@ class KnowtCommandMenu extends React.Component {
         };
         this.handleImagePicked = (event) => {
             const files = getDataTransferFiles_1.default(event);
-            const { view, uploadImage, onImageUploadStart, onImageUploadStop, onShowToast } = this.props;
+            const { view, uploadImage, onImageUploadStart, onImageUploadStop, onShowToast, } = this.props;
             const { state } = view;
-            const parent = prosemirror_utils_1.findParentNode(node => !!node)(state.selection);
+            const parent = prosemirror_utils_1.findParentNode((node) => !!node)(state.selection);
             if (!uploadImage) {
                 throw new Error("uploadImage prop is required to replace images");
             }
@@ -251,7 +251,7 @@ class KnowtCommandMenu extends React.Component {
                     onImageUploadStart,
                     onImageUploadStop,
                     onShowToast,
-                    dictionary: this.props.dictionary
+                    dictionary: this.props.dictionary,
                 });
             }
             if (this.inputRef.current) {
@@ -286,7 +286,7 @@ class KnowtCommandMenu extends React.Component {
                 selectedIndex: 0,
                 searchItemsSelectedIndex: 0,
                 nestedSelectedIndex: null,
-                nestedMenuOpen: false
+                nestedMenuOpen: false,
             });
         }
         if (prevProps.isActive && !this.props.isActive) {
@@ -303,7 +303,7 @@ class KnowtCommandMenu extends React.Component {
         this.setState({
             nestedMenuOpen: false,
             menu2Position: defaultMenuPosition,
-            nestedSelectedIndex: null
+            nestedSelectedIndex: null,
         });
     }
     insertBlock(item) {
@@ -321,7 +321,7 @@ class KnowtCommandMenu extends React.Component {
         if (!selection || !selection.anchorNode || !selection.focusNode) {
             return {
                 top: 0,
-                left: 0
+                left: 0,
             };
         }
         const range = window.document.createRange();
@@ -336,14 +336,14 @@ class KnowtCommandMenu extends React.Component {
         const rect = range.getBoundingClientRect();
         return {
             top: rect.top,
-            left: rect.left
+            left: rect.left,
         };
     }
     onGroupSelect(groupIndex) {
         this.setState({
             selectedIndex: groupIndex,
             nestedSelectedIndex: 0,
-            nestedMenuOpen: true
+            nestedMenuOpen: true,
         });
         this.updateMenu2Position(groupIndex);
     }
@@ -358,8 +358,8 @@ class KnowtCommandMenu extends React.Component {
                 left,
                 top: _top + window.scrollY + offset,
                 bottom: undefined,
-                updatedAt: Date.now()
-            }
+                updatedAt: Date.now(),
+            },
         });
     }
     updateMenu1Position() {
@@ -369,7 +369,7 @@ class KnowtCommandMenu extends React.Component {
         else {
             this.setState({
                 menu1Position: this.getMenu1InitialPosition(),
-                menu1MaxHeight: defaultMenuMaxHeight
+                menu1MaxHeight: defaultMenuMaxHeight,
             });
         }
     }
@@ -396,7 +396,7 @@ class KnowtCommandMenu extends React.Component {
         const menuRef = this.menuRef.current;
         const menuHeight = menuRef ? menuRef.offsetHeight : 0;
         const paragraph = {
-            node: prosemirror_utils_1.findDomRefAtPos(selection.from, view.domAtPos.bind(view))
+            node: prosemirror_utils_1.findDomRefAtPos(selection.from, view.domAtPos.bind(view)),
         };
         if (!isActive ||
             !paragraph.node ||
@@ -414,7 +414,7 @@ class KnowtCommandMenu extends React.Component {
                 top: bottom + window.scrollY,
                 bottom: undefined,
                 isAbove: true,
-                updatedAt: Date.now()
+                updatedAt: Date.now(),
             };
         }
         else {
@@ -423,7 +423,7 @@ class KnowtCommandMenu extends React.Component {
                 top: undefined,
                 bottom: window.innerHeight - top - window.scrollY,
                 isAbove: false,
-                updatedAt: Date.now()
+                updatedAt: Date.now(),
             };
         }
     }
@@ -452,8 +452,8 @@ class KnowtCommandMenu extends React.Component {
         }
         let exactMatchGroupName, exactMatchItemName;
         let filteredGroups = this.props.allGroups
-            .map(group => {
-            const filteredItems = group.items.filter(item => {
+            .map((group) => {
+            const filteredItems = group.items.filter((item) => {
                 var _a;
                 const { name, title, keywords, searchKeyword, customOnClick } = item;
                 if (!this.props.filterable)
@@ -472,20 +472,15 @@ class KnowtCommandMenu extends React.Component {
                     exactMatchItemName = item.title;
                     return true;
                 }
-                return [
-                    group.groupData.name,
-                    title,
-                    keywords,
-                    searchKeyword
-                ].some(str => { var _a; return str === null || str === void 0 ? void 0 : str.toLowerCase().includes((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.toLowerCase()); });
+                return [group.groupData.name, title, keywords, searchKeyword].some((str) => { var _a; return str === null || str === void 0 ? void 0 : str.toLowerCase().includes((_a = this.props.search) === null || _a === void 0 ? void 0 : _a.toLowerCase()); });
             });
             return Object.assign(Object.assign({}, group), { items: filteredItems });
         })
             .filter(({ items }) => items.length);
         if (!exactMatchGroupName)
             return filteredGroups;
-        filteredGroups = this.moveArrayItemToTop(filteredGroups, filteredGroups.findIndex(group => group.groupData.name === exactMatchGroupName));
-        filteredGroups[0].items = this.moveArrayItemToTop(filteredGroups[0].items, filteredGroups[0].items.findIndex(item => item.title === exactMatchItemName));
+        filteredGroups = this.moveArrayItemToTop(filteredGroups, filteredGroups.findIndex((group) => group.groupData.name === exactMatchGroupName));
+        filteredGroups[0].items = this.moveArrayItemToTop(filteredGroups[0].items, filteredGroups[0].items.findIndex((item) => item.title === exactMatchItemName));
         return filteredGroups;
     }
     moveArrayItemToTop(array, index) {
@@ -498,26 +493,26 @@ class KnowtCommandMenu extends React.Component {
     }
     renderGroups() {
         return this.filtered.map((item, index) => {
-            return this.props.renderGroupMenuItem(item, index, node => {
+            return this.props.renderGroupMenuItem(item, index, (node) => {
                 this.primaryItemsRef[index] = node;
             }, {
                 selected: index === this.state.selectedIndex && this.props.isActive,
-                onClick: () => this.onGroupSelect(index)
+                onClick: () => this.onGroupSelect(index),
             });
         });
     }
     renderSearchResults() {
         let currentIndex = 0;
-        return this.filtered.map(group => {
+        return this.filtered.map((group) => {
             return (React.createElement("div", { key: group.groupData.name },
                 React.createElement(MenuTitle, null, group.groupData.name),
                 group.items.map((item, index) => {
                     const itemIndex = currentIndex++;
-                    return this.props.renderMenuItem(item, index, node => {
+                    return this.props.renderMenuItem(item, index, (node) => {
                         this.primaryItemsRef[itemIndex] = node;
                     }, {
                         selected: itemIndex === this.state.searchItemsSelectedIndex,
-                        onClick: () => this.insertItem(item)
+                        onClick: () => this.insertItem(item),
                     });
                 })));
         });
@@ -545,7 +540,7 @@ class KnowtCommandMenu extends React.Component {
                     _a.map((item, index) => {
                         return this.props.renderMenuItem(item, index, () => { }, {
                             selected: this.state.nestedSelectedIndex === index,
-                            onClick: () => this.insertItem(item)
+                            onClick: () => this.insertItem(item),
                         });
                     }),
                     this.filtered.length === 0 && (React.createElement(ListItem, null,
@@ -553,7 +548,7 @@ class KnowtCommandMenu extends React.Component {
     }
 }
 const MenuTitle = styled_components_1.default.div `
-  color: ${props => props.theme.placeholder};
+  color: ${(props) => props.theme.placeholder};
   padding: 12px 0 20px 18px;
   font-family: Arial;
   font-size: 15px;
@@ -565,7 +560,7 @@ const LinkInputWrapper = styled_components_1.default.div `
 const LinkInput = styled_components_1.default(Input_1.default) `
   height: 36px;
   width: 100%;
-  color: ${props => props.theme.blockToolbarText};
+  color: ${(props) => props.theme.blockToolbarText};
 `;
 const List = styled_components_1.default.ol `
   display: flex;
@@ -583,21 +578,21 @@ const ListItem = styled_components_1.default.li `
 const Empty = styled_components_1.default.div `
   display: flex;
   align-items: center;
-  color: ${props => props.theme.textSecondary};
+  color: ${(props) => props.theme.textSecondary};
   font-weight: 500;
   font-size: 14px;
   height: 36px;
   padding: 0 16px;
 `;
 exports.Wrapper = styled_components_1.default.div `
-  color: ${props => props.theme.text};
-  font-family: ${props => props.theme.fontFamilyMono};
+  color: ${(props) => props.theme.text};
+  font-family: ${(props) => props.theme.fontFamilyMono};
   position: absolute;
-  z-index: ${props => props.theme.zIndex + 100};
-  ${props => props.top !== undefined && `top: ${props.top}px`};
-  ${props => props.bottom !== undefined && `bottom: ${props.bottom}px`};
-  left: ${props => props.left}px;
-  background-color: ${props => props.theme.blockToolbarBackground};
+  z-index: ${(props) => props.theme.zIndex + 100};
+  ${(props) => props.top !== undefined && `top: ${props.top}px`};
+  ${(props) => props.bottom !== undefined && `bottom: ${props.bottom}px`};
+  left: ${(props) => props.left}px;
+  background-color: ${(props) => props.theme.blockToolbarBackground};
   border-radius: 14px;
   box-shadow: rgb(0 0 0 / 8%) 0px 0.4rem 1.6rem 0px;
   opacity: 0;
@@ -633,7 +628,7 @@ exports.Wrapper = styled_components_1.default.div `
     border: 0;
     height: 0;
     margin: 0;
-    border-top: 1px solid ${props => props.theme.blockToolbarDivider};
+    border-top: 1px solid ${(props) => props.theme.blockToolbarDivider};
   }
 
   ${({ active }) => active &&
