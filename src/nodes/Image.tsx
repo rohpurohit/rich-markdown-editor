@@ -19,9 +19,10 @@ import imsizeRule from "../rules/imsize";
  * ![Lorem](image.jpg "class") -> [, "Lorem", "image.jpg", "small"]
  */
 // TODO: alter the regex to detect image size as well: `![Lorem](image.jpg =100x100)`
-const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
+const IMAGE_INPUT_REGEX =
+  /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 
-const uploadPlugin = options => {
+const uploadPlugin = (options) => {
   return new Plugin({
     props: {
       handleDOMEvents: {
@@ -38,8 +39,8 @@ const uploadPlugin = options => {
           // check if we actually pasted any files
           const files = Array.prototype.slice
             .call(event.clipboardData.items)
-            .map(dt => dt.getAsFile())
-            .filter(file => file);
+            .map((dt) => dt.getAsFile())
+            .filter((file) => file);
 
           if (files.length === 0) return false;
 
@@ -61,7 +62,7 @@ const uploadPlugin = options => {
           }
 
           // filter to only include image files
-          const files = getDataTransferFiles(event).filter(file =>
+          const files = getDataTransferFiles(event).filter((file) =>
             /image/i.test(file.type)
           );
 
@@ -72,7 +73,7 @@ const uploadPlugin = options => {
           // grab the position in the document for the cursor
           const result = view.posAtCoords({
             left: event.clientX,
-            top: event.clientY
+            top: event.clientY,
           });
 
           if (result) {
@@ -81,27 +82,13 @@ const uploadPlugin = options => {
           }
 
           return false;
-        }
-      }
-    }
+        },
+      },
+    },
   });
 };
 
-const IMAGE_CLASSES = ["right-50", "left-50"];
-const getLayoutAndTitle = tokenTitle => {
-  if (!tokenTitle) return {};
-  if (IMAGE_CLASSES.includes(tokenTitle)) {
-    return {
-      layoutClass: tokenTitle
-    };
-  } else {
-    return {
-      title: tokenTitle
-    };
-  }
-};
-
-const downloadImageNode = async node => {
+const downloadImageNode = async (node) => {
   const image = await fetch(node.attrs.src);
   const imageBlob = await image.blob();
   const imageURL = URL.createObjectURL(imageBlob);
@@ -130,10 +117,9 @@ export default class Image extends Node {
       attrs: {
         src: {},
         alt: { default: null },
-        layoutClass: { default: null },
         title: { default: null },
         width: { default: null },
-        height: { default: null }
+        height: { default: null },
       },
       content: "text*",
       marks: "",
@@ -145,19 +131,12 @@ export default class Image extends Node {
           tag: "div[class~=image]",
           getAttrs: (dom: HTMLDivElement) => {
             const img = dom.getElementsByTagName("img")[0];
-            const className = dom.className;
-            const layoutClassMatched =
-              className && className.match(/image-(.*)$/);
-            const layoutClass = layoutClassMatched
-              ? layoutClassMatched[1]
-              : null;
             return {
               src: img?.getAttribute("src"),
               alt: img?.getAttribute("alt"),
               title: img?.getAttribute("title"),
-              layoutClass: layoutClass
             };
-          }
+          },
         },
         {
           tag: "img",
@@ -165,88 +144,93 @@ export default class Image extends Node {
             return {
               src: dom.getAttribute("src"),
               alt: dom.getAttribute("alt"),
-              title: dom.getAttribute("title")
+              title: dom.getAttribute("title"),
             };
-          }
-        }
+          },
+        },
       ],
-      toDOM: node => {
-        const className = node.attrs.layoutClass
-          ? `image image-${node.attrs.layoutClass}`
-          : "image";
+      toDOM: (node) => {
         return [
           "div",
-          { class: className },
+          { class: "image" },
           ["img", { ...node.attrs, contentEditable: false }],
-          ["p", { class: "caption" }, 0]
+          ["p", { class: "caption" }, 0],
         ];
-      }
+      },
     };
   }
 
-  handleKeyDown = ({ node, getPos }) => event => {
-    // Pressing Enter inside the caption field should move the cursor/selection
-    // below the image
-    if (event.key === "Enter") {
+  handleCaptionKeyDown =
+    ({ node, getPos }) =>
+    (event) => {
+      // Pressing Enter inside the caption field should move the cursor/selection
+      // below the image
+      if (event.key === "Enter") {
+        event.preventDefault();
+
+        const { view } = this.editor;
+        const $pos = view.state.doc.resolve(getPos() + node.nodeSize);
+        view.dispatch(
+          view.state.tr.setSelection(new TextSelection($pos)).split($pos.pos)
+        );
+        view.focus();
+        return;
+      }
+
+      // Pressing Backspace in an empty caption field should remove the entire
+      // image, leaving an empty paragraph
+      if (event.key === "Backspace" && event.target.innerText === "") {
+        const { view } = this.editor;
+        const $pos = view.state.doc.resolve(getPos());
+        const tr = view.state.tr.setSelection(new NodeSelection($pos));
+        view.dispatch(tr.deleteSelection());
+        view.focus();
+        return;
+      }
+    };
+
+  handleCaptionBlur =
+    ({ node, getPos }) =>
+    (event) => {
+      const alt = event.target.innerText;
+      const { src, title, width, height } = node.attrs;
+
+      if (alt === node.attrs.alt) return;
+
+      const { view } = this.editor;
+      const { tr } = view.state;
+
+      // update meta on object
+      const pos = getPos();
+      const transaction = tr.setNodeMarkup(pos, undefined, {
+        src,
+        alt,
+        title,
+
+        width,
+        height,
+      });
+      view.dispatch(transaction);
+    };
+
+  handleSelect =
+    ({ getPos }) =>
+    (event) => {
       event.preventDefault();
 
       const { view } = this.editor;
-      const $pos = view.state.doc.resolve(getPos() + node.nodeSize);
-      view.dispatch(
-        view.state.tr.setSelection(new TextSelection($pos)).split($pos.pos)
-      );
-      view.focus();
-      return;
-    }
-
-    // Pressing Backspace in an empty caption field should remove the entire
-    // image, leaving an empty paragraph
-    if (event.key === "Backspace" && event.target.innerText === "") {
-      const { view } = this.editor;
       const $pos = view.state.doc.resolve(getPos());
-      const tr = view.state.tr.setSelection(new NodeSelection($pos));
-      view.dispatch(tr.deleteSelection());
-      view.focus();
-      return;
-    }
-  };
+      const transaction = view.state.tr.setSelection(new NodeSelection($pos));
+      view.dispatch(transaction);
+    };
 
-  handleBlur = ({ node, getPos }) => event => {
-    const alt = event.target.innerText;
-    const { src, title, width, height, layoutClass } = node.attrs;
-
-    if (alt === node.attrs.alt) return;
-
-    const { view } = this.editor;
-    const { tr } = view.state;
-
-    // update meta on object
-    const pos = getPos();
-    const transaction = tr.setNodeMarkup(pos, undefined, {
-      src,
-      alt,
-      title,
-      layoutClass,
-      width,
-      height
-    });
-    view.dispatch(transaction);
-  };
-
-  handleSelect = ({ getPos }) => event => {
-    event.preventDefault();
-
-    const { view } = this.editor;
-    const $pos = view.state.doc.resolve(getPos());
-    const transaction = view.state.tr.setSelection(new NodeSelection($pos));
-    view.dispatch(transaction);
-  };
-
-  handleDownload = ({ node }) => event => {
-    event.preventDefault();
-    event.stopPropagation();
-    downloadImageNode(node);
-  };
+  handleDownload =
+    ({ node }) =>
+    (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      downloadImageNode(node);
+    };
 
   resizeImage = ({ node, getPos, width, height }) => {
     const { view } = this.editor;
@@ -256,15 +240,15 @@ export default class Image extends Node {
     const transaction = tr.setNodeMarkup(pos, undefined, {
       ...node.attrs,
       width: Math.round(width),
-      height: Math.round(height)
+      height: Math.round(height),
     });
     view.dispatch(transaction);
   };
 
-  component = props => {
+  component = (props) => {
     const { isSelected } = props;
-    const { alt, src, title, layoutClass, width, height } = props.node.attrs;
-    const className = layoutClass ? `image image-${layoutClass}` : "image";
+    const { alt, src, title, width, height } = props.node.attrs;
+    const className = "image";
 
     const resizableWrapperRef = React.useRef(null);
     const sizeRef = React.useRef({ width, height });
@@ -277,7 +261,7 @@ export default class Image extends Node {
       }
     }, [isSelected]);
 
-    useResizeObserver(resizableWrapperRef, entry => {
+    useResizeObserver(resizableWrapperRef, (entry) => {
       imageResized.current = true;
       sizeRef.current.width = entry.width;
       sizeRef.current.height = entry.height;
@@ -300,8 +284,8 @@ export default class Image extends Node {
           </ResizableWrapper>
         </ImageWrapper>
         <Caption
-          onKeyDown={this.handleKeyDown(props)}
-          onBlur={this.handleBlur(props)}
+          onKeyDown={this.handleCaptionKeyDown(props)}
+          onBlur={this.handleCaptionBlur(props)}
           className="caption"
           tabIndex={-1}
           role="textbox"
@@ -321,9 +305,7 @@ export default class Image extends Node {
       state.esc((node.attrs.alt || "").replace("\n", "") || "") +
       "](" +
       state.esc(node.attrs.src);
-    if (node.attrs.layoutClass) {
-      markdown += ' "' + state.esc(node.attrs.layoutClass) + '"';
-    } else if (node.attrs.title) {
+    if (node.attrs.title) {
       markdown += ' "' + state.esc(node.attrs.title) + '"';
     }
     if (node.attrs.width && node.attrs.height) {
@@ -336,21 +318,21 @@ export default class Image extends Node {
   parseMarkdown() {
     return {
       node: "image",
-      getAttrs: token => {
+      getAttrs: (token) => {
         return {
           src: token.attrGet("src"),
           alt: (token.children[0] && token.children[0].content) || null,
-          ...getLayoutAndTitle(token.attrGet("title")),
+          title: token.attrGet("title"),
           width: token.attrGet("width") || null,
-          height: token.attrGet("height") || null
+          height: token.attrGet("height") || null,
         };
-      }
+      },
     };
   }
 
   commands({ type }) {
     return {
-      downloadImage: () => async state => {
+      downloadImage: () => async (state) => {
         const { node } = state.selection;
 
         if (node.type.name !== "image") {
@@ -365,33 +347,13 @@ export default class Image extends Node {
         dispatch(state.tr.deleteSelection());
         return true;
       },
-      alignRight: () => (state, dispatch) => {
-        const attrs = {
-          ...state.selection.node.attrs,
-          title: null,
-          layoutClass: "right-50"
-        };
-        const { selection } = state;
-        dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
-        return true;
-      },
-      alignLeft: () => (state, dispatch) => {
-        const attrs = {
-          ...state.selection.node.attrs,
-          title: null,
-          layoutClass: "left-50"
-        };
-        const { selection } = state;
-        dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
-        return true;
-      },
-      replaceImage: () => state => {
+      replaceImage: () => (state) => {
         const { view } = this.editor;
         const {
           uploadImage,
           onImageUploadStart,
           onImageUploadStop,
-          onShowToast
+          onShowToast,
         } = this.editor.props;
 
         if (!uploadImage) {
@@ -410,37 +372,18 @@ export default class Image extends Node {
             onImageUploadStop,
             onShowToast,
             dictionary: this.options.dictionary,
-            replaceExisting: true
+            replaceExisting: true,
           });
         };
         inputElement.click();
       },
-      alignCenter: () => (state, dispatch) => {
-        const attrs = {
-          ...state.selection.node.attrs,
-          layoutClass: null
-        };
-        const { selection } = state;
-        dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
-        return true;
-      },
-      createImage: attrs => (state, dispatch) => {
-        const { selection } = state;
-        const position = selection.$cursor
-          ? selection.$cursor.pos
-          : selection.$to.pos;
-        const node = type.create(attrs);
-        const transaction = state.tr.insert(position, node);
-        dispatch(transaction);
-        return true;
-      }
     };
   }
 
   inputRules({ type }) {
     return [
       new InputRule(IMAGE_INPUT_REGEX, (state, match, start, end) => {
-        const [okay, alt, src, matchedTitle] = match;
+        const [okay, alt, src] = match;
         const { tr } = state;
 
         if (okay) {
@@ -450,13 +393,12 @@ export default class Image extends Node {
             type.create({
               src,
               alt,
-              ...getLayoutAndTitle(matchedTitle)
             })
           );
         }
 
         return tr;
-      })
+      }),
     ];
   }
 
@@ -494,8 +436,8 @@ const Button = styled.button`
   margin: 0;
   padding: 0;
   border-radius: 4px;
-  background: ${props => props.theme.background};
-  color: ${props => props.theme.textSecondary};
+  background: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.textSecondary};
   width: 24px;
   height: 24px;
   display: inline-block;
@@ -508,7 +450,7 @@ const Button = styled.button`
   }
 
   &:hover {
-    color: ${props => props.theme.text};
+    color: ${(props) => props.theme.text};
     opacity: 1;
   }
 `;
@@ -519,7 +461,7 @@ const Caption = styled.p`
   font-size: 13px;
   font-style: italic;
   font-weight: normal;
-  color: ${props => props.theme.textSecondary};
+  color: ${(props) => props.theme.textSecondary};
   padding: 2px 0;
   line-height: 16px;
   text-align: center;
@@ -535,7 +477,7 @@ const Caption = styled.p`
   }
 
   &:empty:before {
-    color: ${props => props.theme.placeholder};
+    color: ${(props) => props.theme.placeholder};
     content: attr(data-caption);
     pointer-events: none;
   }
