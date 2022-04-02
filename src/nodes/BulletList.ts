@@ -29,35 +29,7 @@ export default class BulletList extends Node {
   }
 
   inputRules({ type, schema }) {
-    return [
-      wrappingInputRule(/^\s*([-+*])\s$/, type),
-
-      // below is a custom added rule to create bullet list by default (like remnote)
-      //TODO: more testing for this rule to make sure it is working as expected.
-      new InputRule(
-        /^[\s\t\f]*[a-z,A-Z,0-9]?$/,
-        (state, [matchStr], start, end) => {
-          // maybe there is an easier solution
-
-          const tr = !matchStr.trim()
-            ? state.tr.delete(start, end)
-            : state.tr.insertText(matchStr, start, end);
-
-          const $start = tr.doc.resolve(start);
-          const range = $start.blockRange() as NodeRange<any>; //TODO: hmmm
-          const wrapping = range && findWrapping(range, type);
-
-          if (!wrapping) return null;
-          tr.wrap(range, wrapping); //TODO: range should be of type NodeRange<any>
-
-          const before = tr.doc.resolve(start - 1).nodeBefore;
-          if (before && before.type == type && canJoin(tr.doc, start - 1))
-            tr.join(start - 1);
-
-          return tr;
-        }
-      ),
-    ];
+    return [wrappingInputRule(/^\s*([-+*])\s$/, type)];
   }
 
   toMarkdown(state, node) {

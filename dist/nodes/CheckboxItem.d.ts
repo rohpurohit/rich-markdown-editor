@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import Node from "./Node";
 import checkboxRule from "../rules/checkboxes";
 export default class CheckboxItem extends Node {
@@ -17,7 +18,7 @@ export default class CheckboxItem extends Node {
                 checked: boolean;
             };
         }[];
-        toDOM: (node: any) => (string | (string | number)[] | {
+        toDOM: (node: any) => (string | import("react").ReactText[] | {
             "data-type": string;
             class: string | undefined;
         } | (string | HTMLInputElement | {

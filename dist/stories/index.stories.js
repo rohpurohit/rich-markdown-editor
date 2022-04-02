@@ -28,10 +28,9 @@ exports.default = {
     },
 };
 const Template = (args) => react_1.default.createElement(index_1.default, Object.assign({}, args));
-const IMG_WITH_SIZE = `![](https://images.unsplash.com/photo-1645352809168-be1d1ef6d31c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80 =200x200)`;
 exports.Default = Template.bind({});
 exports.Default.args = {
-    defaultValue: IMG_WITH_SIZE,
+    defaultValue: "",
 };
 exports.Emoji = Template.bind({});
 exports.Emoji.args = {
@@ -170,7 +169,7 @@ exports.ReadOnlyWriteCheckboxes.args = {
 };
 exports.Persisted = Template.bind({});
 exports.Persisted.args = {
-    defaultValue: localStorage.getItem("saved") || IMG_WITH_SIZE,
+    defaultValue: localStorage.getItem("saved"),
     onChange: debounce_1.default((value) => {
         const text = value();
         localStorage.setItem("saved", text);
