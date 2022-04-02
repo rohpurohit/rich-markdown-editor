@@ -942,7 +942,7 @@ exports.StyledEditor = styled_components_1.default("div") `
     outline: none;
     border: 0;
     padding: 0;
-    margin-top: 1px;
+    margin-top: 4px;
     margin-${(props) => (props.rtl ? "right" : "left")}: -24px;
 
     &:hover,
