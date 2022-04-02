@@ -26,7 +26,7 @@ class DefaultHighlight extends Mark_1.default {
                 },
                 {
                     style: "background-color",
-                    getAttrs: (value) => !!value && value !== "transparent",
+                    getAttrs: (value) => !!value && value === "red",
                 },
             ],
             toDOM: () => ["mark", { class: "red" }],

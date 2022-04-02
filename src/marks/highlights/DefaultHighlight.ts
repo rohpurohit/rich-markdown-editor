@@ -2,7 +2,6 @@ import markInputRule from "../../lib/markInputRule";
 import Mark from "../Mark";
 import markRule from "../../rules/mark";
 import applyHighlight from "../../commands/applyHighlight";
-import { toggleMark } from "prosemirror-commands";
 
 export default class DefaultHighlight extends Mark {
   get name() {
@@ -24,7 +23,7 @@ export default class DefaultHighlight extends Mark {
         },
         {
           style: "background-color",
-          getAttrs: (value) => !!value && value !== "transparent",
+          getAttrs: (value) => !!value && value === "red",
         },
       ],
       toDOM: () => ["mark", { class: "red" }],
