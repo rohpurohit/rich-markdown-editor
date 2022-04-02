@@ -220,9 +220,8 @@ exports.StyledEditor = styled_components_1.default("div") `
     flex-direction: ${(props) => (props.rtl ? "row-reverse" : "row")};
     display: inline-flex;
     position: relative;
-    top: -2px;
+    top: 0px;
     width: 26px;
-    height: 24px;
 
     &.collapsed {
       opacity: 1;
@@ -243,6 +242,10 @@ exports.StyledEditor = styled_components_1.default("div") `
   h4,
   h5,
   h6 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
     &:hover {
       .heading-anchor {
         opacity: 0.75 !important;

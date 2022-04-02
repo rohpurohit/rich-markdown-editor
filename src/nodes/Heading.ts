@@ -57,12 +57,6 @@ export default class Heading extends Node {
         contentElement: ".heading-content",
       })),
       toDOM: (node) => {
-        const anchor = document.createElement("button");
-        anchor.innerText = "#";
-        anchor.type = "button";
-        anchor.className = "heading-anchor";
-        anchor.addEventListener("click", (event) => this.handleCopyLink(event));
-
         const fold = document.createElement("button");
         fold.innerText = "";
         fold.innerHTML =
@@ -85,7 +79,6 @@ export default class Heading extends Node {
                 node.attrs.collapsed ? "collapsed" : ""
               }`,
             },
-            anchor,
             fold,
           ],
           [
