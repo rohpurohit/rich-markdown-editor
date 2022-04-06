@@ -18,13 +18,16 @@ class EmojiMenu extends react_1.default.Component {
         this.clearSearch = () => {
             var _a;
             const { state, dispatch } = this.props.view;
-            dispatch(state.tr.insertText("", state.selection.$from.pos - ((_a = this.props.search) !== null && _a !== void 0 ? _a : "").length - 1, state.selection.to));
+            const MENU_TRIGGER_LENGTH = 2;
+            dispatch(state.tr.insertText("", state.selection.$from.pos -
+                ((_a = this.props.search) !== null && _a !== void 0 ? _a : "").length -
+                MENU_TRIGGER_LENGTH, state.selection.to));
         };
     }
     get items() {
         const { search = "" } = this.props;
         const n = search.toLowerCase();
-        const result = searcher.search(n).map(item => {
+        const result = searcher.search(n).map((item) => {
             const description = item.description;
             const name = item.names[0];
             return Object.assign(Object.assign({}, item), { name: "emoji", title: name, description, attrs: { markup: name, "data-name": name } });

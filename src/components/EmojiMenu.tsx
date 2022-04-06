@@ -35,7 +35,7 @@ class EmojiMenu extends React.Component<
     const { search = "" } = this.props;
 
     const n = search.toLowerCase();
-    const result = searcher.search(n).map(item => {
+    const result = searcher.search(n).map((item) => {
       const description = item.description;
       const name = item.names[0];
       return {
@@ -53,11 +53,15 @@ class EmojiMenu extends React.Component<
   clearSearch = () => {
     const { state, dispatch } = this.props.view;
 
+    const MENU_TRIGGER_LENGTH = 2; // length of `::`
+
     // clear search input
     dispatch(
       state.tr.insertText(
         "",
-        state.selection.$from.pos - (this.props.search ?? "").length - 1,
+        state.selection.$from.pos -
+          (this.props.search ?? "").length -
+          MENU_TRIGGER_LENGTH,
         state.selection.to
       )
     );
