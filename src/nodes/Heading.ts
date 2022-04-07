@@ -154,28 +154,6 @@ export default class Heading extends Node {
     }
   };
 
-  handleCopyLink = (event) => {
-    // this is unfortunate but appears to be the best way to grab the anchor
-    // as it's added directly to the dom by a decoration.
-    const anchor = event.currentTarget.parentNode.parentNode.previousSibling;
-    if (!anchor.className.includes(this.className)) {
-      throw new Error("Did not find anchor as previous sibling of heading");
-    }
-    const hash = `#${anchor.id}`;
-
-    // the existing url might contain a hash already, lets make sure to remove
-    // that rather than appending another one.
-    const urlWithoutHash = window.location.href.split("#")[0];
-    copy(urlWithoutHash + hash);
-
-    if (this.options.onShowToast) {
-      this.options.onShowToast(
-        this.options.dictionary.linkCopied,
-        ToastType.Info
-      );
-    }
-  };
-
   keys({ type, schema }) {
     const options = this.options.levels.reduce(
       (items, level) => ({

@@ -23,7 +23,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const prosemirror_state_1 = require("prosemirror-state");
-const copy_to_clipboard_1 = __importDefault(require("copy-to-clipboard"));
 const prosemirror_view_1 = require("prosemirror-view");
 const prosemirror_inputrules_1 = require("prosemirror-inputrules");
 const backspaceToParagraph_1 = __importDefault(require("../commands/backspaceToParagraph"));
@@ -31,7 +30,6 @@ const toggleBlockType_1 = __importDefault(require("../commands/toggleBlockType")
 const splitHeading_1 = __importDefault(require("../commands/splitHeading"));
 const headingToSlug_1 = __importStar(require("../lib/headingToSlug"));
 const Node_1 = __importDefault(require("./Node"));
-const types_1 = require("../types");
 const domHelpers_1 = require("../domHelpers");
 class Heading extends Node_1.default {
     constructor() {
@@ -63,18 +61,6 @@ class Heading extends Node_1.default {
                     view.dispatch(transaction);
                     view.focus();
                 }
-            }
-        };
-        this.handleCopyLink = (event) => {
-            const anchor = event.currentTarget.parentNode.parentNode.previousSibling;
-            if (!anchor.className.includes(this.className)) {
-                throw new Error("Did not find anchor as previous sibling of heading");
-            }
-            const hash = `#${anchor.id}`;
-            const urlWithoutHash = window.location.href.split("#")[0];
-            copy_to_clipboard_1.default(urlWithoutHash + hash);
-            if (this.options.onShowToast) {
-                this.options.onShowToast(this.options.dictionary.linkCopied, types_1.ToastType.Info);
             }
         };
     }

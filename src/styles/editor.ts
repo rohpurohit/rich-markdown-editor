@@ -165,25 +165,6 @@ export const StyledEditor = styled("div")<{
     }
   }
 
-  h1:not(.placeholder):before {
-    content: "H1";
-  }
-  h2:not(.placeholder):before {
-    content: "H2";
-  }
-  h3:not(.placeholder):before {
-    content: "H3";
-  }
-  h4:not(.placeholder):before {
-    content: "H4";
-  }
-  h5:not(.placeholder):before {
-    content: "H5";
-  }
-  h6:not(.placeholder):before {
-    content: "H6";
-  }
-
   .with-emoji {
     margin-${(props) => (props.rtl ? "right" : "left")}: -1em;
   }
