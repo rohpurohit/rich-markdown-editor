@@ -479,6 +479,7 @@ class RichMarkdownEditor extends React.PureComponent {
                 prosemirror_dropcursor_1.dropCursor({ color: this.theme().cursor }),
                 prosemirror_gapcursor_1.gapCursor(),
                 prosemirror_inputrules_1.inputRules({ rules: this.inputRules }),
+                prosemirror_keymap_1.keymap({ Tab: () => true }),
                 prosemirror_keymap_1.keymap(prosemirror_commands_1.baseKeymap),
             ],
         });

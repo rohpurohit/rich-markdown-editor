@@ -533,6 +533,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         dropCursor({ color: this.theme().cursor }),
         gapCursor(),
         inputRules({ rules: this.inputRules }),
+        keymap({ Tab: () => true }), // return true so we handle the Tab click, otherwise the default handler is to blue the editor.
         keymap(baseKeymap),
       ],
     });
