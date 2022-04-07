@@ -194,7 +194,7 @@ export const StyledEditor = styled("div")<{
   }
 
   .heading-actions {
-    opacity: 1;
+    opacity: 0;
     background: ${(props) => props.theme.background};
     margin-${(props) => (props.rtl ? "right" : "left")}: -26px;
     flex-direction: ${(props) => (props.rtl ? "row-reverse" : "row")};
