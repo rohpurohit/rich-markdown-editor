@@ -195,13 +195,12 @@ exports.StyledEditor = styled_components_1.default("div") `
   }
 
   .heading-actions {
-    opacity: 0;
+    opacity: 1;
     background: ${(props) => props.theme.background};
     margin-${(props) => (props.rtl ? "right" : "left")}: -26px;
     flex-direction: ${(props) => (props.rtl ? "row-reverse" : "row")};
     display: inline-flex;
     position: relative;
-    top: 0px;
     width: 26px;
 
     &.collapsed {
@@ -217,16 +216,36 @@ exports.StyledEditor = styled_components_1.default("div") `
     }
   }
 
+  h1 {
+    .heading-actions {
+      top: 0;
+    }
+  }
+
+  h2 {
+    .heading-actions {
+      top: 3px;
+    }
+  }
+
+  h3 {
+    .heading-actions {
+      top: 5px;
+    }
+  }
+
+  h4 {
+    .heading-actions {
+      top: 6px;
+    }
+  }
+
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    
     &:hover {
       .heading-anchor {
         opacity: 0.75 !important;
