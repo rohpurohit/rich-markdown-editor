@@ -62,13 +62,6 @@ const docSearchResults = [
         url: "/doc/meeting-notes",
     },
 ];
-class YoutubeEmbed extends React.Component {
-    render() {
-        const { attrs } = this.props;
-        const videoId = attrs.matches[1];
-        return (React.createElement("iframe", { className: this.props.isSelected ? "ProseMirror-selectednode" : "", src: `https://www.youtube.com/embed/${videoId}?modestbranding=1` }));
-    }
-}
 const text = `
 <h1 style="text-align: justify;">
     What is a Cell

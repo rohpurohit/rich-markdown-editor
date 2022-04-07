@@ -56,7 +56,7 @@ declare class LinkEditor extends React.Component<Props, State> {
     moveSelectionToEnd: () => void;
     render(): JSX.Element;
 }
-declare const _default: React.ForwardRefExoticComponent<Pick<Props & React.RefAttributes<LinkEditor>, "tooltip" | "mark" | "view" | "ref" | "key" | "from" | "to" | "dictionary" | "onRemoveLink" | "onCreateLink" | "onSearchLink" | "onSelectLink" | "onClickLink" | "onShowToast"> & {
+declare const _default: React.ForwardRefExoticComponent<Pick<Props & React.RefAttributes<LinkEditor>, "mark" | "view" | "tooltip" | "ref" | "key" | "from" | "to" | "dictionary" | "onRemoveLink" | "onCreateLink" | "onSearchLink" | "onSelectLink" | "onClickLink" | "onShowToast"> & {
     theme?: any;
 }>;
 export default _default;
