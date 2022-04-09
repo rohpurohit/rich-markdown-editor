@@ -25,13 +25,6 @@ export default function imageMenuItems(
 
   return [
     {
-      name: "downloadImage",
-      tooltip: dictionary.downloadImage,
-      icon: DownloadIcon,
-      visible: !!fetch,
-      active: () => false,
-    },
-    {
       name: "replaceImage",
       tooltip: dictionary.replaceImage,
       icon: ReplaceIcon,

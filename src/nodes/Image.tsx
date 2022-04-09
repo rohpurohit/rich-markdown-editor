@@ -1,5 +1,4 @@
 import * as React from "react";
-import { DownloadIcon } from "outline-icons";
 import { Plugin, TextSelection, NodeSelection } from "prosemirror-state";
 import { InputRule } from "prosemirror-inputrules";
 import styled from "styled-components";
@@ -86,24 +85,6 @@ const uploadPlugin = (options) => {
       },
     },
   });
-};
-
-const downloadImageNode = async (node) => {
-  const image = await fetch(node.attrs.src);
-  const imageBlob = await image.blob();
-  const imageURL = URL.createObjectURL(imageBlob);
-  const extension = imageBlob.type.split("/")[1];
-  const potentialName = node.attrs.alt || "image";
-
-  // create a temporary link node and click it with our image data
-  const link = document.createElement("a");
-  link.href = imageURL;
-  link.download = `${potentialName}.${extension}`;
-  document.body.appendChild(link);
-  link.click();
-
-  // cleanup
-  document.body.removeChild(link);
 };
 
 export default class Image extends Node {
@@ -224,14 +205,6 @@ export default class Image extends Node {
       view.dispatch(transaction);
     };
 
-  handleDownload =
-    ({ node }) =>
-    (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      downloadImageNode(node);
-    };
-
   resizeImage = ({ node, getPos, width, height }) => {
     const { view } = this.editor;
     const { tr } = view.state;
@@ -273,12 +246,6 @@ export default class Image extends Node {
           className={isSelected ? "ProseMirror-selectednode" : ""}
           onClick={this.handleSelect(props)}
         >
-          <Button>
-            <DownloadIcon
-              color="currentColor"
-              onClick={this.handleDownload(props)}
-            />
-          </Button>
           <ResizableWrapper ref={resizableWrapperRef} {...{ width, height }}>
             <img src={src} alt={alt} title={title} />
           </ResizableWrapper>
@@ -332,17 +299,6 @@ export default class Image extends Node {
 
   commands({ type }) {
     return {
-      downloadImage: () => async (state) => {
-        const { node } = state.selection;
-
-        if (node.type.name !== "image") {
-          return false;
-        }
-
-        downloadImageNode(node);
-
-        return true;
-      },
       deleteImage: () => (state, dispatch) => {
         dispatch(state.tr.deleteSelection());
         return true;
