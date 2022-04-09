@@ -69,6 +69,10 @@ class BlockMenuTrigger extends Extension_1.default {
                             if (!view.hasFocus()) {
                                 return false;
                             }
+                            const parent = prosemirror_utils_1.findParentNode((node) => node.type.name === "paragraph")(view.state.selection);
+                            if (!parent || parent.node.content.size > 0) {
+                                return false;
+                            }
                             event.preventDefault();
                             this.options.onOpen();
                             return true;

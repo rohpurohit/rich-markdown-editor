@@ -23,7 +23,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(require("react"));
-const outline_icons_1 = require("outline-icons");
 const prosemirror_state_1 = require("prosemirror-state");
 const prosemirror_inputrules_1 = require("prosemirror-inputrules");
 const styled_components_1 = __importDefault(require("styled-components"));
@@ -82,19 +81,6 @@ const uploadPlugin = (options) => {
         },
     });
 };
-const downloadImageNode = async (node) => {
-    const image = await fetch(node.attrs.src);
-    const imageBlob = await image.blob();
-    const imageURL = URL.createObjectURL(imageBlob);
-    const extension = imageBlob.type.split("/")[1];
-    const potentialName = node.attrs.alt || "image";
-    const link = document.createElement("a");
-    link.href = imageURL;
-    link.download = `${potentialName}.${extension}`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
 class Image extends Node_1.default {
     constructor() {
         super(...arguments);
@@ -140,11 +126,6 @@ class Image extends Node_1.default {
             const transaction = view.state.tr.setSelection(new prosemirror_state_1.NodeSelection($pos));
             view.dispatch(transaction);
         };
-        this.handleDownload = ({ node }) => (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            downloadImageNode(node);
-        };
         this.resizeImage = ({ node, getPos, width, height }) => {
             const { view } = this.editor;
             const { tr } = view.state;
@@ -172,8 +153,6 @@ class Image extends Node_1.default {
             });
             return (React.createElement("div", { contentEditable: false, className: className },
                 React.createElement(ImageWrapper, { className: isSelected ? "ProseMirror-selectednode" : "", onClick: this.handleSelect(props) },
-                    React.createElement(Button, null,
-                        React.createElement(outline_icons_1.DownloadIcon, { color: "currentColor", onClick: this.handleDownload(props) })),
                     React.createElement(ResizableWrapper, Object.assign({ ref: resizableWrapperRef }, { width, height }),
                         React.createElement("img", { src: src, alt: alt, title: title }))),
                 React.createElement(Caption, { onKeyDown: this.handleCaptionKeyDown(props), onBlur: this.handleCaptionBlur(props), className: "caption", tabIndex: -1, role: "textbox", contentEditable: true, suppressContentEditableWarning: true, "data-caption": this.options.dictionary.imageCaptionPlaceholder }, alt)));
@@ -260,14 +239,6 @@ class Image extends Node_1.default {
     }
     commands({ type }) {
         return {
-            downloadImage: () => async (state) => {
-                const { node } = state.selection;
-                if (node.type.name !== "image") {
-                    return false;
-                }
-                downloadImageNode(node);
-                return true;
-            },
             deleteImage: () => (state, dispatch) => {
                 dispatch(state.tr.deleteSelection());
                 return true;

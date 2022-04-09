@@ -49,9 +49,6 @@ export default class Image extends Node {
     handleSelect: ({ getPos }: {
         getPos: any;
     }) => (event: any) => void;
-    handleDownload: ({ node }: {
-        node: any;
-    }) => (event: any) => void;
     resizeImage: ({ node, getPos, width, height }: {
         node: any;
         getPos: any;
@@ -73,7 +70,6 @@ export default class Image extends Node {
     commands({ type }: {
         type: any;
     }): {
-        downloadImage: () => (state: any) => Promise<boolean>;
         deleteImage: () => (state: any, dispatch: any) => boolean;
         replaceImage: () => (state: any) => void;
         createImage: () => () => void;
