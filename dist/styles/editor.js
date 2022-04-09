@@ -38,7 +38,7 @@ exports.StyledEditor = styled_components_1.default("div") `
     position: relative;
   }
 
-  ul li::marker {
+  ul > li::marker {
     font-size: 21px;
   }
 
