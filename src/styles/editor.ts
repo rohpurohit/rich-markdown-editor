@@ -37,7 +37,7 @@ export const StyledEditor = styled("div")<{
     position: relative;
   }
 
-  ul li::marker {
+  ul > li::marker {
     font-size: 21px;
   }
 
