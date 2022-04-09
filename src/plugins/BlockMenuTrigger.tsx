@@ -5,7 +5,7 @@ import { Plugin } from "prosemirror-state";
 import { isInTable } from "prosemirror-tables";
 import { findParentNode } from "prosemirror-utils";
 import { PlusIcon } from "outline-icons";
-import { Decoration, DecorationSet } from "prosemirror-view";
+import { Decoration, DecorationSet, EditorView } from "prosemirror-view";
 import Extension from "../lib/Extension";
 
 const MAX_MATCH = 500;
@@ -52,8 +52,16 @@ export default class BlockMenuTrigger extends Extension {
       new Plugin({
         props: {
           handleDOMEvents: {
-            contextmenu: (view, event: MouseEvent) => {
+            contextmenu: (view: EditorView, event: MouseEvent) => {
               if (!view.hasFocus()) {
+                return false;
+              }
+
+              const parent = findParentNode(
+                (node) => node.type.name === "paragraph"
+              )(view.state.selection);
+
+              if (!parent || parent.node.content.size > 0) {
                 return false;
               }
 
