@@ -24,6 +24,11 @@ export const StyledEditor = styled("div")<{
     font-feature-settings: "liga" 0; /* the above doesn't seem to work in Edge */
   }
 
+  .ProseMirror > ul, .ProseMirror > ol {
+    padding: ${(props) => (props.rtl ? "0 18px 0 0" : "0 0 0 18px")};
+  }
+
+
   pre {
     white-space: pre-wrap;
   }
@@ -392,8 +397,8 @@ export const StyledEditor = styled("div")<{
 
   ul,
   ol {
-    margin: ${(props) => (props.rtl ? "0 -26px 0 0.1em" : "0 0.1em 0 -26px")};
-    padding: ${(props) => (props.rtl ? "0 44px 0 0" : "0 0 0 44px")};
+    margin: ${(props) => (props.rtl ? "0 0 0 0.1em" : "0 0.1em 0 0")};
+    padding: ${(props) => (props.rtl ? "0 36px 0 0" : "0 0 0 36px")};
   }
 
   ol ol {
