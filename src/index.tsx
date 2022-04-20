@@ -797,7 +797,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           <React.Fragment>
             <StyledEditor
               ref={(ref) => (this.element = ref)}
-              fontScale={fontScale}
+              fontScale={fontScale ?? 1}
               rtl={isRTL}
               readOnly={readOnly}
               readOnlyWriteCheckboxes={readOnlyWriteCheckboxes}

@@ -538,13 +538,13 @@ class RichMarkdownEditor extends React.PureComponent {
         }
     }
     render() {
-        const { dir, readOnly, readOnlyWriteCheckboxes, style, tooltip, className, onKeyDown, } = this.props;
+        const { dir, readOnly, readOnlyWriteCheckboxes, style, tooltip, className, onKeyDown, fontScale } = this.props;
         const { isRTL } = this.state;
         const dictionary = this.dictionary(this.props.dictionary);
         return (React.createElement(Flex_1.default, { onKeyDown: onKeyDown, style: style, className: className, align: "flex-start", justify: "center", dir: dir, column: true },
             React.createElement(styled_components_1.ThemeProvider, { theme: this.theme() },
                 React.createElement(React.Fragment, null,
-                    React.createElement(editor_1.StyledEditor, { dir: dir, rtl: isRTL, readOnly: readOnly, readOnlyWriteCheckboxes: readOnlyWriteCheckboxes, ref: (ref) => (this.element = ref) }),
+                    React.createElement(editor_1.StyledEditor, { ref: (ref) => (this.element = ref), fontScale: fontScale !== null && fontScale !== void 0 ? fontScale : 1, rtl: isRTL, readOnly: readOnly, readOnlyWriteCheckboxes: readOnlyWriteCheckboxes }),
                     !readOnly && this.view && (React.createElement(React.Fragment, null,
                         React.createElement(SelectionToolbar_1.default, { view: this.view, dictionary: dictionary, commands: this.commands, rtl: isRTL, isTemplate: this.props.template === true, onOpen: this.handleOpenSelectionMenu, onClose: this.handleCloseSelectionMenu, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onCreateLink: this.props.onCreateLink, tooltip: tooltip }),
                         React.createElement(LinkToolbar_1.default, { view: this.view, dictionary: dictionary, isActive: this.state.linkMenuOpen, onCreateLink: this.props.onCreateLink, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onShowToast: this.props.onShowToast, onClose: this.handleCloseLinkMenu, tooltip: tooltip }),
@@ -555,6 +555,7 @@ class RichMarkdownEditor extends React.PureComponent {
 RichMarkdownEditor.defaultProps = {
     defaultValue: "",
     dir: "auto",
+    fontScale: 1,
     placeholder: "Write something nice…",
     onImageUploadStart: () => {
     },

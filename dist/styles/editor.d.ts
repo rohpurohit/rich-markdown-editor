@@ -1,5 +1,6 @@
 export declare const StyledEditor: import("styled-components").StyledComponent<"div", any, {
     rtl: boolean;
+    fontScale: number;
     readOnly?: boolean | undefined;
     readOnlyWriteCheckboxes?: boolean | undefined;
 }, never>;
