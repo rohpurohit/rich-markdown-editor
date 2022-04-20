@@ -10,10 +10,15 @@ export default class Bold extends Mark {
   get schema() {
     return {
       parseDOM: [
-        { tag: "b" },
+        // TODO: comment b tag for now, as it's causing a problem when copying from google docs
+        // { tag: "b" },
         { tag: "strong" },
         { style: "font-style", getAttrs: (value) => value === "bold" },
-        { style: "font-weight", getAttrs: (value) => value === "bold" },
+        {
+          style: "font-weight",
+          getAttrs: (value) =>
+            ["700", "800", "900", "bold", "bolder"].includes(value),
+        },
       ],
       toDOM: () => ["strong"],
     };
