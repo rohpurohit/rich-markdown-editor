@@ -131,6 +131,7 @@ export type Props = {
     | "tr"
     | "emoji"
   )[];
+  fontScale?: number;
   autoFocus?: boolean;
   readOnly?: boolean;
   readOnlyWriteCheckboxes?: boolean;
@@ -185,6 +186,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   static defaultProps = {
     defaultValue: "",
     dir: "auto",
+    fontScale: 1,
     placeholder: "Write something nice…",
     onImageUploadStart: () => {
       // no default behavior
@@ -776,6 +778,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       tooltip,
       className,
       onKeyDown,
+      fontScale
     } = this.props;
     const { isRTL } = this.state;
     const dictionary = this.dictionary(this.props.dictionary);
@@ -793,11 +796,11 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         <ThemeProvider theme={this.theme()}>
           <React.Fragment>
             <StyledEditor
-              dir={dir}
+              ref={(ref) => (this.element = ref)}
+              fontScale={fontScale}
               rtl={isRTL}
               readOnly={readOnly}
               readOnlyWriteCheckboxes={readOnlyWriteCheckboxes}
-              ref={(ref) => (this.element = ref)}
             />
             {!readOnly && this.view && (
               <React.Fragment>

@@ -85,6 +85,12 @@ Allows overriding the inbuilt copy dictionary, for example to internationalize t
 
 With `dark` set to `true` the editor will use a default dark theme that's included. See the [source here](/src/styles/theme.ts).
 
+#### `fontScale`
+
+_Default: 1_
+
+Number to control the font size of the editor.
+
 #### `dir`
 
 _Default: `auto`_

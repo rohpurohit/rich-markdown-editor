@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const StyledEditor = styled("div")<{
   rtl: boolean;
+  fontScale: number;
   readOnly?: boolean;
   readOnlyWriteCheckboxes?: boolean;
 }>`
@@ -9,7 +10,7 @@ export const StyledEditor = styled("div")<{
   background: ${(props) => props.theme.background};
   font-family: ${(props) => props.theme.fontFamily};
   font-weight: ${(props) => props.theme.fontWeight};
-  font-size: 16px;
+  font-size: ${({fontScale}) => fontScale * 16}px;
   line-height: 1.7em;
   width: 100%;
 
@@ -38,7 +39,7 @@ export const StyledEditor = styled("div")<{
   }
 
   ul > li::marker {
-    font-size: 21px;
+    font-size: ${({fontScale}) => fontScale * 21}px;
   }
 
   .image {
@@ -130,7 +131,7 @@ export const StyledEditor = styled("div")<{
       display: ${(props) => (props.readOnly ? "none" : "inline-block")};
       font-family: ${(props) => props.theme.fontFamilyMono};
       color: ${(props) => props.theme.textSecondary};
-      font-size: 13px;
+      font-size: ${({fontScale}) => fontScale * 13}px;
       line-height: 0;
       margin-${(props) => (props.rtl ? "right" : "left")}: -24px;
       width: 24px;
@@ -187,7 +188,7 @@ export const StyledEditor = styled("div")<{
     padding: 0;
     text-align: left;
     font-family: ${(props) => props.theme.fontFamilyMono};
-    font-size: 14px;
+    font-size: ${({fontScale}) => fontScale * 14}px;;
     line-height: 0;
     width: 12px;
     height: 24px;
@@ -439,24 +440,23 @@ export const StyledEditor = styled("div")<{
     text-decoration: line-through;
   }
  
-  ul > li > p,
-  ol > li, p {
-      margin-bottom: 5px !important;
+  p {
+      margin-bottom: ${({fontScale}) => fontScale * 5}px; !important;
   }
 
   ul li::before,
   ol li::before {
-    background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM0RTVDNkUiLz4KPHJlY3QgeD0iOCIgeT0iMTEiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjNEU1QzZFIi8+CjxyZWN0IHg9IjgiIHk9IjE1IiB3aWR0aD0iMyIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzRFNUM2RSIvPgo8cmVjdCB4PSIxMyIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM0RTVDNkUiLz4KPHJlY3QgeD0iMTMiIHk9IjExIiB3aWR0aD0iMyIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzRFNUM2RSIvPgo8cmVjdCB4PSIxMyIgeT0iMTUiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjNEU1QzZFIi8+Cjwvc3ZnPgo=") no-repeat;
-    background-position: 0 3px;
+    background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM0RTVDNkUiLz4KPHJlY3QgeD0iOCIgeT0iMTEiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjNEU1QzZFIi8+CjxyZWN0IHg9IjgiIHk9IjE1IiB3aWR0aD0iMyIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzRFNUM2RSIvPgo8cmVjdCB4PSIxMyIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM0RTVDNkUiLz4KPHJlY3QgeD0iMTMiIHk9IjExIiB3aWR0aD0iMyIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzRFNUM2RSIvPgo8cmVjdCB4PSIxMyIgeT0iMTUiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjNEU1QzZFIi8+Cjwvc3ZnPgo=") no-repeat 0 3px;
     content: "";
     display: ${(props) => (props.readOnly ? "none" : "inline-block")};
     cursor: grab;
     width: 24px;
     height: 24px;
     position: absolute;
-    ${(props) => (props.rtl ? "right" : "left")}: -46px;
+    ${(props) => (props.rtl ? "right" : "left")}: ${({fontScale}) => (fontScale * (fontScale < 1 ? 1.1 : 0.95)) *  -46}px;
     opacity: 0;
     transition: opacity 200ms ease-in-out;
+    top: ${({fontScale}) => fontScale > 1 ? 2 * fontScale : 0}px;
   }
 
   ul li[draggable=true]::before,
@@ -489,14 +489,16 @@ export const StyledEditor = styled("div")<{
       props.readOnly && !props.readOnlyWriteCheckboxes ? "none" : "initial"};
     opacity: ${(props) =>
       props.readOnly && !props.readOnlyWriteCheckboxes ? 0.75 : 1};
-    margin: ${(props) =>
-      props.rtl ? "0.65rem 0 0 0.5em" : "0.65rem 0.5em 0 0"};
-    width: 14px;
-    height: 14px;
+    margin: ${({rtl, fontScale}) =>
+      rtl ? `${fontScale < 1 ? 0.65 : 0.6}rem 0 0 0.5em` : `${fontScale < 1 ? 0.65 : 0.6}rem 0.5em 0 0`};
+    width: ${({fontScale}) => fontScale * 14}px;
+    height: ${({fontScale}) => fontScale * 14}px;
   }
 
   li p:first-child {
-    margin: 0;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
     word-break: break-word;
   }
 
@@ -571,7 +573,7 @@ export const StyledEditor = styled("div")<{
       background: ${(props) => props.theme.blockToolbarBackground};
       color: ${(props) => props.theme.blockToolbarItem};
       border-width: 1px;
-      font-size: 13px;
+      font-size: ${({fontScale}) => fontScale * 13}px;;
       display: none;
       position: absolute;
       border-radius: 4px;
@@ -626,7 +628,7 @@ export const StyledEditor = styled("div")<{
 
     -webkit-font-smoothing: initial;
     font-family: ${(props) => props.theme.fontFamilyMono};
-    font-size: 13px;
+    font-size: ${({fontScale}) => fontScale * 13}px;
     direction: ltr;
     text-align: left;
     white-space: pre;
@@ -643,7 +645,7 @@ export const StyledEditor = styled("div")<{
     margin: 0;
 
     code {
-      font-size: 13px;
+      font-size: ${({fontScale}) => fontScale * 13}px;
       background: none;
       padding: 0;
       border: 0;
