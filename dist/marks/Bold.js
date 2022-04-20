@@ -13,10 +13,12 @@ class Bold extends Mark_1.default {
     get schema() {
         return {
             parseDOM: [
-                { tag: "b" },
                 { tag: "strong" },
                 { style: "font-style", getAttrs: (value) => value === "bold" },
-                { style: "font-weight", getAttrs: (value) => value === "bold" },
+                {
+                    style: "font-weight",
+                    getAttrs: (value) => ["700", "800", "900", "bold", "bolder"].includes(value),
+                },
             ],
             toDOM: () => ["strong"],
         };
