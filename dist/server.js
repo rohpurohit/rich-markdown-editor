@@ -36,6 +36,11 @@ const Link_1 = __importDefault(require("./marks/Link"));
 const Strikethrough_1 = __importDefault(require("./marks/Strikethrough"));
 const Placeholder_1 = __importDefault(require("./marks/Placeholder"));
 const Underline_1 = __importDefault(require("./marks/Underline"));
+const OrangeHighlight_1 = __importDefault(require("./marks/highlights/OrangeHighlight"));
+const YellowHighlight_1 = __importDefault(require("./marks/highlights/YellowHighlight"));
+const BlueHighlight_1 = __importDefault(require("./marks/highlights/BlueHighlight"));
+const GreenHighlight_1 = __importDefault(require("./marks/highlights/GreenHighlight"));
+const DefaultHighlight_1 = __importDefault(require("./marks/highlights/DefaultHighlight"));
 const extensions = new ExtensionManager_1.default([
     new Doc_1.default(),
     new Text_1.default(),
@@ -66,6 +71,11 @@ const extensions = new ExtensionManager_1.default([
     new Placeholder_1.default(),
     new Underline_1.default(),
     new OrderedList_1.default(),
+    new OrangeHighlight_1.default(),
+    new YellowHighlight_1.default(),
+    new BlueHighlight_1.default(),
+    new GreenHighlight_1.default(),
+    new DefaultHighlight_1.default(),
 ]);
 exports.schema = new prosemirror_model_1.Schema({
     nodes: extensions.nodes,
