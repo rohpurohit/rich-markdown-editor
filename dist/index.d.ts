@@ -239,7 +239,9 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     handleSelectRow: (index: number, state: EditorState) => void;
     handleSelectColumn: (index: number, state: EditorState) => void;
     handleSelectTable: (state: EditorState) => void;
-    forceUpdateContent: (newValue: string) => void;
+    forceUpdateContent: (newValue: string, options: {
+        triggerOnChange?: boolean;
+    }) => void;
     focusAtStart: () => void;
     focusAtEnd: () => void;
     getHeadings: () => {

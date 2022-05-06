@@ -180,10 +180,12 @@ class RichMarkdownEditor extends React.PureComponent {
         this.handleSelectTable = (state) => {
             this.view.dispatch(prosemirror_utils_1.selectTable(state.tr));
         };
-        this.forceUpdateContent = (newValue) => {
+        this.forceUpdateContent = (newValue, options) => {
             const newState = this.createState(newValue);
             this.view.updateState(newState);
-            this.handleChange();
+            if (options.triggerOnChange) {
+                this.handleChange();
+            }
         };
         this.focusAtStart = () => {
             const selection = prosemirror_state_1.Selection.atStart(this.view.state.doc);
