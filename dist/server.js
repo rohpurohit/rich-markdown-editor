@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.renderToHtml = exports.serializer = exports.parser = exports.schema = void 0;
+exports.externalHtmlOrMdToHtml = exports.htmlToMd = exports.mdToHtml = exports.schema = void 0;
 const prosemirror_model_1 = require("prosemirror-model");
 const ExtensionManager_1 = __importDefault(require("./lib/ExtensionManager"));
-const renderToHtml_1 = __importDefault(require("./lib/renderToHtml"));
+const domHelpers_1 = require("./domHelpers");
 const Doc_1 = __importDefault(require("./nodes/Doc"));
 const Text_1 = __importDefault(require("./nodes/Text"));
 const Blockquote_1 = __importDefault(require("./nodes/Blockquote"));
@@ -81,11 +81,47 @@ exports.schema = new prosemirror_model_1.Schema({
     nodes: extensions.nodes,
     marks: extensions.marks,
 });
-exports.parser = extensions.parser({
+const domParser = prosemirror_model_1.DOMParser.fromSchema(exports.schema);
+const domSerializer = prosemirror_model_1.DOMSerializer.fromSchema(exports.schema);
+const markdownParser = extensions.parser({
     schema: exports.schema,
     plugins: extensions.rulePlugins,
 });
-exports.serializer = extensions.serializer();
-const renderToHtml = (markdown) => renderToHtml_1.default(markdown, extensions.rulePlugins);
-exports.renderToHtml = renderToHtml;
+const markdownSerializer = extensions.serializer();
+const parseHTML = (html) => {
+    const domNode = document.createElement("div");
+    domNode.innerHTML = html;
+    return domParser.parse(domNode);
+};
+const serializeToHTML = (doc) => {
+    const serializedFragment = domSerializer.serializeFragment(doc.content);
+    const throwAwayDiv = document.createElement("div");
+    throwAwayDiv.appendChild(serializedFragment);
+    return throwAwayDiv.innerHTML;
+};
+const parseMarkdown = (md) => {
+    return markdownParser.parse(md);
+};
+const serializeToMarkdown = (doc) => {
+    return markdownSerializer.serialize(doc);
+};
+const mdToHtml = (markdown) => {
+    const doc = parseMarkdown(markdown);
+    return serializeToHTML(doc);
+};
+exports.mdToHtml = mdToHtml;
+const htmlToMd = (html) => {
+    const doc = parseHTML(html);
+    return serializeToMarkdown(doc);
+};
+exports.htmlToMd = htmlToMd;
+const externalHtmlOrMdToHtml = (content) => {
+    if (domHelpers_1.isHTML(content)) {
+        return serializeToHTML(parseHTML(content));
+    }
+    else {
+        return exports.mdToHtml(content);
+    }
+};
+exports.externalHtmlOrMdToHtml = externalHtmlOrMdToHtml;
 //# sourceMappingURL=server.js.map
