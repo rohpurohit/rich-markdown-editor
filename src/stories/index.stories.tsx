@@ -28,9 +28,6 @@ export default {
 const Template: Story<Props> = (args) => <Editor {...args} />;
 
 export const Default = Template.bind({});
-Default.args = {
-  defaultValue: "",
-};
 
 export const Emoji = Template.bind({});
 Emoji.args = {

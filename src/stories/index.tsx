@@ -40,18 +40,6 @@ const docSearchResults = [
   },
 ];
 
-const text = `
-<h1 style="text-align: justify;">
-    What is a Cell
-</h1>
-<p style="text-align: justify;">
-    In biology, the smallest unit that can live on its own and that makes up all living organisms and the tissues of the body.
-    A cell has three main parts: the cell membrane, the nucleus, and the cytoplasm.
-    The cell membrane surrounds the cell and controls the substances that go into and out of the cell.
-    The nucleus is a structure inside the cell that contains the nucleolus and most of the cell&rsquo;s DNA.
-</p>
-`;
-
 export default function Example(props) {
   const { body } = document;
   if (body)
@@ -62,7 +50,6 @@ export default function Example(props) {
   return (
     <div style={{ padding: "1em 2em" }}>
       <Editor
-        defaultValue={text}
         onCreateLink={(title) => {
           // Delay to simulate time taken for remote API request to complete
           return new Promise((resolve, reject) => {

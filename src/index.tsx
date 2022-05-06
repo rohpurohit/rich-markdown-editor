@@ -535,7 +535,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         dropCursor({ color: this.theme().cursor }),
         gapCursor(),
         inputRules({ rules: this.inputRules }),
-        keymap({ Tab: () => true }), // return true so we handle the Tab click, otherwise the default handler is to blue the editor.
+        keymap({ Tab: () => true }), // return true so we handle the Tab click, otherwise the default handler is to blur the editor.
         keymap(baseKeymap),
       ],
     });
@@ -712,6 +712,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   forceUpdateContent = (newValue: string) => {
     const newState = this.createState(newValue);
     this.view.updateState(newState);
+    this.handleChange();
   };
 
   focusAtStart = () => {
@@ -778,7 +779,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       tooltip,
       className,
       onKeyDown,
-      fontScale
+      fontScale,
     } = this.props;
     const { isRTL } = this.state;
     const dictionary = this.dictionary(this.props.dictionary);
