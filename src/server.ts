@@ -34,6 +34,11 @@ import Link from "./marks/Link";
 import Strikethrough from "./marks/Strikethrough";
 import TemplatePlaceholder from "./marks/Placeholder";
 import Underline from "./marks/Underline";
+import OrangeHighlight from "./marks/highlights/OrangeHighlight";
+import YellowHighlight from "./marks/highlights/YellowHighlight";
+import BlueHighlight from "./marks/highlights/BlueHighlight";
+import GreenHighlight from "./marks/highlights/GreenHighlight";
+import DefaultHighlight from "./marks/highlights/DefaultHighlight";
 
 const extensions = new ExtensionManager([
   new Doc(),
@@ -65,6 +70,11 @@ const extensions = new ExtensionManager([
   new TemplatePlaceholder(),
   new Underline(),
   new OrderedList(),
+  new OrangeHighlight(),
+  new YellowHighlight(),
+  new BlueHighlight(),
+  new GreenHighlight(),
+  new DefaultHighlight(),
 ]);
 
 export const schema = new Schema({
