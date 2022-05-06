@@ -709,10 +709,15 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   // 'public' methods
 
-  forceUpdateContent = (newValue: string) => {
+  forceUpdateContent = (
+    newValue: string,
+    options: { triggerOnChange?: boolean }
+  ) => {
     const newState = this.createState(newValue);
     this.view.updateState(newState);
-    this.handleChange();
+    if (options.triggerOnChange) {
+      this.handleChange();
+    }
   };
 
   focusAtStart = () => {
