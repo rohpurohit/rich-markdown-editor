@@ -62,17 +62,6 @@ const docSearchResults = [
         url: "/doc/meeting-notes",
     },
 ];
-const text = `
-<h1 style="text-align: justify;">
-    What is a Cell
-</h1>
-<p style="text-align: justify;">
-    In biology, the smallest unit that can live on its own and that makes up all living organisms and the tissues of the body.
-    A cell has three main parts: the cell membrane, the nucleus, and the cytoplasm.
-    The cell membrane surrounds the cell and controls the substances that go into and out of the cell.
-    The nucleus is a structure inside the cell that contains the nucleolus and most of the cell&rsquo;s DNA.
-</p>
-`;
 function Example(props) {
     const { body } = document;
     if (body)
@@ -80,7 +69,7 @@ function Example(props) {
             ? theme_1.dark.background
             : theme_1.light.background;
     return (React.createElement("div", { style: { padding: "1em 2em" } },
-        React.createElement(__1.default, Object.assign({ defaultValue: text, onCreateLink: (title) => {
+        React.createElement(__1.default, Object.assign({ onCreateLink: (title) => {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
                         if (title !== "error") {

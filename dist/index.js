@@ -183,6 +183,7 @@ class RichMarkdownEditor extends React.PureComponent {
         this.forceUpdateContent = (newValue) => {
             const newState = this.createState(newValue);
             this.view.updateState(newState);
+            this.handleChange();
         };
         this.focusAtStart = () => {
             const selection = prosemirror_state_1.Selection.atStart(this.view.state.doc);
@@ -538,7 +539,7 @@ class RichMarkdownEditor extends React.PureComponent {
         }
     }
     render() {
-        const { dir, readOnly, readOnlyWriteCheckboxes, style, tooltip, className, onKeyDown, fontScale } = this.props;
+        const { dir, readOnly, readOnlyWriteCheckboxes, style, tooltip, className, onKeyDown, fontScale, } = this.props;
         const { isRTL } = this.state;
         const dictionary = this.dictionary(this.props.dictionary);
         return (React.createElement(Flex_1.default, { onKeyDown: onKeyDown, style: style, className: className, align: "flex-start", justify: "center", dir: dir, column: true },

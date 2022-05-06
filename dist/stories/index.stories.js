@@ -29,9 +29,6 @@ exports.default = {
 };
 const Template = (args) => react_1.default.createElement(index_1.default, Object.assign({}, args));
 exports.Default = Template.bind({});
-exports.Default.args = {
-    defaultValue: "",
-};
 exports.Emoji = Template.bind({});
 exports.Emoji.args = {
     defaultValue: `# Emoji
