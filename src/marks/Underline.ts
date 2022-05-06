@@ -12,9 +12,10 @@ export default class Underline extends Mark {
     return {
       parseDOM: [
         { tag: "u" },
+        { tag: "underline" },
         {
           style: "text-decoration",
-          getAttrs: value => value === "underline",
+          getAttrs: (value) => value === "underline",
         },
       ],
       toDOM: () => ["u", 0],

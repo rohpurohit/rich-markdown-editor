@@ -1,6 +1,6 @@
-import { Schema } from "prosemirror-model";
+import { Schema, DOMParser, DOMSerializer } from "prosemirror-model";
 import ExtensionManager from "./lib/ExtensionManager";
-import render from "./lib/renderToHtml";
+import { isHTML } from "./domHelpers";
 
 // nodes
 import Doc from "./nodes/Doc";
@@ -82,12 +82,50 @@ export const schema = new Schema({
   marks: extensions.marks,
 });
 
-export const parser = extensions.parser({
+const domParser = DOMParser.fromSchema(schema);
+const domSerializer = DOMSerializer.fromSchema(schema);
+
+const markdownParser = extensions.parser({
   schema,
   plugins: extensions.rulePlugins,
 });
+const markdownSerializer = extensions.serializer();
 
-export const serializer = extensions.serializer();
+const parseHTML = (html) => {
+  const domNode = document.createElement("div");
+  domNode.innerHTML = html;
+  return domParser.parse(domNode);
+};
 
-export const renderToHtml = (markdown: string): string =>
-  render(markdown, extensions.rulePlugins);
+const serializeToHTML = (doc) => {
+  const serializedFragment = domSerializer.serializeFragment(doc.content);
+  const throwAwayDiv = document.createElement("div");
+  throwAwayDiv.appendChild(serializedFragment);
+  return throwAwayDiv.innerHTML;
+};
+
+const parseMarkdown = (md) => {
+  return markdownParser.parse(md);
+};
+
+const serializeToMarkdown = (doc) => {
+  return markdownSerializer.serialize(doc);
+};
+
+export const mdToHtml = (markdown: string): string => {
+  const doc = parseMarkdown(markdown);
+  return serializeToHTML(doc);
+};
+
+export const htmlToMd = (html: string): string => {
+  const doc = parseHTML(html);
+  return serializeToMarkdown(doc);
+};
+
+export const externalHtmlOrMdToHtml = (content) => {
+  if (isHTML(content)) {
+    return serializeToHTML(parseHTML(content));
+  } else {
+    return mdToHtml(content);
+  }
+};
