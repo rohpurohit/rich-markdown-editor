@@ -1,7 +1,7 @@
-import { parser } from "./server";
+import { parseMarkdown } from "./server";
 
 test("renders an empty doc", () => {
-  const ast = parser.parse("");
+  const ast = parseMarkdown("");
 
   expect(ast.toJSON()).toEqual({
     content: [{ type: "paragraph" }],

@@ -1,3 +1,6 @@
+/* Not quite a server file, it has to be run in the browser, 
+as it uses browser API to serialize the prosemirror doc AST to html */
+
 import { Schema, DOMParser, DOMSerializer } from "prosemirror-model";
 import ExtensionManager from "./lib/ExtensionManager";
 import { isHTML } from "./domHelpers";
@@ -91,24 +94,24 @@ const markdownParser = extensions.parser({
 });
 const markdownSerializer = extensions.serializer();
 
-const parseHTML = (html) => {
+export const parseHTML = (html) => {
   const domNode = document.createElement("div");
   domNode.innerHTML = html;
   return domParser.parse(domNode);
 };
 
-const serializeToHTML = (doc) => {
+export const serializeToHTML = (doc) => {
   const serializedFragment = domSerializer.serializeFragment(doc.content);
   const throwAwayDiv = document.createElement("div");
   throwAwayDiv.appendChild(serializedFragment);
   return throwAwayDiv.innerHTML;
 };
 
-const parseMarkdown = (md) => {
-  return markdownParser.parse(md);
+export const parseMarkdown = (markdown: string) => {
+  return markdownParser.parse(markdown);
 };
 
-const serializeToMarkdown = (doc) => {
+export const serializeToMarkdown = (doc) => {
   return markdownSerializer.serialize(doc);
 };
 
