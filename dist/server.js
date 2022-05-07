@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.externalHtmlOrMdToHtml = exports.htmlToMd = exports.mdToHtml = exports.serializeToMarkdown = exports.parseMarkdown = exports.serializeToHTML = exports.parseHTML = exports.schema = void 0;
+exports.externalHtmlOrMdToHtml = exports.parseMarkdown = exports.schema = void 0;
 const prosemirror_model_1 = require("prosemirror-model");
 const ExtensionManager_1 = __importDefault(require("./lib/ExtensionManager"));
 const domHelpers_1 = require("./domHelpers");
@@ -87,44 +87,31 @@ const markdownParser = extensions.parser({
     schema: exports.schema,
     plugins: extensions.rulePlugins,
 });
-const markdownSerializer = extensions.serializer();
 const parseHTML = (html) => {
     const domNode = document.createElement("div");
     domNode.innerHTML = html;
     return domParser.parse(domNode);
 };
-exports.parseHTML = parseHTML;
 const serializeToHTML = (doc) => {
     const serializedFragment = domSerializer.serializeFragment(doc.content);
     const throwAwayDiv = document.createElement("div");
     throwAwayDiv.appendChild(serializedFragment);
     return throwAwayDiv.innerHTML;
 };
-exports.serializeToHTML = serializeToHTML;
 const parseMarkdown = (markdown) => {
     return markdownParser.parse(markdown);
 };
 exports.parseMarkdown = parseMarkdown;
-const serializeToMarkdown = (doc) => {
-    return markdownSerializer.serialize(doc);
-};
-exports.serializeToMarkdown = serializeToMarkdown;
 const mdToHtml = (markdown) => {
     const doc = exports.parseMarkdown(markdown);
-    return exports.serializeToHTML(doc);
+    return serializeToHTML(doc);
 };
-exports.mdToHtml = mdToHtml;
-const htmlToMd = (html) => {
-    const doc = exports.parseHTML(html);
-    return exports.serializeToMarkdown(doc);
-};
-exports.htmlToMd = htmlToMd;
 const externalHtmlOrMdToHtml = (content) => {
     if (domHelpers_1.isHTML(content)) {
-        return exports.serializeToHTML(exports.parseHTML(content));
+        return serializeToHTML(parseHTML(content));
     }
     else {
-        return exports.mdToHtml(content);
+        return mdToHtml(content);
     }
 };
 exports.externalHtmlOrMdToHtml = externalHtmlOrMdToHtml;
