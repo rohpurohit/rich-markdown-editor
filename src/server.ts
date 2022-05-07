@@ -92,15 +92,14 @@ const markdownParser = extensions.parser({
   schema,
   plugins: extensions.rulePlugins,
 });
-const markdownSerializer = extensions.serializer();
 
-export const parseHTML = (html) => {
+const parseHTML = (html) => {
   const domNode = document.createElement("div");
   domNode.innerHTML = html;
   return domParser.parse(domNode);
 };
 
-export const serializeToHTML = (doc) => {
+const serializeToHTML = (doc) => {
   const serializedFragment = domSerializer.serializeFragment(doc.content);
   const throwAwayDiv = document.createElement("div");
   throwAwayDiv.appendChild(serializedFragment);
@@ -111,18 +110,9 @@ export const parseMarkdown = (markdown: string) => {
   return markdownParser.parse(markdown);
 };
 
-export const serializeToMarkdown = (doc) => {
-  return markdownSerializer.serialize(doc);
-};
-
-export const mdToHtml = (markdown: string): string => {
+const mdToHtml = (markdown: string): string => {
   const doc = parseMarkdown(markdown);
   return serializeToHTML(doc);
-};
-
-export const htmlToMd = (html: string): string => {
-  const doc = parseHTML(html);
-  return serializeToMarkdown(doc);
 };
 
 export const externalHtmlOrMdToHtml = (content) => {
