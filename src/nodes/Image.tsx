@@ -254,11 +254,11 @@ export default class Image extends Node {
         >
           <ResizableWrapper ref={resizableWrapperRef} {...{ width, height }}>
             <img src={src} alt={alt} title={title} />
-            <ResizeButtonConatiner>
+            <ResizeButtonContainer>
               <ResizeIconContainer>
                 {resizeIcon}
               </ResizeIconContainer>
-            </ResizeButtonConatiner>
+            </ResizeButtonContainer>
           </ResizableWrapper>
         </ImageWrapper>
         <Caption
@@ -475,7 +475,7 @@ const ImageWrapper = styled.span`
   }
 `;
 
-const ResizeButtonConatiner = styled.div`
+const ResizeButtonContainer = styled.div`
   min-width: 22px;
   min-height: 22px;
   max-width: 22px;

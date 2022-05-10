@@ -439,7 +439,7 @@ export const StyledEditor = styled("div")<{
     color: ${(props) => props.theme.textSecondary};
     text-decoration: line-through;
   }
- 
+
   p {
       margin-bottom: ${({fontScale}) => fontScale * 5}px; !important;
   }
