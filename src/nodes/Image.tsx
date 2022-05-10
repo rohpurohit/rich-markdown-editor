@@ -211,40 +211,10 @@ export default class Image extends Node {
       view.dispatch(transaction);
     };
 
-  resizeImage = ({ node, getPos, width, height }) => {
-    const { view } = this.editor;
-    const { tr } = view.state;
-
-    const pos = getPos();
-    const transaction = tr.setNodeMarkup(pos, undefined, {
-      ...node.attrs,
-      width: Math.round(width),
-      height: Math.round(height),
-    });
-    view.dispatch(transaction);
-  };
-
   component = (props) => {
     const { isSelected } = props;
     const { alt, src, title, width, height } = props.node.attrs;
     const className = "image";
-
-    const resizableWrapperRef = React.useRef(null);
-    const sizeRef = React.useRef({ width, height });
-    const imageResized = React.useRef(false);
-
-    React.useEffect(() => {
-      if (imageResized.current) {
-        imageResized.current = false;
-        this.resizeImage({ ...props, ...sizeRef.current });
-      }
-    }, [isSelected]);
-
-    useResizeObserver(resizableWrapperRef, (entry) => {
-      imageResized.current = true;
-      sizeRef.current.width = entry.width;
-      sizeRef.current.height = entry.height;
-    });
 
     return (
       <div contentEditable={false} className={className}>
@@ -252,7 +222,7 @@ export default class Image extends Node {
           className={isSelected ? "ProseMirror-selectednode" : ""}
           onClick={this.handleSelect(props)}
         >
-          <ResizableWrapper ref={resizableWrapperRef} {...{ width, height }}>
+          <ResizableWrapper {...{ width, height }}>
             <img src={src} alt={alt} title={title} />
             <ResizeButtonContainer>
               <ResizeIconContainer>
@@ -386,13 +356,17 @@ const ResizableWrapper = styled.div<{
   width?: number;
   height?: number;
 }>`
-  resize: both;
+  resize: horizontal;
   overflow: hidden;
   max-height: 75%;
   position: relative;
 
   &::-webkit-resizer {
     display: none;
+  }
+
+  @media (max-width: 600px) {
+    max-width: 250px;
   }
 
   ${({ width, height }) =>
