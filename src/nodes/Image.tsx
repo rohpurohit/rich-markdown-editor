@@ -229,6 +229,7 @@ export default class Image extends Node {
     const { alt, src, title, width, height } = props.node.attrs;
     const className = "image";
 
+    const resizableWrapperRef = React.useRef(null);
     const sizeRef = React.useRef({ width, height });
     const imageResized = React.useRef(false);
 
@@ -239,13 +240,18 @@ export default class Image extends Node {
       }
     }, [isSelected]);
 
+    useResizeObserver(resizableWrapperRef, (entry) => {
+      imageResized.current = true;
+      sizeRef.current.width = entry.width;
+    });
+
     return (
       <div contentEditable={false} className={className}>
         <ImageWrapper
           className={isSelected ? "ProseMirror-selectednode" : ""}
           onClick={this.handleSelect(props)}
         >
-          <ResizableWrapper {...{ width, height }}>
+          <ResizableWrapper ref={resizableWrapperRef} {...{ width, height }}>
             <img src={src} alt={alt} title={title} />
             <ResizeButtonContainer>
               <ResizeIconContainer>
