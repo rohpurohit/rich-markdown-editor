@@ -211,10 +211,33 @@ export default class Image extends Node {
       view.dispatch(transaction);
     };
 
+  resizeImage = ({ node, getPos, width, height }) => {
+    const { view } = this.editor;
+    const { tr } = view.state;
+
+    const pos = getPos();
+    const transaction = tr.setNodeMarkup(pos, undefined, {
+      ...node.attrs,
+      width: Math.round(width),
+      height: Math.round(height),
+    });
+    view.dispatch(transaction);
+  };
+
   component = (props) => {
     const { isSelected } = props;
     const { alt, src, title, width, height } = props.node.attrs;
     const className = "image";
+
+    const sizeRef = React.useRef({ width, height });
+    const imageResized = React.useRef(false);
+
+    React.useEffect(() => {
+      if (imageResized.current) {
+        imageResized.current = false;
+        this.resizeImage({ ...props, ...sizeRef.current });
+      }
+    }, [isSelected]);
 
     return (
       <div contentEditable={false} className={className}>
@@ -224,11 +247,11 @@ export default class Image extends Node {
         >
           <ResizableWrapper {...{ width, height }}>
             <img src={src} alt={alt} title={title} />
-            <ResizeButtonContainer>
+            <ResizeButtonConatiner>
               <ResizeIconContainer>
                 {resizeIcon}
               </ResizeIconContainer>
-            </ResizeButtonContainer>
+            </ResizeButtonConatiner>
           </ResizableWrapper>
         </ImageWrapper>
         <Caption
@@ -449,7 +472,7 @@ const ImageWrapper = styled.span`
   }
 `;
 
-const ResizeButtonContainer = styled.div`
+const ResizeButtonConatiner = styled.div`
   min-width: 22px;
   min-height: 22px;
   max-width: 22px;
