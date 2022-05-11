@@ -255,7 +255,7 @@ export default class Image extends Node {
           className={isSelected ? "ProseMirror-selectednode" : ""}
           onClick={this.handleSelect(props)}
         >
-          <ResizableWrapper ref={resizableWrapperRef} {...{ width }}>
+          <ResizableWrapper ref={resizableWrapperRef} {...{ width, height }}>
             <img src={src} alt={alt} title={title} />
             <ResizeButtonContainer>
               <ResizeIconContainer>{resizeIcon}</ResizeIconContainer>
@@ -387,7 +387,7 @@ const ResizableWrapper = styled.div<{
   width?: number;
   height?: number;
 }>`
-  resize: horizontal;
+  resize: both;
   overflow: hidden;
   max-height: 75%;
   position: relative;
@@ -400,7 +400,13 @@ const ResizableWrapper = styled.div<{
     max-width: 250px;
   }
 
-  ${({ width }) => width && `width: ${width}px;`}
+  ${({ width, height }) =>
+    width &&
+    height &&
+    `
+    width: ${width}px;
+    height: ${height}px;
+  `}
 `;
 
 const Button = styled.button`
