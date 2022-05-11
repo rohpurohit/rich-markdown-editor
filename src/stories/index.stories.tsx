@@ -179,7 +179,7 @@ ReadOnlyWriteCheckboxes.args = {
 
 export const Persisted = Template.bind({});
 Persisted.args = {
-  defaultValue: localStorage.getItem("saved"),
+  defaultValue: localStorage.getItem("saved") ?? "",
   onChange: debounce((value) => {
     const text = value();
     localStorage.setItem("saved", text);
