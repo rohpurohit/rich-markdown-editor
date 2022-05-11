@@ -2,6 +2,7 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RTL = exports.Dark = exports.Focused = exports.Images = exports.Placeholder = exports.Persisted = exports.ReadOnlyWriteCheckboxes = exports.Checkboxes = exports.MaxLength = exports.ReadOnly = exports.Notices = exports.Code = exports.Marks = exports.Tables = exports.Blockquotes = exports.Lists = exports.Headings = exports.TemplateDoc = exports.Emoji = exports.Default = void 0;
 const index_1 = __importDefault(require("./index"));
@@ -166,7 +167,7 @@ exports.ReadOnlyWriteCheckboxes.args = {
 };
 exports.Persisted = Template.bind({});
 exports.Persisted.args = {
-    defaultValue: localStorage.getItem("saved"),
+    defaultValue: (_a = localStorage.getItem("saved")) !== null && _a !== void 0 ? _a : "",
     onChange: debounce_1.default((value) => {
         const text = value();
         localStorage.setItem("saved", text);

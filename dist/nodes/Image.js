@@ -157,7 +157,7 @@ class Image extends Node_1.default {
                 React.createElement(ImageWrapper, { className: isSelected ? "ProseMirror-selectednode" : "", onClick: this.handleSelect(props) },
                     React.createElement(ResizableWrapper, Object.assign({ ref: resizableWrapperRef }, { width, height }),
                         React.createElement("img", { src: src, alt: alt, title: title }),
-                        React.createElement(ResizeButtonConatiner, null,
+                        React.createElement(ResizeButtonContainer, null,
                             React.createElement(ResizeIconContainer, null, resizeIcon)))),
                 React.createElement(Caption, { onKeyDown: this.handleCaptionKeyDown(props), onBlur: this.handleCaptionBlur(props), className: "caption", tabIndex: -1, role: "textbox", contentEditable: true, suppressContentEditableWarning: true, "data-caption": this.options.dictionary.imageCaptionPlaceholder }, alt)));
         };
@@ -306,6 +306,10 @@ const ResizableWrapper = styled_components_1.default.div `
     display: none;
   }
 
+  @media (max-width: 600px) {
+    max-width: 250px;
+  }
+
   ${({ width, height }) => width &&
     height &&
     `
@@ -381,7 +385,7 @@ const ImageWrapper = styled_components_1.default.span `
     visibility: visible;
   }
 `;
-const ResizeButtonConatiner = styled_components_1.default.div `
+const ResizeButtonContainer = styled_components_1.default.div `
   min-width: 22px;
   min-height: 22px;
   max-width: 22px;
