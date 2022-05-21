@@ -307,7 +307,7 @@ const ResizableWrapper = styled_components_1.default.div `
   }
 
   @media (max-width: 600px) {
-    max-width: 250px;
+    max-width: 330px;
   }
 
   ${({ width, height }) => width &&
