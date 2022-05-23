@@ -9,7 +9,6 @@ import toggleBlockType from "../commands/toggleBlockType";
 import splitHeading from "../commands/splitHeading";
 import headingToSlug, { headingToPersistenceKey } from "../lib/headingToSlug";
 import Node from "./Node";
-import { ToastType } from "../types";
 import {
   getParsedValue,
   isValidHeading,
@@ -27,6 +26,7 @@ export default class Heading extends Node {
     return {
       levels: [1, 2, 3, 4],
       collapsed: undefined,
+      softToDOM: false,
     };
   }
 
@@ -71,16 +71,20 @@ export default class Heading extends Node {
 
         return [
           `h${node.attrs.level + (this.options.offset || 0)}`,
-          [
-            "span",
-            {
-              contentEditable: false,
-              class: `heading-actions ${
-                node.attrs.collapsed ? "collapsed" : ""
-              }`,
-            },
-            fold,
-          ],
+          ...(this.options.softToDOM
+            ? []
+            : [
+                [
+                  "span",
+                  {
+                    contentEditable: false,
+                    class: `heading-actions ${
+                      node.attrs.collapsed ? "collapsed" : ""
+                    }`,
+                  },
+                  fold,
+                ],
+              ]),
           [
             "span",
             {
