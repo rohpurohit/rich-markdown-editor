@@ -58,7 +58,7 @@ const extensions = new ExtensionManager([
   new Embed(),
   new ListItem(),
   new Notice(),
-  new Heading(),
+  new Heading({ softToDOM: true }),
   new HorizontalRule(),
   new Image(),
   new Table(),

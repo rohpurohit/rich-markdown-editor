@@ -71,6 +71,7 @@ class Heading extends Node_1.default {
         return {
             levels: [1, 2, 3, 4],
             collapsed: undefined,
+            softToDOM: false,
         };
     }
     get schema() {
@@ -110,14 +111,18 @@ class Heading extends Node_1.default {
                 fold.addEventListener("click", (event) => this.handleFoldContent(event));
                 return [
                     `h${node.attrs.level + (this.options.offset || 0)}`,
-                    [
-                        "span",
-                        {
-                            contentEditable: false,
-                            class: `heading-actions ${node.attrs.collapsed ? "collapsed" : ""}`,
-                        },
-                        fold,
-                    ],
+                    ...(this.options.softToDOM
+                        ? []
+                        : [
+                            [
+                                "span",
+                                {
+                                    contentEditable: false,
+                                    class: `heading-actions ${node.attrs.collapsed ? "collapsed" : ""}`,
+                                },
+                                fold,
+                            ],
+                        ]),
                     [
                         "span",
                         {
