@@ -7,6 +7,7 @@ export default class Heading extends Node {
     get defaultOptions(): {
         levels: number[];
         collapsed: undefined;
+        softToDOM: boolean;
     };
     get schema(): {
         attrs: {

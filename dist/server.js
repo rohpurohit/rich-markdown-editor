@@ -56,7 +56,7 @@ const extensions = new ExtensionManager_1.default([
     new Embed_1.default(),
     new ListItem_1.default(),
     new Notice_1.default(),
-    new Heading_1.default(),
+    new Heading_1.default({ softToDOM: true }),
     new HorizontalRule_1.default(),
     new Image_1.default(),
     new Table_1.default(),
