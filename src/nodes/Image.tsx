@@ -397,7 +397,7 @@ const ResizableWrapper = styled.div<{
   }
 
   @media (max-width: 600px) {
-    max-width: 340px;
+    max-width: 300px;
   }
 
   ${({ width, height }) =>
