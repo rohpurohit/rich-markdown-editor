@@ -12,6 +12,7 @@ class Paragraph extends Node_1.default {
     get schema() {
         return {
             content: "inline*",
+            draggable: true,
             group: "block",
             parseDOM: [{ tag: "p" }],
             toDOM: () => ["p", 0],

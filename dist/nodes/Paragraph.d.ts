@@ -3,6 +3,7 @@ export default class Paragraph extends Node {
     get name(): string;
     get schema(): {
         content: string;
+        draggable: boolean;
         group: string;
         parseDOM: {
             tag: string;
