@@ -460,9 +460,6 @@ export const StyledEditor = styled("div")<{
 
   p[draggable=true]::before {
     cursor: grabbing;
-  }
-
-  p[draggable=true].hovering::before {
     opacity: 0.5;
   }
 

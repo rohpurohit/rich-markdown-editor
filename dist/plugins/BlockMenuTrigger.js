@@ -121,10 +121,6 @@ class BlockMenuTrigger extends Extension_1.default {
                                     });
                                     return button;
                                 }));
-                                decorations.push(prosemirror_view_1.Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
-                                    class: "placeholder",
-                                    "data-empty-text": this.options.dictionary.newLineEmpty,
-                                }));
                             }
                             if (isSlash) {
                                 decorations.push(prosemirror_view_1.Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {

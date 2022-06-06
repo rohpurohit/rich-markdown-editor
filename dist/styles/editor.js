@@ -459,9 +459,6 @@ exports.StyledEditor = styled_components_1.default("div") `
 
   p[draggable=true]::before {
     cursor: grabbing;
-  }
-
-  p[draggable=true].hovering::before {
     opacity: 0.5;
   }
 
