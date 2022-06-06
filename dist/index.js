@@ -559,7 +559,7 @@ RichMarkdownEditor.defaultProps = {
     defaultValue: "",
     dir: "auto",
     fontScale: 1,
-    placeholder: "Write something nice…",
+    placeholder: "",
     onImageUploadStart: () => {
     },
     onImageUploadStop: () => {

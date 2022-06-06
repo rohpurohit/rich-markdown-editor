@@ -187,7 +187,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     defaultValue: "",
     dir: "auto",
     fontScale: 1,
-    placeholder: "Write something nice…",
+    placeholder: "",
     onImageUploadStart: () => {
       // no default behavior
     },
